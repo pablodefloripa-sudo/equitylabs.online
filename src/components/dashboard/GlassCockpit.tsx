@@ -5,7 +5,6 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { VoiceWaveform } from './VoiceWaveform';
 import { useVoiceCommands } from '@/hooks/useVoiceCommands';
 import { useAIChat } from '@/hooks/useAIChat';
 
@@ -32,12 +31,6 @@ export const GlassCockpit = ({ onClose }: GlassCockpitProps) => {
   });
   
   const { sendMessage, isLoading: aiLoading } = useAIChat();
-  // Determine waveform state
-  const getWaveformState = (): 'idle' | 'thinking' | 'speaking' => {
-    if (aiLoading) return 'thinking';
-    return 'idle';
-  };
-
   // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -127,11 +120,6 @@ export const GlassCockpit = ({ onClose }: GlassCockpitProps) => {
         {/* Orange glow border at top */}
         <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#FF4500] to-transparent" />
         <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-[#FF4500]/20 to-transparent pointer-events-none" />
-
-        {/* Waveform at the top */}
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 w-48">
-          <VoiceWaveform state={getWaveformState()} />
-        </div>
 
         {/* Chat content area */}
         <div className="absolute inset-0 flex flex-col pt-16 pb-20 px-6">

@@ -64,14 +64,14 @@ const typingPages: PageDef[] = [
   },
   {
     texts: {
-      en: 'EquityLabs gives you seamless access to Grok, Claude, GPT, DeepSeek, Qwen, Llama, Gemini and more — fully integrated with real-time market data, Gmail, Drive, Sheets, Docs, and Calendar.',
-      es: 'EquityLabs te da acceso fluido a Grok, Claude, GPT, DeepSeek, Qwen, Llama, Gemini y más — totalmente integrado con datos de mercado en tiempo real, Gmail, Drive, Sheets, Docs y Calendar.',
-      it: 'EquityLabs ti offre accesso diretto a Grok, Claude, GPT, DeepSeek, Qwen, Llama, Gemini e altro — completamente integrato con dati di mercato in tempo reale, Gmail, Drive, Sheets, Docs e Calendar.',
-      pt: 'EquityLabs dá acesso contínuo a Grok, Claude, GPT, DeepSeek, Qwen, Llama, Gemini e mais — totalmente integrado com dados de mercado em tempo real, Gmail, Drive, Sheets, Docs e Calendar.',
-      fr: "EquityLabs vous donne un accès transparent à Grok, Claude, GPT, DeepSeek, Qwen, Llama, Gemini et plus — entièrement intégré aux données de marché en temps réel, Gmail, Drive, Sheets, Docs et Calendar.",
-      de: 'EquityLabs bietet nahtlosen Zugang zu Grok, Claude, GPT, DeepSeek, Qwen, Llama, Gemini und mehr — vollständig integriert mit Echtzeit-Marktdaten, Gmail, Drive, Sheets, Docs und Calendar.',
-      pl: 'EquityLabs daje płynny dostęp do Grok, Claude, GPT, DeepSeek, Qwen, Llama, Gemini i więcej — w pełni zintegrowane z danymi rynkowymi w czasie rzeczywistym, Gmail, Drive, Sheets, Docs i Calendar.',
-      nl: 'EquityLabs geeft je naadloze toegang tot Grok, Claude, GPT, DeepSeek, Qwen, Llama, Gemini en meer — volledig geïntegreerd met realtime marktdata, Gmail, Drive, Sheets, Docs en Calendar.',
+      en: 'EquityLabs now runs on one private core: qwen/qwen3-vl-8b-thinking, with text, image and PDF input integrated into the operational dashboard.',
+      es: 'EquityLabs ahora corre con un solo nucleo privado: qwen/qwen3-vl-8b-thinking, con texto, imagen y PDF integrados al dashboard operativo.',
+      it: 'EquityLabs ora funziona con un unico nucleo privato: qwen/qwen3-vl-8b-thinking, con testo, immagini e PDF integrati nella dashboard operativa.',
+      pt: 'EquityLabs agora roda com um unico nucleo privado: qwen/qwen3-vl-8b-thinking, com texto, imagem e PDF integrados ao dashboard operacional.',
+      fr: "EquityLabs fonctionne maintenant avec un seul noyau prive: qwen/qwen3-vl-8b-thinking, avec texte, image et PDF integres au dashboard operationnel.",
+      de: 'EquityLabs laeuft jetzt mit einem einzigen privaten Kern: qwen/qwen3-vl-8b-thinking, mit Text, Bild und PDF im operativen Dashboard.',
+      pl: 'EquityLabs dziala teraz na jednym prywatnym rdzeniu: qwen/qwen3-vl-8b-thinking, z tekstem, obrazem i PDF w dashboardzie operacyjnym.',
+      nl: 'EquityLabs draait nu op een enkele private kern: qwen/qwen3-vl-8b-thinking, met tekst, beeld en PDF in het operationele dashboard.',
     },
   },
   {

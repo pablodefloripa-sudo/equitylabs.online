@@ -70,6 +70,7 @@ export const MascotCreatorModal = ({ open, onClose }: MascotCreatorModalProps) =
   const [name, setName] = useState('');
   const [species, setSpecies] = useState(SPECIES[0]);
   const [avatarIdx, setAvatarIdx] = useState(0);
+  const [isActive, setIsActive] = useState(true);
   const [role, setRole] = useState<'basic' | 'advanced'>('basic');
   const [personality, setPersonality] = useState(PERSONALITIES[0]);
   const [autonomy, setAutonomy] = useState(4);
@@ -83,7 +84,38 @@ export const MascotCreatorModal = ({ open, onClose }: MascotCreatorModalProps) =
   const [saving, setSaving] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
 
-  useEffect(() => { if (!open) setPreview(null); }, [open]);
+  useEffect(() => {
+    if (!open) {
+      setPreview(null);
+      return;
+    }
+
+    // Restore the user's latest mascot from Supabase when Companion Forge opens.
+    // This keeps the companion available across browsers and sessions.
+    let cancelled = false;
+    const restoreSavedMascot = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || cancelled) return;
+
+      const { data, error } = await supabase
+        .from('agent_configs')
+        .select('config')
+        .eq('user_id', user.id)
+        .eq('agent_type', 'mascot')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error || !data?.config || cancelled) return;
+      const restored = data.config as Record<string, unknown>;
+      localStorage.setItem('eq:active-mascot', JSON.stringify(restored));
+      window.dispatchEvent(new CustomEvent('eq:mascot-restored', { detail: restored }));
+    };
+
+    void restoreSavedMascot();
+    return () => { cancelled = true; };
+  }, [open]);
 
   const toggleFn = (id: string) =>
     setActiveFunctions((p) => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
@@ -119,7 +151,7 @@ export const MascotCreatorModal = ({ open, onClose }: MascotCreatorModalProps) =
       const { data: { user } } = await supabase.auth.getUser();
       const config = {
         name, species, avatarIdx, role, personality, autonomy, empathy, humor,
-        specialty, voiceTone, languages, activeFunctions, backstory,
+        specialty, voiceTone, languages, activeFunctions, backstory, isActive,
         systemPrompt: buildSystemPrompt(),
         createdAt: new Date().toISOString(),
       };
@@ -129,13 +161,16 @@ export const MascotCreatorModal = ({ open, onClose }: MascotCreatorModalProps) =
       localStorage.setItem('eq:active-mascot', JSON.stringify(config));
       if (user) {
         await supabase.from('agent_configs').insert({
-          user_id: user.id, agent_type: 'mascot', name, config: config as any, is_active: true,
+          user_id: user.id, agent_type: 'mascot', name, config: config as any, is_active: isActive,
         });
       }
       window.dispatchEvent(new CustomEvent('eq:mascot-created', { detail: config }));
-      toast({ title: '✨ Mascota creada', description: `${name} está lista.` });
+      toast({
+        title: isActive ? '✨ Mascota creada' : 'Mascota apagada',
+        description: isActive ? `${name} está lista.` : `${name} quedó guardada pero apagada.`,
+      });
       onClose();
-      setName(''); setBackstory(''); setActiveFunctions([]); setPreview(null);
+      setName(''); setBackstory(''); setActiveFunctions([]); setPreview(null); setIsActive(true);
     } catch (e) {
       toast({ title: 'Error', description: e instanceof Error ? e.message : 'No se pudo guardar', variant: 'destructive' });
     } finally { setSaving(false); }
@@ -226,6 +261,38 @@ export const MascotCreatorModal = ({ open, onClose }: MascotCreatorModalProps) =
                           </button>
                         ))}
                       </div>
+                    </Field>
+
+                    <Field label="Estado de la mascota">
+                      <button
+                        type="button"
+                        onClick={() => setIsActive((value) => !value)}
+                        className={`w-full rounded-xl border px-4 py-3 text-left transition-all ${
+                          isActive
+                            ? 'border-emerald-400/40 bg-emerald-500/10 text-emerald-100'
+                            : 'border-white/10 bg-white/[0.03] text-white/60'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <div>
+                            <p className="text-sm font-semibold">
+                              {isActive ? 'Mascota activa' : 'Mascota apagada'}
+                            </p>
+                            <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-white/45">
+                              {isActive
+                                ? 'Aparece en el dashboard y responde a eventos.'
+                                : 'Se guarda la config, pero no se muestra ni interrumpe.'}
+                            </p>
+                          </div>
+                          <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] ${
+                            isActive
+                              ? 'bg-emerald-400/15 text-emerald-200 border border-emerald-400/30'
+                              : 'bg-white/5 text-white/50 border border-white/10'
+                          }`}>
+                            {isActive ? 'ON' : 'OFF'}
+                          </span>
+                        </div>
+                      </button>
                     </Field>
 
                     <Field label="Personalidad">
@@ -357,7 +424,7 @@ export const MascotCreatorModal = ({ open, onClose }: MascotCreatorModalProps) =
                 <Button size="sm" onClick={handleSave} disabled={saving || !name.trim()}
                   className="h-8 text-xs bg-pink-500/20 hover:bg-pink-500/35 text-pink-100 border border-pink-400/50 shadow-[0_0_15px_rgba(236,72,153,0.35)]">
                   <Save size={ICON_SIZE} className="mr-1.5" />
-                  {saving ? 'Guardando...' : 'Crear Mascota'}
+                  {saving ? 'Guardando...' : isActive ? 'Crear Mascota' : 'Guardar Apagada'}
                 </Button>
               </div>
             </div>

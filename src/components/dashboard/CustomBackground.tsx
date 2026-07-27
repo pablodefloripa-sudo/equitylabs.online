@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { useWallpaperSettings } from './WallpaperSelector';
 import defaultWallpaper from '@/assets/default-wallpaper.jpg';
 import meshCurveWallpaper from '@/assets/wp-mesh-curve.jpg';
+import dashboardCoderBackground from '@/assets/dashboard-coder-bg.jpg';
 
 const PRESET_GRADIENTS: Record<string, string> = {
   'carbon': 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%)',
@@ -47,7 +48,7 @@ export const CustomBackground = memo(() => {
 
     // Default wallpaper
     return {
-      backgroundImage: `url(${meshCurveWallpaper || defaultWallpaper})`,
+      backgroundImage: `url(${dashboardCoderBackground})`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       opacity: settings.opacity ?? 0.35,

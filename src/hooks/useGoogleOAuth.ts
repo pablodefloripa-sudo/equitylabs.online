@@ -165,8 +165,8 @@ export const useGoogleOAuth = (): UseGoogleOAuthReturn => {
       clearPendingGoogleOAuth();
       console.error('Error connecting Google Workspace:', error);
       toast({
-        title: 'Permiso no iniciado',
-        description: 'No se pudo abrir la conexion con Google Workspace.',
+        title: 'Error de conexión Google',
+        description: error instanceof Error ? error.message : 'No se pudo abrir Google Workspace. Revisa OAuth en Supabase.',
         variant: 'destructive',
       });
     }
@@ -206,6 +206,12 @@ export const useGoogleOAuth = (): UseGoogleOAuthReturn => {
         }
       }
 
+      const authorizationCode = queryParams.get('code');
+      if (authorizationCode) {
+        const { error } = await supabase.auth.exchangeCodeForSession(authorizationCode);
+        if (error) throw error;
+      }
+
       const session = await waitForSession();
       cleanAuthUrl(url);
       clearPendingGoogleOAuth();
@@ -219,7 +225,9 @@ export const useGoogleOAuth = (): UseGoogleOAuthReturn => {
 
       toast({
         title: 'Google conectado',
-        description: 'La sesion se inicio correctamente y tus integraciones quedaron listas.',
+        description: session.provider_token
+          ? 'La sesión se inició y las integraciones de Google quedaron listas.'
+          : 'La sesión se inició, pero Google no entregó permisos Workspace. Reconecta aceptando los permisos.',
       });
 
       return true;

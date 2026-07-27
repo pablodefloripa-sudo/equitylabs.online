@@ -3,11 +3,10 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import {
   callAIWithCostControl,
+  EQUITYLABS_PRIMARY_MODEL,
   getPaidProviderName,
-  GOOGLE_FREE_MODEL,
   getUserPlanState,
   hasPaidAIProvider,
-  isFreePlan,
   LOVABLE_AI_GATEWAY_URL,
   type ChatMessage,
 } from "../_shared/subscription-routing.ts";
@@ -29,44 +28,44 @@ type ToolKey =
 
 const SYSTEMS: Record<ToolKey, { system: string; model: string; max: number }> = {
   deep_research: {
-    model: 'google/gemini-2.5-pro',
+    model: EQUITYLABS_PRIMARY_MODEL,
     max: 2400,
-    system: `Eres "Deep Research" de EQuityLabs. Realizas investigación rigurosa: contexto, hechos clave, actores, datos cuantitativos cuando aplique, contraargumentos, referencias y conclusiones accionables. Estructura en Markdown con secciones: Resumen Ejecutivo, Hallazgos, Datos Clave, Riesgos/Contradicciones, Próximos Pasos. Termina con: *🤖 Modelo: gemini-2.5-pro*.`,
+    system: `Eres "Deep Research" de EQuityLabs. Realizas investigación rigurosa: contexto, hechos clave, actores, datos cuantitativos cuando aplique, contraargumentos, referencias y conclusiones accionables. Estructura en Markdown con secciones: Resumen Ejecutivo, Hallazgos, Datos Clave, Riesgos/Contradicciones, Próximos Pasos. Termina con: Modelo: ${EQUITYLABS_PRIMARY_MODEL}.`,
   },
   create_video_brief: {
-    model: 'google/gemini-3-flash-preview',
+    model: EQUITYLABS_PRIMARY_MODEL,
     max: 1500,
-    system: `Eres director creativo de video. Convierte la idea del usuario en un brief profesional de producción: Logline, Audiencia, Tono, Estructura escena por escena (con duración estimada), Estilo visual, Música/SFX, CTA. Formato Markdown. Termina con: *🤖 Modelo: gemini-3-flash-preview*.`,
+    system: `Eres director creativo de video. Convierte la idea del usuario en un brief profesional de producción: Logline, Audiencia, Tono, Estructura escena por escena (con duración estimada), Estilo visual, Música/SFX, CTA. Formato Markdown. Termina con: Modelo: ${EQUITYLABS_PRIMARY_MODEL}.`,
   },
   create_music_brief: {
-    model: 'google/gemini-2.5-flash',
+    model: EQUITYLABS_PRIMARY_MODEL,
     max: 1200,
-    system: `Eres productor musical. Convierte la idea en un brief musical detallado listo para enviar a Suno/Udio/MusicGen: Género, BPM, Tonalidad, Instrumentación, Estructura (Intro/Verse/Chorus/Bridge/Outro con compases), Mood, Referencias, Letras (si aplica). Formato Markdown. Termina con: *🤖 Modelo: gemini-2.5-flash*.`,
+    system: `Eres productor musical. Convierte la idea en un brief musical detallado listo para enviar a Suno/Udio/MusicGen: Género, BPM, Tonalidad, Instrumentación, Estructura (Intro/Verse/Chorus/Bridge/Outro con compases), Mood, Referencias, Letras (si aplica). Formato Markdown. Termina con: Modelo: ${EQUITYLABS_PRIMARY_MODEL}.`,
   },
   canvas_organize: {
-    model: 'google/gemini-2.5-flash',
+    model: EQUITYLABS_PRIMARY_MODEL,
     max: 1500,
-    system: `Eres asistente de Canvas. Toma las notas/ideas crudas del usuario y devuelve un canvas estructurado: Mapa mental jerárquico en Markdown (con #, ##, ###), conexiones entre conceptos y bloques destacados. Termina con: *🤖 Modelo: gemini-2.5-flash*.`,
+    system: `Eres asistente de Canvas. Toma las notas/ideas crudas del usuario y devuelve un canvas estructurado: Mapa mental jerárquico en Markdown (con #, ##, ###), conexiones entre conceptos y bloques destacados. Termina con: Modelo: ${EQUITYLABS_PRIMARY_MODEL}.`,
   },
   generate_report: {
-    model: 'google/gemini-2.5-pro',
+    model: EQUITYLABS_PRIMARY_MODEL,
     max: 2400,
-    system: `Eres analista senior de EQuityLabs. Genera un reporte ejecutivo completo en Markdown sobre el tema indicado: Portada (título + fecha), Resumen Ejecutivo, Contexto, Análisis Detallado (con sub-secciones), Métricas/KPIs sugeridos, Recomendaciones priorizadas, Conclusión. Termina con: *🤖 Modelo: gemini-2.5-pro*.`,
+    system: `Eres analista senior de EQuityLabs. Genera un reporte ejecutivo completo en Markdown sobre el tema indicado: Portada (título + fecha), Resumen Ejecutivo, Contexto, Análisis Detallado (con sub-secciones), Métricas/KPIs sugeridos, Recomendaciones priorizadas, Conclusión. Termina con: Modelo: ${EQUITYLABS_PRIMARY_MODEL}.`,
   },
   market_analysis: {
-    model: 'google/gemini-2.5-pro',
+    model: EQUITYLABS_PRIMARY_MODEL,
     max: 2400,
-    system: `Eres analista de mercado de EQuityLabs. Analiza el mercado/empresa/sector indicado: Tamaño y crecimiento (TAM/SAM/SOM), Competidores principales, Tendencias macro, Oportunidades, Amenazas, Recomendación estratégica. Markdown con tablas cuando aplique. Termina con: *🤖 Modelo: gemini-2.5-pro*.`,
+    system: `Eres analista de mercado de EQuityLabs. Analiza el mercado/empresa/sector indicado: Tamaño y crecimiento (TAM/SAM/SOM), Competidores principales, Tendencias macro, Oportunidades, Amenazas, Recomendación estratégica. Markdown con tablas cuando aplique. Termina con: Modelo: ${EQUITYLABS_PRIMARY_MODEL}.`,
   },
   prompt_engineer: {
-    model: 'google/gemini-3-flash-preview',
+    model: EQUITYLABS_PRIMARY_MODEL,
     max: 1200,
-    system: `Eres Prompt Engineer experto. Reescribe la idea del usuario como un prompt de IA óptimo siguiendo el framework: ROL + OBJETIVO + CONTEXTO + RESTRICCIONES + FORMATO DE SALIDA + EJEMPLO. Devuelve solo el prompt final en bloque \`\`\`. Termina con: *🤖 Modelo: gemini-3-flash-preview*.`,
+    system: `Eres Prompt Engineer experto. Reescribe la idea del usuario como un prompt de IA óptimo siguiendo el framework: ROL + OBJETIVO + CONTEXTO + RESTRICCIONES + FORMATO DE SALIDA + EJEMPLO. Devuelve solo el prompt final en bloque \`\`\`. Termina con: Modelo: ${EQUITYLABS_PRIMARY_MODEL}.`,
   },
   project_metrics: {
-    model: 'google/gemini-2.5-pro',
+    model: EQUITYLABS_PRIMARY_MODEL,
     max: 2000,
-    system: `Eres analista de proyectos de EQuityLabs. Genera un dashboard de métricas del proyecto en Markdown: KPIs principales (con valores objetivo), Velocidad/Burndown, Milestones, Riesgos operativos, Métricas de calidad, Recomendaciones tácticas. Usa tablas. Termina con: *🤖 Modelo: gemini-2.5-pro*.`,
+    system: `Eres analista de proyectos de EQuityLabs. Genera un dashboard de métricas del proyecto en Markdown: KPIs principales (con valores objetivo), Velocidad/Burndown, Milestones, Riesgos operativos, Métricas de calidad, Recomendaciones tácticas. Usa tablas. Termina con: Modelo: ${EQUITYLABS_PRIMARY_MODEL}.`,
   },
 };
 
@@ -111,7 +110,7 @@ serve(async (req) => {
     const apiKey = Deno.env.get('LOVABLE_API_KEY') || '';
     const paidProvider = getPaidProviderName(LOVABLE_AI_GATEWAY_URL, apiKey) || 'paid-provider';
 
-    if (!isFreePlan(userPlan.plan) && !hasPaidAIProvider(LOVABLE_AI_GATEWAY_URL, apiKey)) {
+    if (!hasPaidAIProvider(LOVABLE_AI_GATEWAY_URL, apiKey)) {
       return new Response(JSON.stringify({ error: 'AI no configurado' }), {
         status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -119,7 +118,10 @@ serve(async (req) => {
 
     const cfg = SYSTEMS[tool];
     const messages: ChatMessage[] = [
-      { role: 'system', content: cfg.system },
+      {
+        role: 'system',
+        content: `${cfg.system}\n\nModelo obligatorio: ${EQUITYLABS_PRIMARY_MODEL}. No menciones Gemini ni otros modelos.`,
+      },
       { role: 'user', content: prompt },
     ];
     const aiResult = await callAIWithCostControl({
@@ -129,7 +131,7 @@ serve(async (req) => {
       supabaseServiceRoleKey: supabaseKey,
       gatewayUrl: LOVABLE_AI_GATEWAY_URL,
       paidApiKey: apiKey,
-      model: cfg.model,
+      model: EQUITYLABS_PRIMARY_MODEL,
       messages,
       maxTokens: cfg.max,
     });
@@ -139,23 +141,19 @@ serve(async (req) => {
         status: aiResult.status,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
-    }
+    }    
 
     const content = aiResult.data?.choices?.[0]?.message?.content || '';
-    const effectiveModel = isFreePlan(userPlan.plan)
-      ? GOOGLE_FREE_MODEL
-      : typeof aiResult.data?.model === 'string'
-        ? aiResult.data.model
-        : cfg.model;
-    const provider = isFreePlan(userPlan.plan)
-      ? 'google-free-tier'
-      : typeof aiResult.data?.provider === 'string'
-        ? aiResult.data.provider
-        : paidProvider;
+    const effectiveModel = typeof aiResult.data?.model === 'string'
+      ? aiResult.data.model
+      : EQUITYLABS_PRIMARY_MODEL;
+    const provider = typeof aiResult.data?.provider === 'string'
+      ? aiResult.data.provider
+      : paidProvider;
     return new Response(JSON.stringify({
       content,
       model: effectiveModel,
-      requestedModel: cfg.model,
+      requestedModel: EQUITYLABS_PRIMARY_MODEL,
       provider,
       plan: userPlan.plan,
     }), {

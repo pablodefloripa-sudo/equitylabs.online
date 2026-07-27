@@ -1,20 +1,18 @@
-import { useMemo } from 'react';
 import agentsData from '@/data/agentsData.json';
+import { toApiLanguage, useLanguage } from '@/hooks/useLanguage';
 
 type SupportedLang = 'es' | 'en' | 'it';
 
 type Agent = typeof agentsData.equity_labs_v1[0];
 
-function detectLang(): SupportedLang {
-  const navLang = navigator.language?.slice(0, 2).toLowerCase();
-  if (navLang === 'es' || navLang === 'en' || navLang === 'it') return navLang;
-  return 'en';
-}
-
 export type { Agent };
 
 export function useAgentI18n() {
-  const lang = useMemo(detectLang, []);
+  const { language } = useLanguage();
+  const selectedLang = toApiLanguage(language);
+  const lang: SupportedLang = (selectedLang === 'es' || selectedLang === 'en' || selectedLang === 'it')
+    ? selectedLang
+    : 'en';
 
   const t = (key: string): string => {
     const uiStrings = agentsData.ui as Record<string, Record<string, string>>;

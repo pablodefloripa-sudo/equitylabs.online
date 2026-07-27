@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { LucideIcon } from 'lucide-react';
 import {
@@ -207,10 +207,32 @@ const Suscripciones = () => {
   const [loading, setLoading] = useState<string | null>(null);
   const [submittedPlan, setSubmittedPlan] = useState<string | null>(null);
   const [carouselIndex, setCarouselIndex] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(3);
 
-  const visiblePlans = useMemo(() => plans.slice(carouselIndex, carouselIndex + 3), [carouselIndex]);
+  useEffect(() => {
+    const query = window.matchMedia('(max-width: 767px)');
+    const syncVisibleCount = () => setVisibleCount(query.matches ? 1 : 3);
+
+    syncVisibleCount();
+    query.addEventListener('change', syncVisibleCount);
+    return () => query.removeEventListener('change', syncVisibleCount);
+  }, []);
+
+  const maxCarouselIndex = Math.max(0, plans.length - visibleCount);
+  const visiblePlans = useMemo(() => plans.slice(carouselIndex, carouselIndex + visibleCount), [carouselIndex, visibleCount]);
   const canGoBack = carouselIndex > 0;
-  const canGoForward = carouselIndex < plans.length - 3;
+  const canGoForward = carouselIndex < maxCarouselIndex;
+  const pageStarts = useMemo(() => {
+    const starts: number[] = [];
+    for (let index = 0; index < plans.length; index += visibleCount) {
+      starts.push(Math.min(index, maxCarouselIndex));
+    }
+    return [...new Set(starts)];
+  }, [maxCarouselIndex, visibleCount]);
+
+  useEffect(() => {
+    setCarouselIndex((value) => Math.min(value, maxCarouselIndex));
+  }, [maxCarouselIndex]);
 
   const handleSelectPlan = async (plan: PlanDefinition) => {
     try {
@@ -303,29 +325,29 @@ const Suscripciones = () => {
           </div>
         </section>
 
-        <section className="mx-auto max-w-[92rem] px-6 pb-12 pt-12">
+        <section className="mx-auto max-w-[64rem] px-4 pb-10 pt-5 sm:px-6 md:pt-8 xl:max-w-[70rem]">
           <div className="relative">
             <button
               type="button"
-              onClick={() => setCarouselIndex((value) => Math.max(0, value - 3))}
+              onClick={() => setCarouselIndex((value) => Math.max(0, value - visibleCount))}
               disabled={!canGoBack}
-              className="group absolute left-0 top-1/2 z-20 inline-flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full border border-cyan-400/30 bg-black/55 text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.18)] transition hover:border-cyan-200 hover:bg-cyan-400/12 disabled:cursor-not-allowed disabled:opacity-30 xl:-left-7"
+              className="group absolute left-0 top-1/2 z-20 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-cyan-400/30 bg-black/55 text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.18)] transition hover:border-cyan-200 hover:bg-cyan-400/12 disabled:cursor-not-allowed disabled:opacity-30 md:-left-5"
               aria-label="Mostrar planes anteriores"
             >
-              <ArrowLeft className="h-6 w-6 transition group-hover:-translate-x-0.5" />
+              <ArrowLeft className="h-5 w-5 transition group-hover:-translate-x-0.5" />
             </button>
 
             <button
               type="button"
-              onClick={() => setCarouselIndex((value) => Math.min(plans.length - 3, value + 3))}
+              onClick={() => setCarouselIndex((value) => Math.min(maxCarouselIndex, value + visibleCount))}
               disabled={!canGoForward}
-              className="group absolute right-0 top-1/2 z-20 inline-flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full border border-fuchsia-400/30 bg-black/55 text-fuchsia-100 shadow-[0_0_24px_rgba(217,70,239,0.18)] transition hover:border-fuchsia-200 hover:bg-fuchsia-400/12 disabled:cursor-not-allowed disabled:opacity-30 xl:-right-7"
+              className="group absolute right-0 top-1/2 z-20 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-fuchsia-400/30 bg-black/55 text-fuchsia-100 shadow-[0_0_24px_rgba(217,70,239,0.18)] transition hover:border-fuchsia-200 hover:bg-fuchsia-400/12 disabled:cursor-not-allowed disabled:opacity-30 md:-right-5"
               aria-label="Mostrar siguientes planes"
             >
-              <ArrowRight className="h-6 w-6 transition group-hover:translate-x-0.5" />
+              <ArrowRight className="h-5 w-5 transition group-hover:translate-x-0.5" />
             </button>
 
-            <div className="grid gap-5 xl:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-3">
             {visiblePlans.map((plan) => {
               const Icon = plan.icon;
               const isSubmitted = submittedPlan === plan.key;
@@ -334,7 +356,7 @@ const Suscripciones = () => {
                 <article
                   key={plan.key}
                   className={[
-                    'subscription-card-float relative min-h-[34rem] overflow-hidden rounded-[28px] border border-white/10 bg-black/45 p-6 backdrop-blur-xl transition duration-300',
+                    'subscription-card-float relative min-h-[21.5rem] overflow-hidden rounded-[18px] border border-white/10 bg-black/45 p-4 backdrop-blur-xl transition duration-300 sm:p-5',
                     'subscription-shimmer-border',
                     plan.spotlight ? 'scale-[1.015] border-fuchsia-300/25 bg-[linear-gradient(180deg,rgba(20,20,40,0.88),rgba(8,10,18,0.94))]' : '',
                     accentGlow[plan.key] || '',
@@ -345,39 +367,39 @@ const Suscripciones = () => {
 
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.24em] text-amber-300">{plan.displayPlan}</p>
-                      <h3 className="mt-2 text-[2rem] font-semibold leading-none text-cyan-200">{plan.name}</h3>
-                      <p className="mt-3 text-[15px] leading-7 text-white/78">{plan.summary}</p>
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-300">{plan.displayPlan}</p>
+                      <h3 className="mt-2 text-2xl font-semibold leading-none text-cyan-200">{plan.name}</h3>
+                      <p className="mt-3 text-[12px] font-medium leading-5 text-white/78">{plan.summary}</p>
                     </div>
 
                     <div className={`rounded-2xl bg-gradient-to-br p-[1px] ${plan.accent}`}>
-                      <div className="flex h-12 w-12 items-center justify-center rounded-[15px] bg-slate-950 text-white">
-                        <Icon className="h-6 w-6" />
+                      <div className="flex h-10 w-10 items-center justify-center rounded-[13px] bg-slate-950 text-white">
+                        <Icon className="h-5 w-5" />
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-6 flex items-end gap-2">
-                    <span className="text-5xl font-semibold text-cyan-200">{plan.agentLimit}</span>
-                    <span className="pb-1 text-base font-medium text-amber-200">agentes</span>
-                    <span className="ml-auto pb-1 text-base font-medium text-white/82">
+                  <div className="mt-5 flex items-end gap-2">
+                    <span className="text-4xl font-semibold text-cyan-200">{plan.agentLimit}</span>
+                    <span className="pb-1 text-xs font-semibold text-amber-200">agentes</span>
+                    <span className="ml-auto pb-1 text-xs font-semibold text-white/82">
                       {plan.price} {plan.cadence}
                     </span>
                   </div>
 
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-sm font-semibold text-white">
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-white">
                       {plan.badge}
                     </span>
-                    <span className="rounded-full border border-cyan-400/20 bg-cyan-400/8 px-3 py-1 text-sm font-semibold text-white">
+                    <span className="rounded-full border border-cyan-400/20 bg-cyan-400/8 px-2.5 py-1 text-[11px] font-semibold text-white">
                       {plan.tier}
                     </span>
                   </div>
 
-                  <ul className="mt-5 space-y-3">
+                  <ul className="mt-4 space-y-2.5">
                     {plan.features.map((feature) => (
-                      <li key={feature} className="flex gap-3 text-[15px] font-medium leading-7 text-white/88">
-                        <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-emerald-300" />
+                      <li key={feature} className="flex gap-3 text-[12px] font-semibold leading-5 text-white/88">
+                        <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-300" />
                         <span>{feature}</span>
                       </li>
                     ))}
@@ -387,7 +409,7 @@ const Suscripciones = () => {
                     onClick={() => handleSelectPlan(plan)}
                     disabled={loading === plan.key}
                     className={[
-                      'mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-3.5 text-sm font-medium transition',
+                      'mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg border px-4 py-3 text-xs font-semibold transition',
                       plan.spotlight
                         ? 'border-fuchsia-400/50 bg-fuchsia-400/14 text-white hover:bg-fuchsia-400/18'
                         : 'border-cyan-400/35 bg-cyan-400/10 text-cyan-50 hover:bg-cyan-400/16',
@@ -408,7 +430,7 @@ const Suscripciones = () => {
           </div>
 
           <div className="mt-6 flex items-center justify-center gap-2">
-            {[0, 3].map((start) => (
+            {pageStarts.map((start, pageIndex) => (
               <button
                 key={start}
                 type="button"
@@ -417,7 +439,7 @@ const Suscripciones = () => {
                   'h-2.5 rounded-full transition-all duration-300',
                   carouselIndex === start ? 'w-10 bg-cyan-300 shadow-[0_0_18px_rgba(34,211,238,0.75)]' : 'w-2.5 bg-white/25 hover:bg-white/45',
                 ].join(' ')}
-                aria-label={`Ir al grupo ${start === 0 ? '1' : '2'} de planes`}
+                aria-label={`Ir al grupo ${pageIndex + 1} de planes`}
               />
             ))}
           </div>

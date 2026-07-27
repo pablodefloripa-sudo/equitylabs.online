@@ -1,10 +1,9 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   Zap,
   Loader2,
   ThumbsUp,
-  ThumbsDown,
   Trash2,
   Cpu,
   Plus,
@@ -21,6 +20,11 @@ import {
   TrendingUp,
   Cat,
   X,
+  FileText,
+  Paperclip,
+  Volume2,
+  VolumeX,
+  ChevronDown,
 } from 'lucide-react';
 import { InlineToolsPanel } from './InlineToolsPanel';
 import { AgentResponsePanel } from './AgentResponsePanel';
@@ -28,12 +32,18 @@ import { MascotGreeting } from './MascotGreeting';
 import { MascotTaskDialog } from './MascotTaskDialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { VoiceWaveform } from './VoiceWaveform';
 
 import { useAIChat } from '@/hooks/useAIChat';
+import { useKokoroTTS } from '@/hooks/useKokoroTTS';
 import { useAuth } from '@/hooks/useAuth';
-import { useLanguage } from '@/hooks/useLanguage';
+import { useLanguage, type Language } from '@/hooks/useLanguage';
 import { useToast } from '@/hooks/use-toast';
+import { AGENT_UI_COPY, INLINE_TOOLS_COPY, type DashboardToolKey } from './dashboardI18n';
+import {
+  emitMascotEvent,
+  MASCOT_EVENTS,
+  detectProgressMilestone,
+} from '@/lib/mascot-events';
 
 interface Message {
   id: string;
@@ -43,7 +53,12 @@ interface Message {
   imageUrl?: string;
   model?: string;
   toolLabel?: string;
-  reaction?: 'up' | 'down' | null;
+  reaction?: 'up' | null;
+  route?: string;
+  agentId?: string;
+  agentRoute?: string;
+  provider?: string;
+  attachments?: ChatAttachment[];
   mascot?: boolean;
   agentCommand?: {
     agentName: string;
@@ -57,18 +72,68 @@ interface CommunicationAreaProps {
   onEnterFocusMode: () => void;
 }
 
-type InlineToolKey =
-  | 'create_image'
-  | 'canvas_organize'
-  | 'deep_research'
-  | 'create_video_brief'
-  | 'create_music_brief'
-  | 'learn'
-  | 'prompt_engineer'
-  | 'generate_report'
-  | 'market_analysis'
-  | 'project_metrics'
-  | 'mascot';
+type InlineToolKey = DashboardToolKey;
+
+type ChatAttachment = {
+  id: string;
+  name: string;
+  mimeType: string;
+  size: number;
+  dataUrl: string;
+};
+
+const MAX_CHAT_ATTACHMENTS = 4;
+const MAX_CHAT_ATTACHMENT_BYTES = 8 * 1024 * 1024;
+const SOUND_PREFERENCE_KEY = 'eq_sound_enabled';
+const SOUND_VOICE_KEY = 'eq_sound_voice';
+const SOUND_LANGUAGES = ['es', 'en', 'pt', 'it', 'fr', 'de', 'el'];
+
+const speechText = (value: string) => value
+  .replace(/```[\s\S]*?```/g, ' ')
+  .replace(/[*_#>`~-]/g, ' ')
+  .replace(/\s+/g, ' ')
+  .trim();
+const ACCEPTED_CHAT_ATTACHMENT_TYPES = [
+  'image/png',
+  'image/jpeg',
+  'image/jpg',
+  'image/webp',
+  'image/gif',
+  'application/pdf',
+];
+
+const isAcceptedChatAttachment = (file: File) => (
+  ACCEPTED_CHAT_ATTACHMENT_TYPES.includes(file.type)
+  || /\.pdf$/i.test(file.name)
+  || /\.(png|jpe?g|webp|gif)$/i.test(file.name)
+);
+
+const formatAttachmentSize = (bytes: number) => {
+  if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+};
+
+const fileToChatAttachment = (file: File): Promise<ChatAttachment> => (
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result !== 'string') {
+        reject(new Error('No se pudo leer el archivo.'));
+        return;
+      }
+
+      resolve({
+        id: crypto.randomUUID(),
+        name: file.name || (file.type === 'application/pdf' ? 'document.pdf' : 'image.jpg'),
+        mimeType: file.type || (/\.pdf$/i.test(file.name) ? 'application/pdf' : 'image/jpeg'),
+        size: file.size,
+        dataUrl: reader.result,
+      });
+    };
+    reader.onerror = () => reject(new Error('No se pudo leer el archivo.'));
+    reader.readAsDataURL(file);
+  })
+);
 
 type AgentProjectForm = {
   projectName: string;
@@ -88,21 +153,21 @@ const emptyAgentProjectForm: AgentProjectForm = {
   dataSource: '',
 };
 
-const DEFAULT_ENGINE = 'tencent/hy3:free';
+const DEFAULT_ENGINE = 'qwen/qwen3-vl-8b-thinking';
 const ACTIVE_AGENT_STORAGE_KEY = 'eq_active_agent_context';
 const PROJECT_ROOTS_STORAGE_KEY = 'eq_project_roots';
-const INLINE_TOOL_META: Record<InlineToolKey, { label: string; icon: React.ComponentType<{ className?: string }> }> = {
-  create_image: { label: 'Crear imagen', icon: ImageIcon },
-  canvas_organize: { label: 'Canvas', icon: Layout },
-  deep_research: { label: 'Deep Research', icon: Telescope },
-  create_video_brief: { label: 'Video', icon: Clapperboard },
-  create_music_brief: { label: 'Musica', icon: Music },
-  learn: { label: 'Learn', icon: GraduationCap },
-  prompt_engineer: { label: 'Prompt Eng.', icon: Sparkles },
-  generate_report: { label: 'Reporte', icon: FileBarChart },
-  market_analysis: { label: 'Mercado', icon: TrendingUp },
-  project_metrics: { label: 'Metricas', icon: BarChart3 },
-  mascot: { label: 'Mascota IA', icon: Cat },
+const INLINE_TOOL_ICONS: Record<InlineToolKey, React.ComponentType<{ className?: string }>> = {
+  create_image: ImageIcon,
+  canvas_organize: Layout,
+  deep_research: Telescope,
+  create_video_brief: Clapperboard,
+  create_music_brief: Music,
+  learn: GraduationCap,
+  prompt_engineer: Sparkles,
+  generate_report: FileBarChart,
+  market_analysis: TrendingUp,
+  project_metrics: BarChart3,
+  mascot: Cat,
 };
 
 type ProjectRootRecord = {
@@ -130,19 +195,19 @@ const ORCHESTRATOR_ROLE_OPTIONS = [
 ];
 
 const OPERATION_MODES = [
-  'SEO Estratégico',
+  'SEO EstratÃƒÆ’Ã‚Â©gico',
   'Full-Stack Dev',
   'Copywriter',
   'Debug Mode',
   'Creatividad',
-  'Precisión Quirúrgica',
+  'PrecisiÃƒÆ’Ã‚Â³n QuirÃƒÆ’Ã‚Âºrgica',
 ] as const;
 
 const STYLE_MODES = [
   'Equilibrado',
   'Lluvia de Ideas',
-  'Concisión Extrema',
-  'Explicación Humana',
+  'ConcisiÃƒÆ’Ã‚Â³n Extrema',
+  'ExplicaciÃƒÆ’Ã‚Â³n Humana',
   'Formato Markdown',
 ] as const;
 
@@ -158,6 +223,39 @@ const metricFields: Array<{
   { key: 'deadline', label: 'Fecha limite', placeholder: 'Ej: 30 dias, 2026-08-15' },
   { key: 'dataSource', label: 'Fuente de datos', placeholder: 'Sheets, CRM, manual, Analytics' },
 ];
+
+const STARTUP_WORK_PRESETS = [
+  {
+    label: 'Generar ideas',
+    icon: Sparkles,
+    prompt: 'Generame 5 a 8 ideas de alto potencial con foco en ROI, claridad y velocidad de ejecucion.',
+  },
+  {
+    label: 'Chequear viabilidad',
+    icon: ShieldCheck,
+    prompt: 'Haceme un chequeo rapido de viabilidad del concepto con riesgos, supuestos y alerta de permisos.',
+  },
+  {
+    label: 'Crear outline',
+    icon: FileText,
+    prompt: 'Armame un outline claro del proyecto con diferenciador competitivo, pasos y entregables.',
+  },
+  {
+    label: 'Mapear mercado',
+    icon: TrendingUp,
+    prompt: 'Haceme un mapa rapido de mercado, competidores, oportunidad y hueco estrategico.',
+  },
+  {
+    label: 'Revisar permisos',
+    icon: ShieldCheck,
+    prompt: 'Decime que permisos necesito conectar si quiero usar Gmail, Calendar, Drive o Sheets.',
+  },
+  {
+    label: 'Definir KPI',
+    icon: BarChart3,
+    prompt: 'Definime KPI y una mini hoja de ruta operativa para medir avance y retorno.',
+  },
+] as const;
 
 const StatusLEDs = ({ isThinking }: { isThinking: boolean }) => (
   <div className="flex items-center gap-2">
@@ -185,32 +283,64 @@ const StatusLEDs = ({ isThinking }: { isThinking: boolean }) => (
   </div>
 );
 
-const buildAgentCommand = (agentName: string, tasks: string[], engine: string, userName: string) => {
-  const safeTasks = tasks.length ? tasks : ['Buscar norte estrategico', 'Implementar agentes necesarios', 'Auditar rendimiento y permisos'];
-  const proposals = safeTasks.slice(0, 3);
+const buildAgentCommand = (
+  agentName: string,
+  tasks: string[],
+  engine: string,
+  userName: string,
+  language: Language,
+) => {
+  const copy = AGENT_UI_COPY[language];
+  const safeTasks = tasks.length ? tasks : copy.defaultTasks;
+  const proposals = Array.from(new Set([...safeTasks, ...copy.defaultTasks])).slice(0, 5);
 
   return {
     prompt: [
-      `Ejecucion inmediata con ${agentName}.`,
-      `Motor inicial: ${engine}.`,
+      copy.immediateExecution(agentName),
+      copy.initialEngine(engine),
       '',
-      `Contexto del agente: ${safeTasks.join(' | ')}`,
+      copy.agentContext(safeTasks.join(' | ')),
       '',
-      'Objetivo: encontrar el norte estrategico del usuario, proponer el squad minimo de agentes, abrir un proyecto operativo, definir metricas de rendimiento, auditoria, control y permisos requeridos.',
+      copy.objective,
       '',
-      'Empeza por la propuesta 1 salvo que el usuario elija otra.',
+      copy.startHint,
     ].join('\n'),
     content: [
-      `**${agentName} listo para operar.**`,
+      copy.ready(agentName),
       '',
-      `Hola ${userName}. Ya entendí que este agente fue elegido como punto de entrada.`,
+      copy.greeting(userName),
       '',
-      'Antes de ejecutar, vamos a abrir el documento raiz del proyecto y dejar registrada la proxima tarea.',
+      copy.beforeExecute,
       '',
-      'Completá este kickoff rapido: rol operativo, tronco, tiempo disponible, horas semanales y siguiente micro-accion.',
+      copy.kickoff,
     ].join('\n'),
     proposals,
   };
+};
+
+const announceTaskSuggestions = (
+  agentName: string,
+  proposals: string[],
+  source: string,
+) => {
+  if (!proposals.length) return;
+
+  emitMascotEvent(MASCOT_EVENTS.TASK_SUGGESTED, {
+    agentName,
+    proposals,
+    source,
+    message: `Te propongo ${proposals.length} tareas para ${agentName}.`,
+  });
+};
+
+const announceProgress = (response: string, source: string) => {
+  const milestone = detectProgressMilestone(response);
+  if (!milestone) return;
+
+  emitMascotEvent(MASCOT_EVENTS.PROGRESS_DETECTED, {
+    milestone,
+    source,
+  });
 };
 
 const getOperatorName = (user: ReturnType<typeof useAuth>['user']) => {
@@ -350,12 +480,20 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
   const [toolsOpen, setToolsOpen] = useState(false);
   const [responseScale, setResponseScale] = useState(1);
   const [selectedInlineTool, setSelectedInlineTool] = useState<{ key: InlineToolKey; label: string } | null>(null);
+  const [chatAttachments, setChatAttachments] = useState<ChatAttachment[]>([]);
+  const [soundEnabled, setSoundEnabled] = useState(() => (
+    typeof window !== 'undefined' && window.localStorage.getItem(SOUND_PREFERENCE_KEY) === 'true'
+  ));
+  const [soundMenuOpen, setSoundMenuOpen] = useState(false);
+  const [selectedVoiceName, setSelectedVoiceName] = useState(() => (
+    typeof window !== 'undefined' ? window.localStorage.getItem(SOUND_VOICE_KEY) || '' : ''
+  ));
   const [activeAgentName, setActiveAgentName] = useState<string | null>(null);
   const [activeAgentId, setActiveAgentId] = useState<string | null>(null);
   const [activeAgentEngine, setActiveAgentEngine] = useState<string>(DEFAULT_ENGINE);
   const [agentProjectForm, setAgentProjectForm] = useState<AgentProjectForm>(emptyAgentProjectForm);
-  const [operationMode, setOperationMode] = useState<(typeof OPERATION_MODES)[number]>('SEO Estratégico');
-  const [styleMode, setStyleMode] = useState<(typeof STYLE_MODES)[number]>('Explicación Humana');
+  const [operationMode, setOperationMode] = useState<(typeof OPERATION_MODES)[number]>('SEO EstratÃƒÆ’Ã‚Â©gico');
+  const [styleMode, setStyleMode] = useState<(typeof STYLE_MODES)[number]>('ExplicaciÃƒÆ’Ã‚Â³n Humana');
   const [missionToday, setMissionToday] = useState('');
   const [timeLimitEnabled, setTimeLimitEnabled] = useState(false);
   const [timeLimitDate, setTimeLimitDate] = useState('');
@@ -363,16 +501,17 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
   const [winnerPrompts, setWinnerPrompts] = useState<Array<{ id: string; title: string; prompt: string; savedAt: string }>>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { t } = useLanguage();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { t, language } = useLanguage();
+  const agentUiCopy = AGENT_UI_COPY[language];
+  const inlineToolsCopy = INLINE_TOOLS_COPY[language];
+  const inlineToolLabels = inlineToolsCopy.tools;
   const { toast } = useToast();
   const { user } = useAuth();
   
   const { sendMessage, isLoading: aiLoading } = useAIChat();
-  const getWaveformState = (): 'idle' | 'thinking' | 'speaking' => {
-    if (aiLoading) return 'thinking';
-    return 'idle';
-  };
-
+  const { speak, stop, voices } = useKokoroTTS();
+  const spokenMessageRef = useRef<string | null>(null);
   // Permanent auto-focus
   const forceFocus = useCallback(() => {
     setTimeout(() => textareaRef.current?.focus(), 50);
@@ -421,9 +560,9 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
         engine?: string;
       }>).detail || {};
       const agentName = detail.name || 'Agente';
-      const engine = detail.engine || DEFAULT_ENGINE;
+      const engine = DEFAULT_ENGINE;
       const operatorName = getOperatorName(user);
-      const command = buildAgentCommand(agentName, detail.tasks || [], engine, operatorName);
+      const command = buildAgentCommand(agentName, detail.tasks || [], engine, operatorName, language);
       const subscriptionRaw = localStorage.getItem('eq_subscription_context');
       const subscription = subscriptionRaw ? JSON.parse(subscriptionRaw) : null;
       localStorage.setItem(ACTIVE_AGENT_STORAGE_KEY, JSON.stringify({
@@ -458,6 +597,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
           proposals: command.proposals,
         },
       }]);
+      announceTaskSuggestions(agentName, command.proposals, 'agent-selected');
       setInputValue('');
       setActiveAgentName(agentName);
       setActiveAgentId(detail.id || null);
@@ -469,7 +609,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
 
     window.addEventListener('eq:agent-selected', handleAgentSelected);
     return () => window.removeEventListener('eq:agent-selected', handleAgentSelected);
-  }, [forceFocus, user]);
+  }, [forceFocus, language, user]);
 
   useEffect(() => {
     if (messages.length > 0) return;
@@ -491,8 +631,9 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
       const command = buildAgentCommand(
         activeAgent.name,
         activeAgent.tasks || [],
-        activeAgent.engine || DEFAULT_ENGINE,
+        DEFAULT_ENGINE,
         operatorName,
+        language,
       );
 
       setMessages([{
@@ -500,20 +641,21 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
         role: 'assistant',
         content: command.content,
         timestamp: new Date(),
-        model: activeAgent.engine || DEFAULT_ENGINE,
+        model: DEFAULT_ENGINE,
         agentCommand: {
           agentName: activeAgent.name,
           userName: operatorName,
           proposals: command.proposals,
         },
       }]);
+      announceTaskSuggestions(activeAgent.name, command.proposals, 'cached-agent');
       setActiveAgentName(activeAgent.name);
       setActiveAgentId(activeAgent.id || null);
-      setActiveAgentEngine(activeAgent.engine || DEFAULT_ENGINE);
+      setActiveAgentEngine(DEFAULT_ENGINE);
     } catch {
       // ignore malformed active agent cache
     }
-  }, [messages.length, user]);
+  }, [language, messages.length, user]);
 
   const autoResize = useCallback(() => {
     const el = textareaRef.current;
@@ -527,14 +669,129 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
 
   useEffect(() => { autoResize(); }, [inputValue, autoResize]);
 
+  const addChatFiles = useCallback(async (files: FileList | File[]) => {
+    const incoming = Array.from(files);
+    if (incoming.length === 0) return;
+
+    const remainingSlots = MAX_CHAT_ATTACHMENTS - chatAttachments.length;
+    if (remainingSlots <= 0) {
+      toast({
+        title: 'Adjuntos completos',
+        description: `Maximo ${MAX_CHAT_ATTACHMENTS} archivos por mensaje.`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const validFiles: File[] = [];
+    for (const file of incoming) {
+      if (!isAcceptedChatAttachment(file)) {
+        toast({
+          title: 'Archivo no compatible',
+          description: `${file.name || 'archivo'} no es imagen ni PDF.`,
+          variant: 'destructive',
+        });
+        continue;
+      }
+
+      if (file.size > MAX_CHAT_ATTACHMENT_BYTES) {
+        toast({
+          title: 'Archivo muy pesado',
+          description: `${file.name || 'archivo'} supera ${formatAttachmentSize(MAX_CHAT_ATTACHMENT_BYTES)}.`,
+          variant: 'destructive',
+        });
+        continue;
+      }
+
+      validFiles.push(file);
+    }
+
+    const selectedFiles = validFiles.slice(0, remainingSlots);
+    if (validFiles.length > remainingSlots) {
+      toast({
+        title: 'Adjuntos limitados',
+        description: `Solo agregue ${remainingSlots} archivo(s) mas.`,
+      });
+    }
+
+    if (selectedFiles.length === 0) return;
+
+    try {
+      const nextAttachments = await Promise.all(selectedFiles.map(fileToChatAttachment));
+      setChatAttachments(prev => [...prev, ...nextAttachments].slice(0, MAX_CHAT_ATTACHMENTS));
+      toast({
+        title: 'Adjunto listo',
+        description: `${nextAttachments.length} archivo(s) preparado(s) para Qwen VL.`,
+      });
+    } catch (error) {
+      toast({
+        title: 'No pude leer el archivo',
+        description: error instanceof Error ? error.message : 'Error de lectura.',
+        variant: 'destructive',
+      });
+    } finally {
+      forceFocus();
+    }
+  }, [chatAttachments.length, forceFocus, toast]);
+
+  const handleChatPaste = useCallback((event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const files = Array.from(event.clipboardData.files || []);
+    const itemFiles = Array.from(event.clipboardData.items || [])
+      .filter(item => item.kind === 'file')
+      .map(item => item.getAsFile())
+      .filter((file): file is File => Boolean(file));
+    const pastedFiles = [...files, ...itemFiles].filter((file, index, allFiles) => (
+      allFiles.findIndex(candidate => (
+        candidate.name === file.name
+        && candidate.type === file.type
+        && candidate.size === file.size
+      )) === index
+    ));
+
+    if (pastedFiles.length === 0) return;
+
+    event.preventDefault();
+    void addChatFiles(pastedFiles);
+  }, [addChatFiles]);
+
+  const handleChatDrop = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+    const files = event.dataTransfer.files;
+    if (!files?.length) return;
+
+    event.preventDefault();
+    void addChatFiles(files);
+  }, [addChatFiles]);
+
+  const handleChatDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+    if (event.dataTransfer.types.includes('Files')) {
+      event.preventDefault();
+    }
+  }, []);
+
+  const handleChatFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files?.length) void addChatFiles(files);
+    event.target.value = '';
+  }, [addChatFiles]);
+
+  const removeChatAttachment = useCallback((id: string) => {
+    setChatAttachments(prev => prev.filter(item => item.id !== id));
+    forceFocus();
+  }, [forceFocus]);
+
   // Resume saved session from HistoryModal
   useEffect(() => {
-    const loadResume = (detail?: { messages?: Array<{ id: string; role: 'user' | 'assistant'; content: string; timestamp: string }> }) => {
+    const loadResume = (detail?: { messages?: Array<{ id: string; role: 'user' | 'assistant'; content: string; timestamp: string; model?: string }>; context?: any }) => {
       let msgs = detail?.messages;
+      let resumeContext = detail?.context;
       if (!msgs) {
         try {
           const raw = sessionStorage.getItem('eq_resume_session');
-          if (raw) msgs = JSON.parse(raw).messages;
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            msgs = parsed.messages;
+            resumeContext = parsed.context;
+          }
         } catch { /* ignore */ }
       }
       if (msgs && msgs.length) {
@@ -543,9 +800,16 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
           role: m.role,
           content: m.content,
           timestamp: new Date(m.timestamp),
+          model: m.model,
         })));
-        if ((detail as { context?: unknown } | undefined)?.context) {
-          (window as unknown as { __eqDashboardContext?: unknown }).__eqDashboardContext = (detail as { context?: unknown }).context;
+        if (resumeContext) {
+          (window as unknown as { __eqDashboardContext?: unknown }).__eqDashboardContext = resumeContext;
+          const restoredAgent = resumeContext.activeAgent;
+          if (restoredAgent) {
+            setActiveAgentName(restoredAgent.name || null);
+            setActiveAgentId(restoredAgent.id || null);
+            setActiveAgentEngine(restoredAgent.engine || DEFAULT_ENGINE);
+          }
         }
         sessionStorage.removeItem('eq_resume_session');
         forceFocus();
@@ -555,7 +819,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
     const handler = (e: Event) => loadResume((e as CustomEvent).detail);
     window.addEventListener('eq:resume-session', handler);
     return () => window.removeEventListener('eq:resume-session', handler);
-  }, [forceFocus]);
+  }, [forceFocus, inlineToolsCopy.tools]);
 
   // Listen for tool prompts/results from ToolsMenu
   useEffect(() => {
@@ -565,7 +829,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
       setMessages(prev => [...prev, {
         id: crypto.randomUUID(),
         role: 'user',
-        content: `**${tool}** — ${prompt}`,
+        content: `**${tool}** ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â ${prompt}`,
         timestamp: new Date(),
       }]);
       forceFocus();
@@ -602,15 +866,15 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
       window.removeEventListener('eq:tool-result', onResult);
       window.removeEventListener('eq:mascot-greeting', onMascot);
     };
-  }, [forceFocus]);
+  }, [forceFocus, inlineToolsCopy.tools]);
 
   useEffect(() => {
     const handleInlineToolSelected = (event: Event) => {
       const detail = (event as CustomEvent<{ key?: InlineToolKey; label?: string }>).detail || {};
-      if (!detail.key || !INLINE_TOOL_META[detail.key]) return;
+      if (!detail.key || !INLINE_TOOL_ICONS[detail.key]) return;
       setSelectedInlineTool({
         key: detail.key,
-        label: detail.label || INLINE_TOOL_META[detail.key].label,
+        label: detail.label || inlineToolLabels[detail.key].label,
       });
       forceFocus();
     };
@@ -626,7 +890,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
       window.removeEventListener('eq:inline-tool-selected', handleInlineToolSelected);
       window.removeEventListener('eq:inline-tool-cleared', handleInlineToolCleared);
     };
-  }, [forceFocus]);
+  }, [forceFocus, inlineToolLabels]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -634,8 +898,48 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
     (window as unknown as { __eqMessages?: Message[] }).__eqMessages = messages;
   }, [messages]);
 
-  const setReaction = (id: string, reaction: 'up' | 'down') => {
-    setMessages(prev => prev.map(m => m.id === id ? { ...m, reaction: m.reaction === reaction ? null : reaction } : m));
+  useEffect(() => {
+    if (!soundEnabled) {
+      stop();
+      return;
+    }
+
+    const latestAssistant = [...messages].reverse().find(
+      (message) => message.role === 'assistant' && message.content.trim(),
+    );
+
+    if (!latestAssistant || spokenMessageRef.current === latestAssistant.id) return;
+
+    spokenMessageRef.current = latestAssistant.id;
+    const cleanText = speechText(latestAssistant.content);
+
+    if (cleanText) void speak(cleanText, selectedVoiceName || undefined);
+  }, [messages, selectedVoiceName, soundEnabled, speak, stop]);
+
+  const toggleSound = () => {
+    setSoundEnabled((enabled) => {
+      const next = !enabled;
+      localStorage.setItem(SOUND_PREFERENCE_KEY, String(next));
+      if (!next) stop();
+      return next;
+    });
+  };
+
+  const voiceOptions = voices
+    .filter((voice) => SOUND_LANGUAGES.some((languageCode) => voice.lang.toLowerCase().startsWith(languageCode)))
+    .slice(0, 6);
+  const voiceLanguageNames: Record<string, string> = {
+    es: 'ES', en: 'EN', pt: 'PT', it: 'IT', fr: 'FR', de: 'DE', el: 'GR',
+  };
+
+  const chooseVoice = (voiceName: string) => {
+    setSelectedVoiceName(voiceName);
+    localStorage.setItem(SOUND_VOICE_KEY, voiceName);
+    setSoundMenuOpen(false);
+  };
+
+  const toggleLike = (id: string) => {
+    setMessages(prev => prev.map(m => m.id === id ? { ...m, reaction: m.reaction === 'up' ? null : 'up' } : m));
     forceFocus();
   };
 
@@ -645,10 +949,11 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
   };
 
   const handleSend = async () => {
-    if (!inputValue.trim() || aiLoading) return;
+    const currentInput = inputValue.trim();
+    const currentAttachments = chatAttachments;
+    if ((!currentInput && currentAttachments.length === 0) || aiLoading) return;
 
-    if (selectedInlineTool) {
-      const currentInput = inputValue.trim();
+    if (selectedInlineTool && currentAttachments.length === 0) {
       setInputValue('');
       forceFocus();
       window.dispatchEvent(new CustomEvent('eq:run-selected-tool', {
@@ -664,18 +969,19 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
     const userMessage: Message = {
       id: crypto.randomUUID(),
       role: 'user',
-      content: inputValue.trim(),
+      content: currentInput || 'Analizar archivo adjunto.',
       timestamp: new Date(),
+      attachments: currentAttachments,
     };
 
     setMessages(prev => [...prev, userMessage]);
-    const currentInput = inputValue.trim();
     setInputValue('');
+    setChatAttachments([]);
     forceFocus();
 
     try {
       const history = messages.map(m => ({ role: m.role, content: m.content }));
-      const result = await sendMessage(currentInput, history, activeAgentId || undefined);
+      const result = await sendMessage(currentInput, history, activeAgentId || undefined, currentAttachments);
       
       const assistantMessage: Message = {
         id: crypto.randomUUID(),
@@ -687,9 +993,14 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
           : typeof result.meta?.model === 'string'
             ? result.meta.model
             : undefined,
+        route: typeof result.meta?.route === 'string' ? result.meta.route : undefined,
+        agentId: typeof result.meta?.agentId === 'string' ? result.meta.agentId : undefined,
+        agentRoute: typeof result.meta?.agentRoute === 'string' ? result.meta.agentRoute : undefined,
+        provider: typeof result.meta?.provider === 'string' ? result.meta.provider : undefined,
       };
 
       setMessages(prev => [...prev, assistantMessage]);
+      announceProgress(result.response, 'handleSend');
       forceFocus();
 
     } catch (error) {
@@ -747,7 +1058,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
       id: crypto.randomUUID(),
       role: 'user',
       content: [
-        `**${currentAgentName} — tablero de metricas**`,
+        `**${currentAgentName} ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â tablero de metricas**`,
         '',
         filled,
       ].join('\n'),
@@ -770,7 +1081,12 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
           : typeof result.meta?.model === 'string'
             ? result.meta.model
             : currentAgentName,
+        route: typeof result.meta?.route === 'string' ? result.meta.route : undefined,
+        agentId: typeof result.meta?.agentId === 'string' ? result.meta.agentId : undefined,
+        agentRoute: typeof result.meta?.agentRoute === 'string' ? result.meta.agentRoute : undefined,
+        provider: typeof result.meta?.provider === 'string' ? result.meta.provider : undefined,
       }]);
+      announceProgress(result.response, 'agent-metrics');
     } catch (error) {
       console.error('Error sending agent metrics:', error);
       const errorMessageText = error instanceof Error ? error.message : 'Error desconocido';
@@ -801,7 +1117,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
 
     const nextEntry = {
       id: crypto.randomUUID(),
-      title: `${operationMode} · ${styleMode}`,
+      title: `${operationMode} Ãƒâ€šÃ‚Â· ${styleMode}`,
       prompt,
       savedAt: new Date().toISOString(),
     };
@@ -819,11 +1135,11 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
       id: crypto.randomUUID(),
       role: 'assistant',
       content: [
-        `**Permiso requerido: ${provider}.**`,
+        agentUiCopy.permissionRequired(provider),
         '',
         reason,
         '',
-        'Voy a abrir el centro de integraciones para que confirmes el acceso. Sin confirmacion, el agente trabaja con datos manuales o archivos cargados por vos.',
+        agentUiCopy.permissionFallback,
       ].join('\n'),
       timestamp: new Date(),
       model: 'permission-router',
@@ -839,16 +1155,30 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
     }
   };
 
-  const selectedInlineToolMeta = selectedInlineTool ? INLINE_TOOL_META[selectedInlineTool.key] : null;
+  const selectedInlineToolMeta = selectedInlineTool
+    ? {
+        label: inlineToolsCopy.tools[selectedInlineTool.key].label,
+        icon: INLINE_TOOL_ICONS[selectedInlineTool.key],
+      }
+    : null;
   const SelectedInlineToolIcon = selectedInlineToolMeta?.icon;
+  const activeResponseMessage = [...messages].reverse().find((msg) => msg.role === 'assistant') || null;
+  const historyMessages = activeResponseMessage
+    ? messages.filter((msg) => msg.id !== activeResponseMessage.id && msg.role === 'assistant')
+    : messages.filter((msg) => msg.role === 'assistant');
+  const historyTitleByLanguage: Record<Language, string> = {
+    ES: 'Historial',
+    EN: 'History',
+    PT: 'Historico',
+    DE: 'Verlauf',
+    IT: 'Cronologia',
+    FR: 'Historique',
+    NL: 'Geschiedenis',
+    PL: 'Historia',
+  };
 
   return (
     <div className="relative mx-auto h-full w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-      {/* Waveform */}
-      <div className="absolute top-1 left-1/2 -translate-x-1/2 w-48 z-10">
-        <VoiceWaveform state={getWaveformState()} />
-      </div>
-
       {/* Messages */}
       <div
         className="absolute inset-x-0 top-0 overflow-hidden px-1"
@@ -863,48 +1193,165 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
             animate={{ opacity: 1, y: 0 }}
             className="mb-6 text-center"
           >
-            <p className="text-muted-foreground/40 text-xs font-mono tracking-widest">Meta-Learning focus mode</p>
+            <p className="text-muted-foreground/40 text-xs font-mono tracking-widest">{agentUiCopy.focusMode}</p>
           </motion.div>
         ) : (
-          <div className="flex-1 overflow-y-auto scrollbar-thin pb-6">
-            <div className="mx-auto w-full max-w-4xl space-y-3">
-              {messages.map((msg, index) => (
+          <div className="flex-1 min-h-0 pb-6">
+            <div className="mx-auto flex h-full w-full max-w-5xl flex-col gap-0">
+              {false && historyMessages.length > 0 && (
                 <motion.div
-                  key={msg.id}
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.03 }}
-                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className="min-h-[5.25rem] max-h-[32%] overflow-hidden rounded-[22px] border border-emerald-300/18 bg-black/42 px-3 py-2 backdrop-blur-2xl shadow-[0_0_26px_rgba(16,185,129,0.12),inset_0_1px_0_rgba(255,255,255,0.06)]"
                 >
-                  {msg.role === 'assistant' ? (
-                    <div className="w-full">
-                      {msg.mascot && !msg.content ? (
+                  <div className="mb-2 flex items-center justify-between gap-3 border-b border-emerald-200/10 pb-1.5">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-emerald-200/70">
+                      {historyTitleByLanguage[language]}
+                    </span>
+                    <span className="rounded-full border border-emerald-300/15 bg-emerald-300/8 px-2 py-0.5 font-mono text-[9px] text-emerald-100/55">
+                      {historyMessages.length}
+                    </span>
+                  </div>
+
+                  <div className="max-h-[calc(100%-2rem)] space-y-2 overflow-y-auto pr-1 scrollbar-thin">
+                    {historyMessages.map((msg, index) => (
+                      <motion.div
+                        key={msg.id}
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.015 }}
+                        className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                      >
+                        {msg.role === 'assistant' ? (
+                          <div className="w-full rounded-2xl border border-cyan-300/12 bg-cyan-300/6 px-3 py-2 text-left">
+                            <div className="mb-1 flex items-center gap-2">
+                              <Cpu className="h-3 w-3 text-cyan-300/65" />
+                              <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-cyan-200/60">
+                                {msg.model || DEFAULT_ENGINE}
+                              </span>
+                              {(msg.agentId || msg.route) && (
+                                <span className="rounded border border-emerald-300/15 bg-emerald-300/8 px-1.5 py-0.5 text-[8px] font-mono uppercase tracking-[0.12em] text-emerald-200/60">
+                                  {msg.agentId || msg.route}{msg.agentRoute ? ` -> ${msg.agentRoute}` : ''}
+                                </span>
+                              )}
+                              <div className="ml-auto flex items-center gap-1">
+                                <button
+                                  type="button"
+                                  aria-pressed={msg.reaction === 'up'}
+                                  aria-label={agentUiCopy.like}
+                                  onClick={() => toggleLike(msg.id)}
+                                  className={`inline-flex h-6 w-6 items-center justify-center rounded-md border transition-colors ${
+                                    msg.reaction === 'up'
+                                      ? 'border-emerald-300/80 bg-emerald-500/30 text-emerald-100 shadow-[0_0_10px_rgba(52,211,153,0.28)]'
+                                      : 'border-emerald-300/45 bg-emerald-500/15 text-emerald-200 hover:border-emerald-200/80 hover:bg-emerald-500/30 hover:text-white'
+                                  }`}
+                                  title={agentUiCopy.like}
+                                >
+                                  <ThumbsUp className="h-3 w-3" />
+                                </button>
+                                <button
+                                  type="button"
+                                  aria-label="Parar audio"
+                                  onClick={stop}
+                                  className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-amber-300/65 bg-amber-400/22 text-amber-100 transition-colors hover:border-amber-100 hover:bg-amber-400/40 hover:text-white"
+                                  title="Parar audio"
+                                >
+                                  <VolumeX className="h-3 w-3" />
+                                </button>
+                                <button
+                                  type="button"
+                                  aria-label={agentUiCopy.delete}
+                                  onClick={() => deleteMessage(msg.id)}
+                                  className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-red-300/65 bg-red-500/22 text-red-100 transition-colors hover:border-red-100 hover:bg-red-500/40 hover:text-white"
+                                  title={agentUiCopy.delete}
+                                >
+                                  <Trash2 className="h-3 w-3" />
+                                </button>
+                              </div>
+                            </div>
+                            <p className="whitespace-pre-wrap break-words text-[11px] leading-5 text-cyan-50/68">
+                              {msg.imageUrl
+                                ? msg.toolLabel || 'Imagen generada'
+                                : msg.mascot && !msg.content
+                                  ? 'Pip / Mascot'
+                                  : msg.content}
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="max-w-[78%] rounded-2xl border border-cyan-300/16 bg-black/45 px-3 py-2 text-[11px] leading-5 text-cyan-50/72">
+                            <div className="mb-1 font-mono text-[9px] uppercase tracking-[0.18em] text-cyan-200/45">you</div>
+                            <p className="max-h-10 overflow-hidden">{msg.content}</p>
+                            {msg.attachments && msg.attachments.length > 0 && (
+                              <div className="mt-2 flex flex-wrap gap-1.5">
+                                {msg.attachments.map((attachment) => (
+                                  <span
+                                    key={attachment.id}
+                                    className="inline-flex max-w-[180px] items-center gap-1 rounded-lg border border-cyan-300/14 bg-cyan-300/7 px-2 py-0.5 font-mono text-[9px] text-cyan-100/58"
+                                  >
+                                    {attachment.mimeType === 'application/pdf' ? (
+                                      <FileText className="h-3 w-3 shrink-0" />
+                                    ) : (
+                                      <ImageIcon className="h-3 w-3 shrink-0" />
+                                    )}
+                                    <span className="truncate">{attachment.name}</span>
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
+              <div
+                className="min-h-0 flex-1 overflow-y-auto pr-1 scrollbar-thin"
+                style={{ perspective: '1400px' }}
+              >
+                {activeResponseMessage ? (
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeResponseMessage.id}
+                      initial={{ opacity: 0, rotateY: -360, scale: 0.86, y: 22 }}
+                      animate={{ opacity: 1, rotateY: 0, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, rotateY: 360, scale: 0.86, y: -18 }}
+                      transition={{ duration: 0.82, ease: [0.16, 1, 0.3, 1] }}
+                      className="w-full origin-center"
+                      style={{ transformStyle: 'preserve-3d' }}
+                    >
+                      {activeResponseMessage.mascot && !activeResponseMessage.content ? (
                         <MascotGreeting onPickTask={(task) => setMascotTask(task)} />
-                      ) : msg.imageUrl ? (
-                        <div className="rounded-2xl border border-cyan-400/30 bg-black/60 backdrop-blur-xl p-3">
-                          <img src={msg.imageUrl} alt={msg.toolLabel || 'Imagen'} className="w-full max-w-xl rounded-xl" />
+                      ) : activeResponseMessage.imageUrl ? (
+                        <div className="rounded-2xl border border-cyan-400/30 bg-black/60 p-3 backdrop-blur-xl">
+                          <img src={activeResponseMessage.imageUrl} alt={activeResponseMessage.toolLabel || 'Imagen'} className="w-full max-w-xl rounded-xl" />
                         </div>
                       ) : (
                         <>
                           <AgentResponsePanel
-                            content={msg.content}
-                            model={msg.model}
-                            mascot={msg.mascot}
+                            content={activeResponseMessage.content}
+                            model={activeResponseMessage.model}
+                            mascot={activeResponseMessage.mascot}
                             responseScale={responseScale}
                             isThinking={aiLoading}
+                            onSpeak={() => {
+                              const text = speechText(activeResponseMessage.content);
+                              if (text) void speak(text, selectedVoiceName || undefined);
+                            }}
                           />
-                          {msg.agentCommand && (
+                          {activeResponseMessage.agentCommand && (
                             <div className="mt-2 rounded-2xl border border-cyan-400/20 bg-black/45 p-3 backdrop-blur-xl">
                               <div className="mb-2 flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.18em] text-cyan-300/75">
                                 <ShieldCheck className="h-3.5 w-3.5" />
-                                Opciones de arranque
+                                {agentUiCopy.startupOptions}
                               </div>
                               <div className="grid gap-2 md:grid-cols-3">
-                                {msg.agentCommand.proposals.map((proposal, proposalIndex) => (
+                                {activeResponseMessage.agentCommand.proposals.map((proposal, proposalIndex) => (
                                   <button
                                     key={proposal}
                                     onClick={() => {
-                                      setInputValue(`Ejecutar propuesta ${proposalIndex + 1} con ${msg.agentCommand?.agentName}: ${proposal}`);
+                                      setInputValue(agentUiCopy.executeProposal(proposalIndex + 1, activeResponseMessage.agentCommand?.agentName || 'Agent', proposal));
                                       forceFocus();
                                     }}
                                     className="rounded-xl border border-cyan-400/20 bg-cyan-400/5 px-3 py-2 text-left text-[11px] leading-snug text-cyan-50/80 transition hover:border-cyan-300/45 hover:bg-cyan-400/10"
@@ -914,75 +1361,127 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
                                   </button>
                                 ))}
                               </div>
+                              <div className="mt-3 border-t border-cyan-400/10 pt-3">
+                                <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.18em] text-cyan-300/60">
+                                  Mas opciones de trabajo
+                                </p>
+                                <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
+                                  {STARTUP_WORK_PRESETS.map((preset) => (
+                                    <button
+                                      key={preset.label}
+                                      onClick={() => {
+                                        setInputValue(preset.prompt);
+                                        forceFocus();
+                                      }}
+                                      className="group rounded-xl border border-cyan-400/20 bg-cyan-400/5 px-3 py-2 text-left text-[11px] leading-snug text-cyan-50/80 transition hover:border-cyan-300/45 hover:bg-cyan-400/10"
+                                    >
+                                      <preset.icon className="mb-1 h-4 w-4 text-cyan-300 transition-transform group-hover:scale-110" />
+                                      <span className="mb-1 block font-semibold text-cyan-50">{preset.label}</span>
+                                      <span className="block text-[10px] text-cyan-100/55">{preset.prompt}</span>
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
                               <button
-                                onClick={() => requestIntegration('Google Workspace', 'Esta ejecucion necesita Gmail, Drive, Calendar o Sheets para leer datos reales y accionar con permiso explicito.')}
+                                onClick={() => requestIntegration('Google Workspace', agentUiCopy.googleWorkspaceReason)}
                                 className="mt-2 rounded-lg border border-fuchsia-300/25 bg-fuchsia-400/10 px-3 py-1.5 text-[11px] font-medium text-fuchsia-100 transition hover:border-fuchsia-200/45 hover:bg-fuchsia-400/15"
                               >
-                                Conectar permisos si hacen falta
+                                {agentUiCopy.connectPermissions}
                               </button>
                             </div>
                           )}
                         </>
                       )}
-                      {/* Footer outside the box: model + reactions + delete */}
-                      {!(msg.mascot && !msg.content) && (
-                      <div className="mt-1 flex items-center gap-2 px-1">
-                        <Cpu className="w-3 h-3 text-cyan-400/70" />
-                        <span className="text-[10px] font-mono text-cyan-300/70 tracking-wider">
-                          {msg.model || 'gemini-2.5-flash'}
-                        </span>
-                        <div className="ml-auto flex items-center gap-1">
-                          <button
-                            onClick={() => setReaction(msg.id, 'up')}
-                            className={`p-1 rounded-md transition-colors ${msg.reaction === 'up' ? 'text-emerald-400 bg-emerald-400/10' : 'text-muted-foreground/50 hover:text-emerald-400 hover:bg-emerald-400/10'}`}
-                            title="Me gusta"
-                          >
-                            <ThumbsUp className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => setReaction(msg.id, 'down')}
-                            className={`p-1 rounded-md transition-colors ${msg.reaction === 'down' ? 'text-orange-400 bg-orange-400/10' : 'text-muted-foreground/50 hover:text-orange-400 hover:bg-orange-400/10'}`}
-                            title="No me gusta"
-                          >
-                            <ThumbsDown className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => deleteMessage(msg.id)}
-                            className="p-1 rounded-md text-muted-foreground/50 hover:text-red-400 hover:bg-red-400/10 transition-colors"
-                            title="Eliminar"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
+
+                      {!(activeResponseMessage.mascot && !activeResponseMessage.content) && (
+                        <div className="relative z-20 mt-3 flex items-center gap-2 rounded-b-[18px] px-5 pb-3 pt-1">
+                          <Cpu className="h-3 w-3 text-cyan-400/70" />
+                          <span className="font-mono text-[10px] tracking-wider text-cyan-300/70">
+                            {activeResponseMessage.model || DEFAULT_ENGINE}
+                          </span>
+                          {(activeResponseMessage.agentId || activeResponseMessage.route) && (
+                            <span className="rounded border border-emerald-300/15 bg-emerald-300/8 px-1.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.12em] text-emerald-200/70">
+                              {activeResponseMessage.agentId || activeResponseMessage.route}{activeResponseMessage.agentRoute ? ` -> ${activeResponseMessage.agentRoute}` : ''}
+                            </span>
+                          )}
+                          <div className="ml-auto flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              aria-pressed={activeResponseMessage.reaction === 'up'}
+                              aria-label={agentUiCopy.like}
+                              onClick={() => toggleLike(activeResponseMessage.id)}
+                              className={`inline-flex h-7 w-7 items-center justify-center rounded-md border transition-colors ${
+                                activeResponseMessage.reaction === 'up'
+                                  ? 'border-emerald-300/80 bg-emerald-500/30 text-emerald-100 shadow-[0_0_12px_rgba(52,211,153,0.3)]'
+                                  : 'border-emerald-300/45 bg-emerald-500/15 text-emerald-200 hover:border-emerald-200/80 hover:bg-emerald-500/30 hover:text-white'
+                              }`}
+                              title={agentUiCopy.like}
+                            >
+                              <ThumbsUp className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              aria-label="Reproducir mensaje"
+                              onClick={() => {
+                                const text = speechText(activeResponseMessage.content);
+                                if (text) void speak(text, selectedVoiceName || undefined);
+                              }}
+                              className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-cyan-200/70 bg-cyan-400 text-slate-950 transition-colors hover:bg-cyan-300 hover:shadow-[0_0_12px_rgba(34,211,238,0.5)]"
+                              title="Reproducir mensaje"
+                            >
+                              <Volume2 className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              aria-label="Parar audio"
+                              onClick={stop}
+                              className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-amber-300/65 bg-amber-400/22 text-amber-100 transition-colors hover:border-amber-100 hover:bg-amber-400/40 hover:text-white"
+                              title="Parar audio"
+                            >
+                              <VolumeX className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              aria-label={agentUiCopy.delete}
+                              onClick={() => deleteMessage(activeResponseMessage.id)}
+                              className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-red-300/65 bg-red-500/22 text-red-100 transition-colors hover:border-red-100 hover:bg-red-500/40 hover:text-white"
+                              title={agentUiCopy.delete}
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </motion.div>
+                  </AnimatePresence>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex h-full items-center justify-center rounded-[22px] border border-slate-200/40 bg-slate-700/35 text-center font-mono text-xs uppercase tracking-[0.18em] text-cyan-100/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.38),0_18px_35px_rgba(0,0,0,0.25)]"
+                  >
+                    {aiLoading ? (
+                      <div className="w-full max-w-md px-6">
+                        <div className="mb-3 flex items-center justify-between text-[10px]">
+                          <span className="flex items-center gap-2 text-cyan-100/85">
+                            <span className="h-2 w-2 animate-pulse rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(103,232,249,0.9)]" />
+                            AGENT THINKING
+                          </span>
+                          <span className="text-emerald-200/80">TYPING...</span>
+                        </div>
+                        <div className="h-2 overflow-hidden rounded-full border border-cyan-200/25 bg-slate-950/80">
+                          <motion.div
+                            className="h-full w-1/3 rounded-full bg-gradient-to-r from-cyan-300 via-emerald-300 to-cyan-300"
+                            animate={{ x: ['-110%', '310%'] }}
+                            transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+                          />
                         </div>
                       </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="relative max-w-[80%] overflow-hidden rounded-[22px] border border-cyan-300/30 bg-[linear-gradient(180deg,rgba(7,18,34,0.90)_0%,rgba(3,7,14,0.92)_100%)] px-4 py-4 text-sm text-cyan-50/90 backdrop-blur-2xl shadow-[0_0_32px_rgba(34,211,238,0.12),0_0_0_1px_rgba(255,255,255,0.03),inset_0_1px_0_rgba(255,255,255,0.08)]">
-                      <div
-                        className="pointer-events-none absolute inset-0 opacity-[0.08]"
-                        style={{
-                          backgroundImage:
-                            'radial-gradient(circle at 20% 0%, rgba(34,211,238,0.14), transparent 28%), radial-gradient(circle at 80% 20%, rgba(168,85,247,0.08), transparent 24%), linear-gradient(135deg, rgba(255,255,255,0.05), transparent 28%, rgba(34,211,238,0.05))',
-                        }}
-                      />
-                      <div className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-200/90 to-transparent" />
-                      <div className="relative z-10 mb-3 flex items-center gap-2 font-mono text-[10px] text-cyan-200/55">
-                        <span className="rounded border border-cyan-400/20 bg-cyan-400/10 px-1.5 py-0.5">you</span>
-                        <span>equitylabs://user-input</span>
-                      </div>
-                      <div className="relative z-10 font-mono text-[clamp(12px,calc(13px*var(--response-scale)),20px)] leading-relaxed">
-                        {msg.content}
-                      </div>
-                      <div className="absolute top-0 left-0 h-3 w-3 rounded-tl-[22px] border-l border-t border-cyan-400/45" />
-                      <div className="absolute top-0 right-0 h-3 w-3 rounded-tr-[22px] border-r border-t border-cyan-400/35" />
-                      <div className="absolute bottom-0 left-0 h-3 w-3 rounded-bl-[22px] border-b border-l border-cyan-400/35" />
-                      <div className="absolute bottom-0 right-0 h-3 w-3 rounded-br-[22px] border-b border-r border-cyan-400/45" />
-                    </div>
-                  )}
-                </motion.div>
-              ))}
-              <div ref={messagesEndRef} />
+                    ) : agentUiCopy.focusMode}
+                  </motion.div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
             </div>
           </div>
         )}
@@ -997,7 +1496,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
         }}
       >
         <InlineToolsPanel open={toolsOpen} onClose={() => setToolsOpen(false)} />
-        {false && activeAgentName ? (
+        {activeAgentName && activeAgentEngine === '__legacy_project_console__' ? (
           <motion.div
             key={activeAgentName}
             initial={{ opacity: 0, y: 34, scale: 0.96 }}
@@ -1060,9 +1559,9 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
                     Perfil tecnico
                   </p>
                   <div className="mt-2 grid gap-2 text-[11px] text-cyan-50/72">
-                    <p>• Modelo base para el proyecto nuevo: <span className="text-cyan-200">{activeAgentEngine || DEFAULT_ENGINE}</span></p>
-                    <p>• Salida pensada para panel interno y trazabilidad operativa.</p>
-                    <p>• Debe mantener respuestas directas y resumen ejecutivo.</p>
+                    <p>ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Modelo base para el proyecto nuevo: <span className="text-cyan-200">{activeAgentEngine || DEFAULT_ENGINE}</span></p>
+                    <p>ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Salida pensada para panel interno y trazabilidad operativa.</p>
+                    <p>ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Debe mantener respuestas directas y resumen ejecutivo.</p>
                   </div>
                 </div>
               </div>
@@ -1071,8 +1570,8 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
             <div className="border-b border-cyan-300/12 px-3 py-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-cyan-200/60">Modo de Operación</p>
-                  <h3 className="mt-1 text-sm font-semibold text-cyan-50">Instrucción 1 del nuevo proyecto</h3>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-cyan-200/60">Modo de OperaciÃƒÆ’Ã‚Â³n</p>
+                  <h3 className="mt-1 text-sm font-semibold text-cyan-50">InstrucciÃƒÆ’Ã‚Â³n 1 del nuevo proyecto</h3>
                 </div>
                 <button
                   type="button"
@@ -1141,12 +1640,12 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
                 <div className="grid gap-3 md:grid-cols-[1.2fr_0.8fr]">
                   <label className="rounded-xl border border-cyan-300/16 bg-cyan-300/7 px-3 py-2">
                     <span className="mb-1 block font-mono text-[10px] uppercase tracking-[0.16em] text-cyan-200/70">
-                      Escribe la misión de hoy...
+                      Escribe la misiÃƒÆ’Ã‚Â³n de hoy...
                     </span>
                     <Textarea
                       value={missionToday}
                       onChange={(event) => setMissionToday(event.target.value)}
-                      placeholder="Escribe la misión de hoy..."
+                      placeholder="Escribe la misiÃƒÆ’Ã‚Â³n de hoy..."
                       className="min-h-[100px] border-0 bg-transparent p-0 text-sm text-cyan-50 placeholder:text-cyan-100/24 focus-visible:ring-0"
                     />
                   </label>
@@ -1190,7 +1689,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
 
                     {!timeLimitEnabled && (
                       <p className="text-xs leading-relaxed text-emerald-100/50">
-                        Presioná <span className="text-emerald-200">Time Limit</span> para abrir el selector de fecha.
+                        PresionÃƒÆ’Ã‚Â¡ <span className="text-emerald-200">Time Limit</span> para abrir el selector de fecha.
                       </p>
                     )}
                   </div>
@@ -1205,7 +1704,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
                     Guardar Prompt Ganador
                   </button>
                   <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-cyan-200/40">
-                    Todo esto se envía como instrucción 1 del proyecto
+                    Todo esto se envÃƒÆ’Ã‚Â­a como instrucciÃƒÆ’Ã‚Â³n 1 del proyecto
                   </span>
                 </div>
               </div>
@@ -1255,7 +1754,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
                     ))
                   ) : (
                     <p className="py-4 text-center text-xs text-cyan-50/45">
-                      Sin prompts guardados aún.
+                      Sin prompts guardados aÃƒÆ’Ã‚Âºn.
                     </p>
                   )}
                 </div>
@@ -1304,7 +1803,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
               className="inline-flex items-center rounded-[16px] border border-slate-200/26 px-3 py-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.28),0_8px_18px_rgba(0,0,0,0.18)]"
               style={{
                 background:
-                  'linear-gradient(180deg, rgba(196,201,208,0.30) 0%, rgba(128,136,148,0.20) 48%, rgba(64,72,84,0.16) 100%)',
+                  'linear-gradient(180deg, rgba(15,23,42,0.82) 0%, rgba(30,41,59,0.78) 48%, rgba(2,6,23,0.92) 100%)',
                 backdropFilter: 'blur(8px)',
                 WebkitBackdropFilter: 'blur(8px)',
               }}
@@ -1314,13 +1813,46 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
           </div>
 
           {/* Textarea row */}
-          <div className="eq-spectrum-box relative mx-0 my-0 rounded-[24px] border border-white/20 px-4 py-2 sm:px-5" style={{ background: 'rgba(0, 0, 0, 0.89)', boxShadow: '0 14px 24px rgba(0,0,0,0.34), inset 0 1px 0 rgba(255,255,255,0.04)' }}>
+          <div
+            className="eq-spectrum-box relative mx-0 my-0 rounded-[24px] border border-white/20 px-4 py-2 sm:px-5"
+            onDrop={handleChatDrop}
+            onDragOver={handleChatDragOver}
+            style={{ background: 'rgba(0, 0, 0, 0.89)', boxShadow: '0 14px 24px rgba(0,0,0,0.34), inset 0 1px 0 rgba(255,255,255,0.04)' }}
+          >
             <div className="pointer-events-none absolute inset-[3px] rounded-[21px] border border-slate-200/26 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]" />
+            {chatAttachments.length > 0 && (
+              <div className="relative z-10 mb-2 flex flex-wrap gap-2">
+                {chatAttachments.map((attachment) => (
+                  <div
+                    key={attachment.id}
+                    className="group inline-flex max-w-[220px] items-center gap-2 rounded-xl border border-cyan-300/24 bg-cyan-300/8 px-2 py-1 text-cyan-50/82"
+                  >
+                    {attachment.mimeType === 'application/pdf' ? (
+                      <FileText className="h-4 w-4 shrink-0 text-amber-200/85" />
+                    ) : (
+                      <ImageIcon className="h-4 w-4 shrink-0 text-cyan-200/85" />
+                    )}
+                    <span className="min-w-0 truncate text-[11px] font-medium">{attachment.name}</span>
+                    <span className="shrink-0 font-mono text-[9px] text-cyan-100/45">{formatAttachmentSize(attachment.size)}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeChatAttachment(attachment.id)}
+                      className="shrink-0 rounded-md p-0.5 text-cyan-100/50 transition hover:bg-red-400/12 hover:text-red-200"
+                      aria-label={`Quitar ${attachment.name}`}
+                      title={`Quitar ${attachment.name}`}
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
 
             <textarea
               ref={textareaRef}
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
+              onPaste={handleChatPaste}
               onKeyDown={handleKeyDown}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
@@ -1331,6 +1863,14 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
               className="w-full bg-transparent border-none outline-none resize-none text-foreground/95 text-xl font-display placeholder:text-muted-foreground/30 leading-relaxed scrollbar-thin caret-primary overflow-y-auto text-center sm:text-left"
               style={{ minHeight: '24px', maxHeight: '120px', caretColor: 'hsl(var(--primary))', fontSize: '18px' }}
             />
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/png,image/jpeg,image/jpg,image/webp,image/gif,application/pdf,.png,.jpg,.jpeg,.webp,.gif,.pdf"
+              multiple
+              className="hidden"
+              onChange={handleChatFileChange}
+            />
           </div>
 
           {/* Toolbar */}
@@ -1339,7 +1879,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
               className="inline-flex items-center gap-2 rounded-[16px] border border-slate-200/26 px-2.5 py-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.28),0_8px_18px_rgba(0,0,0,0.18)]"
               style={{
                 background:
-                  'linear-gradient(180deg, rgba(196,201,208,0.30) 0%, rgba(128,136,148,0.20) 48%, rgba(64,72,84,0.16) 100%)',
+                  'linear-gradient(180deg, rgba(15,23,42,0.82) 0%, rgba(30,41,59,0.78) 48%, rgba(2,6,23,0.92) 100%)',
                 backdropFilter: 'blur(8px)',
                 WebkitBackdropFilter: 'blur(8px)',
               }}
@@ -1348,7 +1888,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
                 variant="ghost"
                 size="icon"
                 onClick={() => setToolsOpen(v => !v)}
-                title="Centro de Herramientas"
+                title={inlineToolsCopy.panelTitle}
                 className={`h-7 w-7 rounded-xl transition-all duration-300 border ${
                   toolsOpen
                     ? 'text-cyan-200 bg-cyan-400/20 border-cyan-400/60 shadow-[0_0_12px_rgba(34,211,238,0.45)]'
@@ -1357,6 +1897,74 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
               >
                 <Plus className="w-4 h-4" />
               </Button>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => fileInputRef.current?.click()}
+                title="Adjuntar imagen o PDF"
+                className="h-7 w-7 rounded-xl border border-cyan-400/30 bg-cyan-400/5 text-cyan-300/80 transition-all duration-300 hover:bg-cyan-400/15 hover:text-cyan-200"
+              >
+                <Paperclip className="h-4 w-4" />
+              </Button>
+
+              <div className="relative inline-flex">
+                <Button
+                  variant="ghost"
+                  onClick={toggleSound}
+                  title={soundEnabled ? 'Desactivar lectura por voz' : 'Activar lectura por voz'}
+                  aria-label={soundEnabled ? 'Desactivar SOUND' : 'Activar SOUND'}
+                  aria-pressed={soundEnabled}
+                  className={`h-7 rounded-l-xl rounded-r-none border px-2 transition-all duration-300 ${
+                    soundEnabled
+                      ? 'border-emerald-300/70 bg-emerald-400/20 text-emerald-300 shadow-[0_0_12px_rgba(52,211,153,0.35)]'
+                      : 'border-cyan-400/30 bg-cyan-400/5 text-cyan-300/80 hover:bg-cyan-400/15 hover:text-cyan-200'
+                  }`}
+                >
+                  {soundEnabled ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
+                  <span className="text-[9px] font-mono font-bold tracking-[0.12em]">SOUND</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setSoundMenuOpen((open) => !open)}
+                  title="Elegir voz"
+                  aria-label="Elegir voz"
+                  className={`h-7 w-5 rounded-l-none rounded-r-xl border border-l-0 px-0 transition-all ${
+                    soundEnabled
+                      ? 'border-emerald-300/70 bg-emerald-400/20 text-emerald-300'
+                      : 'border-cyan-400/30 bg-cyan-400/5 text-cyan-300/80'
+                  }`}
+                >
+                  <ChevronDown className="h-3 w-3" />
+                </Button>
+                {soundMenuOpen && (
+                  <div className="absolute bottom-9 left-0 z-50 min-w-[220px] rounded-xl border border-cyan-300/30 bg-slate-950/95 p-1.5 shadow-[0_0_24px_rgba(34,211,238,0.22)] backdrop-blur-xl">
+                    <p className="px-2 py-1 text-[9px] font-mono uppercase tracking-[0.15em] text-cyan-200/55">
+                      Voces disponibles
+                    </p>
+                    {voiceOptions.length > 0 ? voiceOptions.map((voice) => (
+                      <button
+                        key={`${voice.name}-${voice.lang}`}
+                        type="button"
+                        onClick={() => chooseVoice(voice.name)}
+                        className={`flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-left text-[10px] transition ${
+                          selectedVoiceName === voice.name
+                            ? 'bg-emerald-400/18 text-emerald-200'
+                            : 'text-cyan-50/80 hover:bg-cyan-400/10 hover:text-cyan-100'
+                        }`}
+                      >
+                        <span className="max-w-[170px] truncate">{voice.name}</span>
+                      <span className="ml-2 font-mono text-[9px] text-cyan-200/45">
+                        {voiceLanguageNames[voice.lang.slice(0, 2).toLowerCase()] || voice.lang}
+                      </span>
+                      </button>
+                    )) : (
+                      <p className="px-2 py-2 text-[10px] text-cyan-100/55">El navegador todavía no informó voces.</p>
+                    )}
+                  </div>
+                )}
+              </div>
 
               {SelectedInlineToolIcon && selectedInlineTool && (
                 <div className="inline-flex items-center gap-1 rounded-xl border border-cyan-300/28 bg-black/18 px-2 py-1 text-cyan-100/88 shadow-[0_0_10px_rgba(34,211,238,0.12)]">
@@ -1381,7 +1989,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
               variant="ghost"
               size="icon"
               onClick={handleSend}
-              disabled={!inputValue.trim() || aiLoading}
+              disabled={(!inputValue.trim() && chatAttachments.length === 0) || aiLoading}
               className="h-8 w-8 rounded-xl bg-primary/20 text-primary hover:bg-primary/30 hover:shadow-[0_0_20px_hsl(var(--primary)/0.3)] disabled:opacity-30 transition-all duration-300"
             >
               {aiLoading ? (
@@ -1429,7 +2037,12 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
                 : typeof result.meta?.model === 'string'
                   ? result.meta.model
                   : undefined,
+              route: typeof result.meta?.route === 'string' ? result.meta.route : undefined,
+              agentId: typeof result.meta?.agentId === 'string' ? result.meta.agentId : undefined,
+              agentRoute: typeof result.meta?.agentRoute === 'string' ? result.meta.agentRoute : undefined,
+              provider: typeof result.meta?.provider === 'string' ? result.meta.provider : undefined,
             }]);
+            announceProgress(result.response, 'mascot-task');
           } catch (e) {
             setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', content: t('chat.error'), timestamp: new Date() }]);
           }

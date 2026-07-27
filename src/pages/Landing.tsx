@@ -1,27 +1,39 @@
 import { useState } from 'react';
-import { Crown, ZoomIn, ZoomOut } from 'lucide-react';
+import { Crown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AgentEliteCarousel } from '@/components/landing/AgentEliteCarousel';
 import { LanguageFloater, type LandingLang } from '@/components/landing/LanguageFloater';
 import { getLandingLang, setStoredLandingLang } from '@/components/landing/landingContent';
+import { useLanguage, type Language } from '@/hooks/useLanguage';
 
 const agentsBg = '/slides/base.jpg';
-const LANDING_SCALE_MIN = 0.55;
-const LANDING_SCALE_MAX = 2;
-const LANDING_SCALE_STEP = 0.1;
+
+const landingLangToAppLanguage = (lang: LandingLang): Language => {
+  switch (lang) {
+    case 'es':
+      return 'ES';
+    case 'pt':
+      return 'PT';
+    case 'de':
+      return 'DE';
+    case 'it':
+      return 'IT';
+    case 'fr':
+      return 'FR';
+    case 'nl':
+      return 'NL';
+    case 'pl':
+      return 'PL';
+    default:
+      return 'EN';
+  }
+};
 
 const Landing = () => {
+  const { setLanguage } = useLanguage();
   const [lang, setLang] = useState<LandingLang>(() => getLandingLang());
-  const [visualScale, setVisualScale] = useState(1);
+  const visualScale = 1;
   const navigate = useNavigate();
-
-  const increaseZoom = () => {
-    setVisualScale(value => Math.min(LANDING_SCALE_MAX, Number((value + LANDING_SCALE_STEP).toFixed(2))));
-  };
-
-  const decreaseZoom = () => {
-    setVisualScale(value => Math.max(LANDING_SCALE_MIN, Number((value - LANDING_SCALE_STEP).toFixed(2))));
-  };
 
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">
@@ -46,33 +58,13 @@ const Landing = () => {
             Ver suscripciones
           </button>
 
-          <div className="flex items-center gap-1 rounded-full border border-cyan-300/25 bg-black/55 p-1 backdrop-blur-xl shadow-[0_0_18px_rgba(34,211,238,0.2)]">
-            <button
-              type="button"
-              title="Agrandar visual"
-              aria-label="Agrandar visual"
-              onClick={increaseZoom}
-              className="flex h-8 w-8 items-center justify-center rounded-full text-cyan-200/80 transition hover:bg-cyan-300/12 hover:text-cyan-50"
-            >
-              <ZoomIn className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              title="Achicar visual"
-              aria-label="Achicar visual"
-              onClick={decreaseZoom}
-              className="flex h-8 w-8 items-center justify-center rounded-full text-cyan-200/80 transition hover:bg-cyan-300/12 hover:text-cyan-50"
-            >
-              <ZoomOut className="h-4 w-4" />
-            </button>
-          </div>
-
           <LanguageFloater
             className="relative"
             lang={lang}
             onChange={(nextLang) => {
               setStoredLandingLang(nextLang);
               setLang(nextLang);
+              setLanguage(landingLangToAppLanguage(nextLang));
             }}
           />
         </div>

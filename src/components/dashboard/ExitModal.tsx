@@ -17,11 +17,13 @@ export const ExitModal = ({ isOpen, onClose, onConfirmExit }: ExitModalProps) =>
   const { user, signOut } = useAuth();
   const { toast } = useToast();
 
-  const finalizeExit = async () => {
-    try {
-      await signOut();
-    } catch (e) {
-      console.error('signOut failed', e);
+  const finalizeExit = async (keepSession = false) => {
+    if (!keepSession) {
+      try {
+        await signOut();
+      } catch (e) {
+        console.error('signOut failed', e);
+      }
     }
     // Always navigate, even if signOut throws
     onConfirmExit();
@@ -38,7 +40,7 @@ export const ExitModal = ({ isOpen, onClose, onConfirmExit }: ExitModalProps) =>
 
         // Pull live messages from the dashboard chat
         const live = (window as unknown as {
-          __eqMessages?: Array<{ role: string; content: string; timestamp?: Date }>;
+          __eqMessages?: Array<{ role: string; content: string; timestamp?: Date; model?: string; agentRoute?: string }>;
         }).__eqMessages || [];
 
         const rows = live
@@ -49,7 +51,9 @@ export const ExitModal = ({ isOpen, onClose, onConfirmExit }: ExitModalProps) =>
             content: m.content,
             project_id: projectId,
             project_name: projectName,
+            model_used: m.model || m.agentRoute || null,
           }));
+        const context = (window as unknown as { __eqDashboardContext?: unknown }).__eqDashboardContext || null;
 
         // Persist full conversation (if any) plus the marker, all under same project_id
         if (rows.length > 0) {
@@ -58,13 +62,14 @@ export const ExitModal = ({ isOpen, onClose, onConfirmExit }: ExitModalProps) =>
         await supabase.from('chat_history').insert({
           user_id: user.id,
           role: 'system',
-          content: `📌 Session saved — ${stamp}`,
+          content: `EQ_SESSION_CONTEXT:${JSON.stringify({ context, savedAt: new Date().toISOString() })}`,
           project_id: projectId,
           project_name: projectName,
         });
       }
       toast({ title: 'Session saved', description: 'Available in History.' });
-      await finalizeExit();
+      // Saving is not logging out: preserve auth, active agent and selected model.
+      await finalizeExit(true);
     } catch (e) {
       console.error(e);
       toast({ title: 'Error', description: 'Could not save session.', variant: 'destructive' });
@@ -96,8 +101,7 @@ export const ExitModal = ({ isOpen, onClose, onConfirmExit }: ExitModalProps) =>
 
   const handleJustExit = async () => {
     if (working) return;
-    setWorking('save');
-    await finalizeExit();
+    await handleSaveAndExit();
   };
 
   return (
@@ -139,7 +143,7 @@ export const ExitModal = ({ isOpen, onClose, onConfirmExit }: ExitModalProps) =>
                 className="w-full h-10 rounded-xl font-display text-xs text-muted-foreground hover:text-foreground"
               >
                 <LogOut className="w-4 h-4 mr-2" />
-                EXIT WITHOUT CHANGES
+                EXIT & SAVE SESSION
               </Button>
               <Button
                 variant="ghost"

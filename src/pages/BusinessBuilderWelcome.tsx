@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowRight,
@@ -18,6 +18,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/runtime-client';
 import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/hooks/useLanguage';
 import data from '@/data/lifestyleAgents.json';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -107,12 +108,75 @@ const SummaryText = () => (
   </p>
 );
 
+const copyByLanguage = {
+  EN: {
+    greeting: 'Hello',
+    intro:
+      'Your agent is ready to work with you. We will build structure, clarity, and real progress from the first minute.',
+    tasksTitle: 'What you can do now',
+    tasksBadge: '1 · 2 · 3',
+    recentProjects: 'Recent projects',
+    metrics: 'Metrics',
+    conversations: 'Past conversations',
+    mascotTitle: 'Mascot',
+    mascotBody: 'Mascot ready to accompany, guide, and summarize the work.',
+    mascotSub: 'Use it for reminders, focus, or conversational support.',
+    openHistory: 'Open full history',
+    enterWorkspace: 'Enter workspace',
+    newProject: 'New project',
+    modelTitle: 'Model',
+    replaceableImage: 'Replaceable image',
+    placeholderImage: '1:1 placeholder to replace with your image.',
+    noProjects: 'You have not added projects yet. Click New project to register time and focus.',
+    newProjectDialog: 'New project',
+    dialogDescription: 'Add project data to measure time, focus, and progress.',
+    inputProjectName: 'Project name',
+    inputExecutionTime: 'Execution time',
+    inputHoursWorked: 'Worked hours',
+    inputDeepFocus: 'Deep focus',
+    inputNotes: 'Optional notes',
+    cancel: 'Cancel',
+    saveProject: 'Save project',
+  },
+  ES: {
+    greeting: 'Hola',
+    intro:
+      'Tu agente ya esta listo para trabajar con vos. Vamos a construir estructura, claridad y avance real desde el primer minuto.',
+    tasksTitle: 'Lo que podes hacer ahora',
+    tasksBadge: '1 · 2 · 3',
+    recentProjects: 'Proyectos recientes',
+    metrics: 'Metricas',
+    conversations: 'Conversaciones pasadas',
+    mascotTitle: 'Mascota',
+    mascotBody: 'Mascota lista para acompanarte, guiar y resumir el trabajo.',
+    mascotSub: 'Podes usarla para recordatorios, foco o apoyo conversacional.',
+    openHistory: 'Abrir historial completo',
+    enterWorkspace: 'Entrar al workspace',
+    newProject: 'Nuevo proyecto',
+    modelTitle: 'Modelo',
+    replaceableImage: 'Imagen reemplazable',
+    placeholderImage: 'Placeholder 1:1 para reemplazar por tu imagen.',
+    noProjects: 'Aun no cargaste proyectos. Tocá Nuevo proyecto para registrar tiempo y foco.',
+    newProjectDialog: 'Nuevo proyecto',
+    dialogDescription: 'Cargá los datos del proyecto para medir tiempo, foco y avance.',
+    inputProjectName: 'Nombre del proyecto',
+    inputExecutionTime: 'Tiempo de ejecucion',
+    inputHoursWorked: 'Horas de trabajo aplicadas',
+    inputDeepFocus: 'Focus profundo',
+    inputNotes: 'Notas opcionales',
+    cancel: 'Cancelar',
+    saveProject: 'Guardar proyecto',
+  },
+} as const;
+
 export default function BusinessBuilderWelcome() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { language } = useLanguage();
   const [displayName, setDisplayName] = useState<string>('');
   const [projects, setProjects] = useState<ProjectMetric[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'tasks' | 'metrics' | 'history' | 'mascot'>('tasks');
   const [form, setForm] = useState({
     projectName: '',
     executionTime: '',
@@ -121,6 +185,12 @@ export default function BusinessBuilderWelcome() {
     deepFocus: '',
     notes: '',
   });
+  const tasksRef = useRef<HTMLDivElement | null>(null);
+  const metricsRef = useRef<HTMLDivElement | null>(null);
+  const historyRef = useRef<HTMLDivElement | null>(null);
+  const mascotRef = useRef<HTMLDivElement | null>(null);
+
+  const ui = language === 'EN' ? copyByLanguage.EN : copyByLanguage.ES;
 
   const firstName = useMemo(() => {
     const fallback =
@@ -199,11 +269,16 @@ export default function BusinessBuilderWelcome() {
   };
 
   const headerTabs = [
-    { label: 'Tareas', icon: MessageSquareText },
-    { label: 'Metricas', icon: BarChart3 },
-    { label: 'Historial', icon: History },
-    { label: 'Mascota', icon: Bot },
+    { key: 'tasks' as const, label: language === 'EN' ? 'Tasks' : 'Tareas', icon: MessageSquareText, ref: tasksRef },
+    { key: 'metrics' as const, label: ui.metrics, icon: BarChart3, ref: metricsRef },
+    { key: 'history' as const, label: language === 'EN' ? 'History' : 'Historial', icon: History, ref: historyRef },
+    { key: 'mascot' as const, label: ui.mascotTitle, icon: Bot, ref: mascotRef },
   ];
+
+  const handleJumpTo = (tab: (typeof headerTabs)[number]) => {
+    setActiveTab(tab.key);
+    tab.ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   return (
     <div className="min-h-screen bg-[#020403] text-white relative overflow-hidden">
@@ -216,12 +291,12 @@ export default function BusinessBuilderWelcome() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45 }}
-          className="rounded-[28px] border border-emerald-400/20 bg-black/55 backdrop-blur-2xl shadow-[0_0_50px_rgba(16,185,129,0.07)] overflow-hidden"
+          className="overflow-hidden rounded-[28px] border border-emerald-400/20 bg-black/55 shadow-[0_0_50px_rgba(16,185,129,0.07)] backdrop-blur-2xl"
         >
           <div className="h-[2px] bg-gradient-to-r from-transparent via-emerald-300/90 to-transparent" />
 
           <div className="p-5 md:p-7">
-            <div className="flex flex-col gap-4 border border-emerald-400/12 bg-[#020806]/55 rounded-2xl p-4 md:p-5">
+            <div className="flex flex-col gap-4 rounded-2xl border border-emerald-400/12 bg-[#020806]/55 p-4 md:p-5">
               <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <div className="flex items-center gap-3">
                   <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-emerald-400/20 bg-emerald-400/10 text-emerald-300">
@@ -229,28 +304,35 @@ export default function BusinessBuilderWelcome() {
                   </div>
                   <div>
                     <p className="text-[10px] font-mono uppercase tracking-[0.28em] text-emerald-300/70">Business Builder</p>
-                    <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-emerald-100">
-                      Hola, {firstName}
+                    <h1 className="text-3xl font-semibold tracking-tight text-emerald-100 md:text-4xl">
+                      {ui.greeting}, {firstName}
                     </h1>
                   </div>
                 </div>
 
                 <button
                   onClick={() => setDialogOpen(true)}
-                  className="inline-flex items-center gap-2 rounded-full border border-emerald-400/22 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-100 hover:bg-emerald-400/15 transition-colors"
+                  className="inline-flex items-center gap-2 rounded-full border border-emerald-400/22 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-100 transition-colors hover:bg-emerald-400/15"
                 >
                   <Plus className="h-4 w-4" />
-                  Nuevo proyecto
+                  {ui.newProject}
                 </button>
               </div>
 
               <div className="flex flex-wrap gap-2">
                 {headerTabs.map((tab) => {
                   const Icon = tab.icon;
+                  const isActive = activeTab === tab.key;
                   return (
                     <button
-                      key={tab.label}
-                      className="inline-flex items-center gap-2 rounded-full border border-emerald-400/15 bg-black/30 px-3 py-1.5 text-xs font-medium text-emerald-100/80 hover:border-emerald-300/35 hover:text-emerald-50 transition-colors"
+                      key={tab.key}
+                      onClick={() => handleJumpTo(tab)}
+                      aria-pressed={isActive}
+                      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                        isActive
+                          ? 'border-emerald-300/45 bg-emerald-400/15 text-emerald-50'
+                          : 'border-emerald-400/15 bg-black/30 text-emerald-100/80 hover:border-emerald-300/35 hover:text-emerald-50'
+                      }`}
                     >
                       <Icon className="h-3.5 w-3.5 text-emerald-300/80" />
                       {tab.label}
@@ -259,24 +341,22 @@ export default function BusinessBuilderWelcome() {
                 })}
               </div>
 
-              <p className="text-sm md:text-base text-emerald-100/65 max-w-3xl">
-                Tu agente <span className="text-emerald-300">{agentName}</span> ya esta listo para trabajar con vos.
-                Vamos a construir estructura, claridad y avance real desde el primer minuto.
+              <p className="max-w-3xl text-sm text-emerald-100/65 md:text-base">
+                Tu agente <span className="text-emerald-300">{agentName}</span> ya esta listo para trabajar con vos.{' '}
+                {ui.intro}
               </p>
             </div>
 
             <div className="mt-6 grid gap-4 lg:grid-cols-[1.25fr_0.9fr]">
               <div className="space-y-4">
-                <div className="rounded-2xl border border-emerald-400/18 bg-[#02100a]/70 p-4 md:p-5">
+                <div ref={tasksRef} className="rounded-2xl border border-emerald-400/18 bg-[#02100a]/70 p-4 md:p-5">
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-[10px] font-mono uppercase tracking-[0.26em] text-emerald-300/70">
-                        Tareas del agente
-                      </p>
-                      <h2 className="mt-1 text-lg font-semibold text-emerald-50">Lo que podes hacer ahora</h2>
+                      <p className="text-[10px] font-mono uppercase tracking-[0.26em] text-emerald-300/70">{ui.tasksTitle}</p>
+                      <h2 className="mt-1 text-lg font-semibold text-emerald-50">{ui.tasksTitle}</h2>
                     </div>
                     <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[10px] font-mono uppercase tracking-[0.2em] text-emerald-200/70">
-                      1 · 2 · 3
+                      {ui.tasksBadge}
                     </span>
                   </div>
 
@@ -314,8 +394,8 @@ export default function BusinessBuilderWelcome() {
 
                 <div className="rounded-2xl border border-emerald-400/18 bg-[#02100a]/70 p-4 md:p-5">
                   <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.26em] text-emerald-300/70">
-                    <Clock3 className="w-3.5 h-3.5" />
-                    Proyectos recientes
+                    <Clock3 className="h-3.5 w-3.5" />
+                    {ui.recentProjects}
                   </div>
 
                   <div className="mt-4 space-y-2.5">
@@ -328,12 +408,8 @@ export default function BusinessBuilderWelcome() {
                               <p className="mt-1 text-xs text-emerald-100/55">
                                 Fecha {project.date} · Tiempo {project.executionTime} · Horas {project.hoursWorked}
                               </p>
-                              <p className="mt-1 text-xs text-emerald-100/45">
-                                Foco profundo: {project.deepFocus}
-                              </p>
-                              {project.notes ? (
-                                <p className="mt-1 text-xs text-emerald-100/35">{project.notes}</p>
-                              ) : null}
+                              <p className="mt-1 text-xs text-emerald-100/45">Foco profundo: {project.deepFocus}</p>
+                              {project.notes ? <p className="mt-1 text-xs text-emerald-100/35">{project.notes}</p> : null}
                             </div>
                             <span className="shrink-0 text-[10px] font-mono text-emerald-300/45">Nuevo</span>
                           </div>
@@ -341,8 +417,7 @@ export default function BusinessBuilderWelcome() {
                       ))
                     ) : (
                       <div className="rounded-xl border border-emerald-400/12 bg-black/35 p-3 text-sm text-emerald-100/55">
-                        Aun no cargaste proyectos. Tocá <span className="text-emerald-200">Nuevo proyecto</span> para
-                        registrar tiempo y foco.
+                        {ui.noProjects}
                       </div>
                     )}
                   </div>
@@ -350,15 +425,15 @@ export default function BusinessBuilderWelcome() {
               </div>
 
               <div className="space-y-4">
-                <div className="rounded-2xl border border-emerald-400/18 bg-[#02100a]/70 p-4 md:p-5">
+                <div ref={metricsRef} className="rounded-2xl border border-emerald-400/18 bg-[#02100a]/70 p-4 md:p-5">
                   <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.26em] text-emerald-300/70">
-                    <BarChart3 className="w-3.5 h-3.5" />
-                    Metricas
+                    <BarChart3 className="h-3.5 w-3.5" />
+                    {ui.metrics}
                   </div>
                   <div className="mt-4 grid grid-cols-2 gap-3">
                     {metrics.map((metric) => (
                       <div key={metric.label} className="rounded-xl border border-emerald-400/12 bg-black/40 p-3">
-                        <p className="text-[10px] uppercase tracking-[0.22em] text-emerald-300/55 font-mono">
+                        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-emerald-300/55">
                           {metric.label}
                         </p>
                         <p className="mt-2 text-2xl font-semibold text-emerald-50">{metric.value}</p>
@@ -368,10 +443,10 @@ export default function BusinessBuilderWelcome() {
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-emerald-400/18 bg-[#02100a]/70 p-4 md:p-5">
+                <div ref={historyRef} className="rounded-2xl border border-emerald-400/18 bg-[#02100a]/70 p-4 md:p-5">
                   <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.26em] text-emerald-300/70">
-                    <History className="w-3.5 h-3.5" />
-                    Conversaciones pasadas
+                    <History className="h-3.5 w-3.5" />
+                    {ui.conversations}
                   </div>
                   <div className="mt-4 space-y-2.5">
                     {recentConversations.map((item) => (
@@ -388,56 +463,52 @@ export default function BusinessBuilderWelcome() {
                   </div>
                   <button
                     onClick={() => navigate('/')}
-                    className="mt-3 inline-flex items-center gap-2 text-xs font-medium text-emerald-300 hover:text-emerald-200 transition-colors"
+                    className="mt-3 inline-flex items-center gap-2 text-xs font-medium text-emerald-300 transition-colors hover:text-emerald-200"
                   >
-                    Abrir historial completo
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    {ui.openHistory}
+                    <ArrowRight className="h-3.5 w-3.5" />
                   </button>
                 </div>
 
-                <div className="rounded-2xl border border-emerald-400/18 bg-[#02100a]/70 p-4 md:p-5">
+                <div ref={mascotRef} className="rounded-2xl border border-emerald-400/18 bg-[#02100a]/70 p-4 md:p-5">
                   <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.26em] text-emerald-300/70">
-                    <Bot className="w-3.5 h-3.5" />
-                    Mascota
+                    <Bot className="h-3.5 w-3.5" />
+                    {ui.mascotTitle}
                   </div>
                   <div className="mt-3 rounded-xl border border-emerald-400/12 bg-black/40 p-3">
-                    <p className="text-sm text-emerald-50/90">
-                      Mascota lista para acompanarte, guiar y resumir el trabajo.
-                    </p>
-                    <p className="mt-1 text-xs text-emerald-100/55">
-                      Podes usarla para recordatorios, foco o apoyo conversacional.
-                    </p>
+                    <p className="text-sm text-emerald-50/90">{ui.mascotBody}</p>
+                    <p className="mt-1 text-xs text-emerald-100/55">{ui.mascotSub}</p>
                   </div>
                 </div>
 
                 <div className="rounded-2xl border border-emerald-400/18 bg-[#02100a]/70 p-4 md:p-5">
                   <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.26em] text-emerald-300/70">
-                    <LayoutPanelTop className="w-3.5 h-3.5" />
-                    Imagen reemplazable
+                    <LayoutPanelTop className="h-3.5 w-3.5" />
+                    {ui.replaceableImage}
                   </div>
-                  <div className="mt-3 aspect-square w-full rounded-2xl border border-emerald-400/18 bg-black relative overflow-hidden">
+                  <div className="relative mt-3 aspect-square w-full overflow-hidden rounded-2xl border border-emerald-400/18 bg-black">
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <Square className="w-10 h-10 text-emerald-400/20" />
+                      <Square className="h-10 w-10 text-emerald-400/20" />
                     </div>
                     <div className="absolute inset-x-0 bottom-0 bg-black/55 px-3 py-2">
-                      <p className="text-[11px] text-emerald-100/60">Placeholder 1:1 para reemplazar por tu imagen.</p>
+                      <p className="text-[11px] text-emerald-100/60">{ui.placeholderImage}</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="rounded-2xl border border-emerald-400/18 bg-[#02100a]/70 p-4 md:p-5">
-                  <p className="text-[10px] font-mono uppercase tracking-[0.26em] text-emerald-300/70">Modelo</p>
+                  <p className="text-[10px] font-mono uppercase tracking-[0.26em] text-emerald-300/70">{ui.modelTitle}</p>
                   <SummaryText />
                   <div className="mt-3 flex items-center gap-2 text-[11px] text-emerald-100/50">
-                    <Target className="w-3.5 h-3.5 text-emerald-300/70" />
+                    <Target className="h-3.5 w-3.5 text-emerald-300/70" />
                     Orquestacion, razonamiento multi-paso y trabajo empresarial largo.
                   </div>
                   <div className="mt-3 flex items-center gap-2 text-[11px] text-emerald-100/50">
-                    <TrendingUp className="w-3.5 h-3.5 text-emerald-300/70" />
+                    <TrendingUp className="h-3.5 w-3.5 text-emerald-300/70" />
                     {freeModels.join(' · ') || engineFree}
                   </div>
                   <div className="mt-2 flex items-center gap-2 text-[11px] text-emerald-100/50">
-                    <Sparkles className="w-3.5 h-3.5 text-emerald-300/70" />
+                    <Sparkles className="h-3.5 w-3.5 text-emerald-300/70" />
                     {proModels.join(' · ') || enginePro}
                   </div>
                 </div>
@@ -450,10 +521,10 @@ export default function BusinessBuilderWelcome() {
               </p>
               <button
                 onClick={() => navigate('/')}
-                className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-2 text-xs font-medium text-emerald-100 hover:bg-emerald-400/15 transition-colors"
+                className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-2 text-xs font-medium text-emerald-100 transition-colors hover:bg-emerald-400/15"
               >
-                Entrar al workspace
-                <ChevronRight className="w-3.5 h-3.5" />
+                {ui.enterWorkspace}
+                <ChevronRight className="h-3.5 w-3.5" />
               </button>
             </div>
           </div>
@@ -463,23 +534,21 @@ export default function BusinessBuilderWelcome() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="border-emerald-400/20 bg-[#03100a] text-emerald-50 sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-emerald-50">Nuevo proyecto</DialogTitle>
-            <DialogDescription className="text-emerald-100/55">
-              Cargá los datos del proyecto para medir tiempo, foco y avance.
-            </DialogDescription>
+            <DialogTitle className="text-emerald-50">{ui.newProjectDialog}</DialogTitle>
+            <DialogDescription className="text-emerald-100/55">{ui.dialogDescription}</DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-3">
             <Input
               value={form.projectName}
               onChange={(event) => handleFormChange('projectName', event.target.value)}
-              placeholder="Nombre del proyecto"
+              placeholder={ui.inputProjectName}
               className="border-emerald-400/20 bg-black/40 text-emerald-50 placeholder:text-emerald-100/35"
             />
             <Input
               value={form.executionTime}
               onChange={(event) => handleFormChange('executionTime', event.target.value)}
-              placeholder="Tiempo de ejecucion"
+              placeholder={ui.inputExecutionTime}
               className="border-emerald-400/20 bg-black/40 text-emerald-50 placeholder:text-emerald-100/35"
             />
             <Input
@@ -491,19 +560,19 @@ export default function BusinessBuilderWelcome() {
             <Input
               value={form.hoursWorked}
               onChange={(event) => handleFormChange('hoursWorked', event.target.value)}
-              placeholder="Horas de trabajo aplicadas"
+              placeholder={ui.inputHoursWorked}
               className="border-emerald-400/20 bg-black/40 text-emerald-50 placeholder:text-emerald-100/35"
             />
             <Input
               value={form.deepFocus}
               onChange={(event) => handleFormChange('deepFocus', event.target.value)}
-              placeholder="Focus profundo"
+              placeholder={ui.inputDeepFocus}
               className="border-emerald-400/20 bg-black/40 text-emerald-50 placeholder:text-emerald-100/35"
             />
             <Textarea
               value={form.notes}
               onChange={(event) => handleFormChange('notes', event.target.value)}
-              placeholder="Notas opcionales"
+              placeholder={ui.inputNotes}
               className="min-h-[96px] border-emerald-400/20 bg-black/40 text-emerald-50 placeholder:text-emerald-100/35"
             />
           </div>
@@ -513,13 +582,13 @@ export default function BusinessBuilderWelcome() {
               onClick={() => setDialogOpen(false)}
               className="rounded-full border border-emerald-400/15 px-4 py-2 text-sm text-emerald-100/70 hover:text-emerald-50"
             >
-              Cancelar
+              {ui.cancel}
             </button>
             <button
               onClick={handleCreateProject}
               className="inline-flex items-center gap-2 rounded-full border border-emerald-400/22 bg-emerald-400/10 px-4 py-2 text-sm text-emerald-100 hover:bg-emerald-400/15"
             >
-              Guardar proyecto
+              {ui.saveProject}
               <ChevronRight className="h-4 w-4" />
             </button>
           </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 
 interface GhostTyperProps {
@@ -11,9 +11,101 @@ export const GhostTyper = ({ text, isActive, visualScale }: GhostTyperProps) => 
   const [displayed, setDisplayed] = useState('');
   const [cursorVisible, setCursorVisible] = useState(true);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const bannerScale = Math.max(0.7, Number((1.02 - Math.max(0, visualScale - 1) * 0.72).toFixed(2)));
-  const textScale = Math.max(0.72, Number((1 - Math.max(0, visualScale - 1) * 0.58).toFixed(2)));
-  const bannerWidth = `${Math.max(62, Number((96 - Math.max(0, visualScale - 1) * 44).toFixed(2)))}vw`;
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const audioEnabledRef = useRef(false);
+  const lastPulseRef = useRef(0);
+  const textScale = 1.02;
+
+  const ensureAudioReady = useCallback(async () => {
+    if (typeof window === 'undefined') return null;
+
+    const AudioCtx = window.AudioContext || (window as typeof window & {
+      webkitAudioContext?: typeof AudioContext;
+    }).webkitAudioContext;
+
+    if (!AudioCtx) return null;
+
+    if (!audioContextRef.current) {
+      audioContextRef.current = new AudioCtx();
+    }
+
+    if (audioContextRef.current.state === 'suspended') {
+      try {
+        await audioContextRef.current.resume();
+      } catch {
+        return null;
+      }
+    }
+
+    audioEnabledRef.current = audioContextRef.current.state === 'running';
+    return audioContextRef.current;
+  }, []);
+
+  const playSynthKeyPulse = useCallback((char: string) => {
+    if (!audioEnabledRef.current || /\s/.test(char)) return;
+
+    const ctx = audioContextRef.current;
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    if (now - lastPulseRef.current < 0.022) return;
+    lastPulseRef.current = now;
+
+    const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+    const oscA = ctx.createOscillator();
+    const oscB = ctx.createOscillator();
+
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.035, now + 0.004);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(1450 + Math.random() * 550, now);
+    filter.Q.setValueAtTime(6 + Math.random() * 2, now);
+
+    oscA.type = 'triangle';
+    oscB.type = 'sawtooth';
+
+    const base = 760 + Math.random() * 280;
+    oscA.frequency.setValueAtTime(base, now);
+    oscA.frequency.exponentialRampToValueAtTime(base * 1.22, now + 0.045);
+    oscB.frequency.setValueAtTime(base * 1.9, now);
+    oscB.frequency.exponentialRampToValueAtTime(base * 2.25, now + 0.03);
+
+    oscA.connect(filter);
+    oscB.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+
+    oscA.start(now);
+    oscB.start(now);
+    oscA.stop(now + 0.055);
+    oscB.stop(now + 0.04);
+  }, []);
+
+  useEffect(() => {
+    const unlockAudio = () => {
+      void ensureAudioReady();
+    };
+
+    window.addEventListener('pointerdown', unlockAudio, { passive: true });
+    window.addEventListener('keydown', unlockAudio);
+
+    return () => {
+      window.removeEventListener('pointerdown', unlockAudio);
+      window.removeEventListener('keydown', unlockAudio);
+    };
+  }, [ensureAudioReady]);
+
+  useEffect(() => {
+    return () => {
+      if (audioContextRef.current) {
+        void audioContextRef.current.close();
+        audioContextRef.current = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     setDisplayed('');
@@ -22,7 +114,9 @@ export const GhostTyper = ({ text, isActive, visualScale }: GhostTyperProps) => 
     let i = 0;
     intervalRef.current = setInterval(() => {
       if (i < text.length) {
+        const nextChar = text.charAt(i);
         setDisplayed(text.slice(0, i + 1));
+        playSynthKeyPulse(nextChar);
         i++;
       } else {
         if (intervalRef.current) clearInterval(intervalRef.current);
@@ -32,7 +126,7 @@ export const GhostTyper = ({ text, isActive, visualScale }: GhostTyperProps) => 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [text, isActive]);
+  }, [text, isActive, playSynthKeyPulse]);
 
   useEffect(() => {
     const blink = setInterval(() => setCursorVisible(v => !v), 530);
@@ -46,12 +140,10 @@ export const GhostTyper = ({ text, isActive, visualScale }: GhostTyperProps) => 
       className="w-full px-4 py-3 font-mono tracking-normal sm:px-6"
     >
       <div
-        className="mx-auto rounded-lg border border-cyan-400/30 bg-black/50 px-5 py-4 backdrop-blur-sm sm:px-8 sm:py-5"
+        className="mx-auto w-full max-w-[1320px] rounded-lg border border-cyan-400/30 bg-black/50 px-5 py-4 backdrop-blur-sm sm:px-8 sm:py-5"
         style={{
           boxShadow: '0 0 25px rgba(34,211,238,0.15)',
-          maxWidth: bannerWidth,
-          transform: `scale(${bannerScale})`,
-          transformOrigin: 'top center',
+          maxWidth: '100%',
         }}
       >
         <div className="flex items-center gap-2 mb-2">

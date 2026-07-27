@@ -4,11 +4,10 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import {
   callPaidGateway,
   callAIWithCostControl,
+  EQUITYLABS_PRIMARY_MODEL,
   getPaidProviderName,
-  GOOGLE_FREE_MODEL,
   getUserPlanState,
   hasPaidAIProvider,
-  isFreePlan,
   LOVABLE_AI_GATEWAY_URL,
   resolveModel,
   type AgentKey,
@@ -22,12 +21,76 @@ const corsHeaders = {
 };
 
 const AGENT_ONE_ID = 'ag_01';
-const AGENT_ONE_MODEL = 'tencent/hy3:free';
+const AGENT_ONE_MODEL = EQUITYLABS_PRIMARY_MODEL;
 const AGENT_ONE_START_PROMPT = `Eres Agent 1 de EQuityLabs.
-Tu modelo obligatorio es tencent/hy3:free.
-Tu primera tarea es recibir al usuario, decir hola, presentarte con claridad y pedir el objetivo inicial.
+Tu modelo obligatorio es qwen/qwen3-vl-8b-thinking.
+Tu primera tarea es recibir al usuario por su nombre, decir hola, presentarte con claridad y pedir el objetivo inicial.
 No menciones otros modelos, no delegates, no pidas integraciones al inicio salvo que el usuario lo pida.
-Responde en espanol claro, directo y breve.`;
+Responde en el idioma solicitado por el usuario, con contexto suficiente, acciones concretas y un próximo paso claro.`;
+
+type ChatAttachment = {
+  name?: string;
+  mimeType?: string;
+  dataUrl?: string;
+  size?: number;
+};
+
+const MAX_ATTACHMENTS = 4;
+const MAX_ATTACHMENT_BYTES = 8 * 1024 * 1024;
+
+function sanitizeAttachments(value: unknown): ChatAttachment[] {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .slice(0, MAX_ATTACHMENTS)
+    .filter((item): item is ChatAttachment => {
+      if (!item || typeof item !== 'object') return false;
+      const attachment = item as ChatAttachment;
+      if (typeof attachment.dataUrl !== 'string' || typeof attachment.mimeType !== 'string') return false;
+      if (typeof attachment.size === 'number' && attachment.size > MAX_ATTACHMENT_BYTES) return false;
+      return (
+        attachment.mimeType.startsWith('image/')
+        || attachment.mimeType === 'application/pdf'
+      );
+    });
+}
+
+function buildUserContent(message: string, attachments: ChatAttachment[]): ChatMessage['content'] {
+  if (attachments.length === 0) return message;
+
+  const content: Array<Record<string, unknown>> = [
+    {
+      type: 'text',
+      text: message || 'Analiza los archivos adjuntos.',
+    },
+  ];
+
+  for (const attachment of attachments) {
+    if (!attachment.dataUrl || !attachment.mimeType) continue;
+
+    if (attachment.mimeType.startsWith('image/')) {
+      content.push({
+        type: 'image_url',
+        image_url: {
+          url: attachment.dataUrl,
+        },
+      });
+      continue;
+    }
+
+    if (attachment.mimeType === 'application/pdf') {
+      content.push({
+        type: 'file',
+        file: {
+          filename: attachment.name || 'document.pdf',
+          file_data: attachment.dataUrl,
+        },
+      });
+    }
+  }
+
+  return content;
+}
 
 // Detect if message is a simple greeting
 function isGreeting(message: string): boolean {
@@ -261,8 +324,36 @@ const AGENT_KEYS: AgentKey[] = [
   'recepcionista',
 ];
 
+const AGENT_ID_ROUTE_MAP: Record<string, AgentKey> = {
+  ag_02: 'investigador',
+  ag_03: 'analista',
+  ag_04: 'analista',
+  ag_05: 'revisor',
+  ag_06: 'analista',
+  ag_07: 'logic',
+  ag_08: 'architect',
+  ag_09: 'analista',
+  ag_10: 'orquestador',
+  ag_11: 'investigador',
+  ag_12: 'orquestador',
+  ag_13: 'asistente',
+  ag_14: 'logic',
+  ag_15: 'desarrollador',
+  ag_16: 'orquestador',
+  ag_17: 'investigador',
+  ag_18: 'investigador',
+  ag_19: 'revisor',
+  ag_20: 'recepcionista',
+};
+
 function isAgentKey(value: unknown): value is AgentKey {
   return typeof value === 'string' && AGENT_KEYS.includes(value as AgentKey);
+}
+
+function resolveAgentRoute(agentId: unknown): AgentKey | null {
+  if (isAgentKey(agentId)) return agentId;
+  if (typeof agentId !== 'string') return null;
+  return AGENT_ID_ROUTE_MAP[agentId] || null;
 }
 
 function resolvePaidProviderLabel(apiKey: string): string {
@@ -270,20 +361,18 @@ function resolvePaidProviderLabel(apiKey: string): string {
 }
 
 function resolveProviderLabel(
-  plan: SubscriptionPlanKey,
+  _plan: SubscriptionPlanKey,
   paidProvider: string,
   aiData?: Record<string, unknown>,
 ): string {
-  if (isFreePlan(plan)) return 'google-free-tier';
   return typeof aiData?.provider === 'string' ? aiData.provider : paidProvider;
 }
 
 function resolveEffectiveModel(
-  plan: SubscriptionPlanKey,
+  _plan: SubscriptionPlanKey,
   requestedModel: string,
   aiData?: Record<string, unknown>,
 ): string {
-  if (isFreePlan(plan)) return GOOGLE_FREE_MODEL;
   return typeof aiData?.model === 'string' ? aiData.model : requestedModel;
 }
 
@@ -322,12 +411,22 @@ serve(async (req) => {
   }
 
   try {
-    const { message, conversationHistory, agentId, language } = await req.json();
+    const { message, conversationHistory, agentId, language, attachments } = await req.json();
+    const safeAttachments = sanitizeAttachments(attachments);
     const langMap: Record<string, string> = {
       es: 'español', en: 'English', pt: 'português', de: 'Deutsch',
       it: 'italiano', fr: 'français', zh: '中文', ja: '日本語'
     };
-    const responseLang = langMap[language] || langMap['es'];
+    const requestedLanguage = typeof language === 'string' ? language.trim().toLowerCase() : 'es';
+    const normalizedLangMap: Record<string, string> = {
+      ...langMap,
+      es: 'espanol',
+      pt: 'portugues',
+      fr: 'francais',
+      nl: 'Nederlands',
+      pl: 'polski',
+    };
+    const responseLang = normalizedLangMap[requestedLanguage] || normalizedLangMap.es;
 
     if (!message) {
       throw new Error('Message is required');
@@ -360,7 +459,7 @@ serve(async (req) => {
     const apiKey = Deno.env.get('LOVABLE_API_KEY') || '';
     const paidProvider = resolvePaidProviderLabel(apiKey);
 
-    if (!isFreePlan(activePlan) && !hasPaidAIProvider(LOVABLE_AI_GATEWAY_URL, apiKey)) {
+    if (!hasPaidAIProvider(LOVABLE_AI_GATEWAY_URL, apiKey)) {
       console.error('CRITICAL: no paid AI provider configured. Expected OPENROUTER_API_KEY or LOVABLE_API_KEY');
       return new Response(
         JSON.stringify({ error: 'AI service not configured' }),
@@ -388,20 +487,25 @@ serve(async (req) => {
       }
     }
 
+    const firstName = userDisplayName.trim().split(/\s+/)[0] || 'usuario';
     const isFirstMessage = !conversationHistory || conversationHistory.length === 0;
     const isSimpleGreeting = isGreeting(message);
     const useAgentOne = isAgentOne(agentId) || !agentId;
 
     if (useAgentOne) {
+      const agentOnePrompt = `${AGENT_ONE_START_PROMPT}
+El nombre del usuario es ${firstName}.
+El idioma de respuesta seleccionado es ${responseLang}.
+${isFirstMessage ? `En tu primera respuesta, comienza con "Hola ${firstName},".` : 'No repitas el saludo inicial si la conversación ya comenzó.'}`;
       const agentOneMessages: ChatMessage[] = [
         {
           role: 'system',
-          content: AGENT_ONE_START_PROMPT,
+          content: agentOnePrompt,
         },
         ...(conversationHistory || []),
         {
           role: 'user',
-          content: message,
+          content: buildUserContent(message, safeAttachments),
         },
       ];
 
@@ -439,6 +543,7 @@ serve(async (req) => {
             plan: activePlan,
             route: 'agent:ag_01',
             agentId: AGENT_ONE_ID,
+            agentRoute: 'architect',
             availableTools,
             usage: aiResult.data?.usage || null,
           }
@@ -451,15 +556,15 @@ serve(async (req) => {
     if (isFirstMessage && isSimpleGreeting && userId) {
       const toolsList = formatAvailableTools(availableTools);
       const greetingWithTools = toolsList 
-        ? `¡Hola ${userDisplayName}! 👋\n\nVeo que tengo acceso a tus integraciones:${toolsList}\n\n¿En qué trabajamos hoy?`
-        : `¡Hola ${userDisplayName}! 👋\n\nEstoy listo para ayudarte. Aún no tienes integraciones de Google activas. ¿Quieres conectar Gmail, Drive, Sheets o Calendar?`;
+        ? `¡Hola ${firstName}! 👋\n\nVeo que tengo acceso a tus integraciones:${toolsList}\n\n¿En qué trabajamos hoy?`
+        : `¡Hola ${firstName}! 👋\n\nEstoy listo para ayudarte. Aún no tienes integraciones de Google activas. ¿Quieres conectar Gmail, Drive, Sheets o Calendar?`;
       
-      const modelUsed = isFreePlan(activePlan) ? GOOGLE_FREE_MODEL : resolveModel(activePlan, 'orquestador');
+      const modelUsed = resolveModel(activePlan, 'orquestador');
       
       return new Response(
         JSON.stringify({ 
           response: greetingWithTools,
-          meta: { model: modelUsed, plan: activePlan, route: 'greeting_with_tools', availableTools }
+          meta: { model: modelUsed, provider: paidProvider, plan: activePlan, route: 'greeting_with_tools', availableTools }
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -484,7 +589,7 @@ serve(async (req) => {
       
       if (result.error) {
         return new Response(
-          JSON.stringify({ response: `❌ Error al acceder a Drive: ${result.error}`, meta: { action: 'drive_error', model: resolveEffectiveModel(activePlan, resolveModel(activePlan, 'architect')), provider: isFreePlan(activePlan) ? 'google-free-tier' : paidProvider, plan: activePlan } }),
+          JSON.stringify({ response: `❌ Error al acceder a Drive: ${result.error}`, meta: { action: 'drive_error', model: resolveEffectiveModel(activePlan, resolveModel(activePlan, 'architect')), provider: paidProvider, plan: activePlan } }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
@@ -524,7 +629,7 @@ serve(async (req) => {
       
       if (result.error) {
         return new Response(
-          JSON.stringify({ response: `❌ Error al acceder a Sheets: ${result.error}`, meta: { action: 'sheets_error', model: resolveEffectiveModel(activePlan, resolveModel(activePlan, 'logic')), provider: isFreePlan(activePlan) ? 'google-free-tier' : paidProvider, plan: activePlan } }),
+          JSON.stringify({ response: `❌ Error al acceder a Sheets: ${result.error}`, meta: { action: 'sheets_error', model: resolveEffectiveModel(activePlan, resolveModel(activePlan, 'logic')), provider: paidProvider, plan: activePlan } }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
@@ -562,7 +667,7 @@ serve(async (req) => {
         
         if (result.error) {
           return new Response(
-            JSON.stringify({ response: `❌ Error al acceder a Calendar: ${result.error}`, meta: { action: 'calendar_error', model: resolveEffectiveModel(activePlan, resolveModel(activePlan, 'logic')), provider: isFreePlan(activePlan) ? 'google-free-tier' : paidProvider, plan: activePlan } }),
+            JSON.stringify({ response: `❌ Error al acceder a Calendar: ${result.error}`, meta: { action: 'calendar_error', model: resolveEffectiveModel(activePlan, resolveModel(activePlan, 'logic')), provider: paidProvider, plan: activePlan } }),
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
         }
@@ -572,7 +677,7 @@ serve(async (req) => {
         ).join('\n\n') || 'No hay eventos próximos';
 
         return new Response(
-          JSON.stringify({ response: `📆 **Tu Agenda**\n\n${eventsContext}`, meta: { action: 'calendar_list', model: resolveEffectiveModel(activePlan, resolveModel(activePlan, 'logic')), provider: isFreePlan(activePlan) ? 'google-free-tier' : paidProvider, plan: activePlan, eventCount: result.data?.count || 0 } }),
+          JSON.stringify({ response: `📆 **Tu Agenda**\n\n${eventsContext}`, meta: { action: 'calendar_list', model: resolveEffectiveModel(activePlan, resolveModel(activePlan, 'logic')), provider: paidProvider, plan: activePlan, eventCount: result.data?.count || 0 } }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
@@ -591,7 +696,7 @@ serve(async (req) => {
         
         if (result.error) {
           return new Response(
-            JSON.stringify({ response: `❌ Error al leer emails: ${result.error}`, meta: { action: 'gmail_read_error', model: resolveEffectiveModel(activePlan, resolveModel(activePlan, 'recepcionista')), provider: isFreePlan(activePlan) ? 'google-free-tier' : paidProvider, plan: activePlan } }),
+            JSON.stringify({ response: `❌ Error al leer emails: ${result.error}`, meta: { action: 'gmail_read_error', model: resolveEffectiveModel(activePlan, resolveModel(activePlan, 'recepcionista')), provider: paidProvider, plan: activePlan } }),
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
         }
@@ -629,7 +734,7 @@ serve(async (req) => {
 
         if (result.success) {
           return new Response(
-            JSON.stringify({ response: `✅ **Email enviado**\n\n📬 Destinatario: ${emailIntent.to}\n🆔 ID: \`${result.data.messageId}\``, meta: { action: 'gmail_sent', model: resolveEffectiveModel(activePlan, resolveModel(activePlan, 'recepcionista')), provider: isFreePlan(activePlan) ? 'google-free-tier' : paidProvider, plan: activePlan, messageId: result.data.messageId } }),
+            JSON.stringify({ response: `✅ **Email enviado**\n\n📬 Destinatario: ${emailIntent.to}\n🆔 ID: \`${result.data.messageId}\``, meta: { action: 'gmail_sent', model: resolveEffectiveModel(activePlan, resolveModel(activePlan, 'recepcionista')), provider: paidProvider, plan: activePlan, messageId: result.data.messageId } }),
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
         }
@@ -639,13 +744,14 @@ serve(async (req) => {
     // Standard AI chat flow
     let modelToUse: string;
     let routingReason: string;
+    const routedAgent = resolveAgentRoute(agentId);
 
     if (isFirstMessage && isSimpleGreeting) {
       modelToUse = resolveModel(activePlan, 'greeting');
       routingReason = 'greeting';
-    } else if (isAgentKey(agentId)) {
-      modelToUse = resolveModel(activePlan, agentId);
-      routingReason = `agent:${agentId}`;
+    } else if (routedAgent) {
+      modelToUse = resolveModel(activePlan, routedAgent);
+      routingReason = `agent:${agentId}->${routedAgent}`;
     } else {
       modelToUse = resolveModel(activePlan, 'default');
       routingReason = 'default';
@@ -670,17 +776,18 @@ Eres el asistente principal de EQuityLabs, una plataforma de control de misiones
 - **Recepcionista**: Gestiona emails de Gmail
 
 ## Reglas
-- IDIOMA OBLIGATORIO: Responde SIEMPRE en ${responseLang}, sin excepción.
-- FORMATO DE TEXTO: Texto plano y limpio. NO uses asteriscos (*, **), NO uses almohadillas (#, ##, ###), NO uses emoticonos ni emojis. Si necesitas estructurar, usa secciones "Razonamiento:", "Ejecución:" y "Next Step:" en líneas separadas.
-- Sé breve y directo (máximo 2-3 párrafos).
+- IDIOMA PREFERIDO: Responde en ${responseLang}. Si el usuario solicita expresamente otro idioma compatible, responde en ese idioma.
+- IDIOMAS COMPATIBLES: español, inglés, portugués, italiano, francés, alemán y griego.
+- FORMATO: Responde de forma natural, clara y profesional. No uses ni muestres las etiquetas "Razonamiento:", "Ejecución:" o "Next Step:"; entrega directamente la información y el próximo paso cuando corresponda.
+- Sé claro y directo, incluyendo el contexto necesario, las acciones recomendadas y un próximo paso concreto cuando corresponda.
 - Si te preguntan quién eres, di que eres el asistente de EQuityLabs.
-${agentId ? `\n## Modo Agente Activo: ${agentId}` : ''}
+${agentId ? `\n## Modo Agente Activo: ${agentId}${routedAgent ? ` (${routedAgent})` : ''}` : ''}
 `;
 
     const messages: ChatMessage[] = [
       { role: 'system', content: equityLabsContext },
       ...(conversationHistory || []),
-      { role: 'user', content: message },
+      { role: 'user', content: buildUserContent(message, safeAttachments) },
     ];
 
     const aiResult = await callAI(supabaseUrl, supabaseKey, userId, activePlan, apiKey, modelToUse, messages);
@@ -714,6 +821,8 @@ ${agentId ? `\n## Modo Agente Activo: ${agentId}` : ''}
           effectiveModel,
           plan: activePlan,
           route: routingReason,
+          agentId: typeof agentId === 'string' ? agentId : null,
+          agentRoute: routedAgent,
           availableTools,
           usage: aiResult.data?.usage || null
         }

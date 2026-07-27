@@ -12,7 +12,8 @@ interface MascotTaskDialogProps {
 export const MascotTaskDialog = ({ open, task, onClose, onExecute }: MascotTaskDialogProps) => {
   const { language } = useLanguage();
   type Lang = 'es' | 'en' | 'pt' | 'fr' | 'de' | 'it' | 'zh' | 'ja';
-  const lang = (['es','en','pt','fr','de','it','zh','ja'].includes(language) ? language : 'es') as Lang;
+  const normalizedLanguage = language.toLowerCase();
+  const lang = (['es','en','pt','fr','de','it','zh','ja'].includes(normalizedLanguage) ? normalizedLanguage : 'en') as Lang;
 
   const t: Record<Lang, { title: string; intro: string; now: string; schedule: string; delegate: string; nowDesc: string; schDesc: string; delDesc: string }> = {
     es: { title: 'Pip propone esta tarea', intro: 'Selecciona cómo quieres ejecutarla:', now: 'Ejecutar ahora', schedule: 'Programar', delegate: 'Delegar al SQUAD', nowDesc: 'El agente activo procesará la tarea inmediatamente', schDesc: 'Añadir al planificador para más tarde', delDesc: 'Asignar a un agente especializado del SQUAD' },

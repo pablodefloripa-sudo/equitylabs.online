@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MessageSquare, Image as ImageIcon, FileText, Trash2, Loader2, FolderPlus, HardDrive, Rocket, File, FileSpreadsheet, FileImage, FileVideo, FileAudio, Upload } from 'lucide-react';
+import { X, MessageSquare, Image as ImageIcon, FileText, Trash2, Loader2, FolderPlus, HardDrive, Rocket, File, FileSpreadsheet, FileImage, FileVideo, FileAudio, Upload, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/runtime-client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { AppBunkerPanel } from './AppBunkerPanel';
+import { ClientArchivePanel } from './ClientArchivePanel';
 import { ProjectMindMapStudio } from './ProjectMindMapStudio';
 
 interface ProjectManagerModalProps {
@@ -13,7 +13,7 @@ interface ProjectManagerModalProps {
   onClose: () => void;
 }
 
-type Tab = 'bunker' | 'maps' | 'chats' | 'assets';
+type Tab = 'archive' | 'maps' | 'chats' | 'assets';
 
 interface LocalFile {
   name: string;
@@ -32,7 +32,7 @@ const getFileIcon = (name: string) => {
 };
 
 export const ProjectManagerModal = ({ isOpen, onClose }: ProjectManagerModalProps) => {
-  const [tab, setTab] = useState<Tab>('bunker');
+  const [tab, setTab] = useState<Tab>('archive');
   const [chats, setChats] = useState<any[]>([]);
   const [assets, setAssets] = useState<any[]>([]);
   const [localFiles, setLocalFiles] = useState<LocalFile[]>([]);
@@ -92,8 +92,9 @@ export const ProjectManagerModal = ({ isOpen, onClose }: ProjectManagerModalProp
         .from('chat_history')
         .select('project_id, project_name, created_at')
         .eq('user_id', user.id)
+        .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
         .order('created_at', { ascending: false })
-        .limit(100);
+        .limit(300);
 
       const grouped = new Map<string, any>();
       for (const row of data || []) {
@@ -123,14 +124,14 @@ export const ProjectManagerModal = ({ isOpen, onClose }: ProjectManagerModalProp
 
   useEffect(() => {
     if (!isOpen) return;
-    if (tab === 'maps' || tab === 'bunker') return;
+    if (tab === 'maps' || tab === 'archive') return;
     if (tab === 'chats') fetchChats();
     else fetchAssets();
   }, [isOpen, tab, fetchChats, fetchAssets]);
 
   useEffect(() => {
     if (isOpen) {
-      setTab('bunker');
+      setTab('archive');
     }
   }, [isOpen]);
 
@@ -139,6 +140,49 @@ export const ProjectManagerModal = ({ isOpen, onClose }: ProjectManagerModalProp
     await supabase.from('chat_history').delete().eq('user_id', user.id).eq('project_id', projectId);
     setChats(prev => prev.filter(c => c.project_id !== projectId));
     toast({ title: 'Deleted' });
+  };
+
+  const resumeChat = async (chat: { project_id: string; project_name: string }) => {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('chat_history')
+        .select('id, role, content, created_at, model_used')
+        .eq('user_id', user.id)
+        .eq('project_id', chat.project_id)
+        .order('created_at', { ascending: true });
+      if (error) throw error;
+
+      const rows = data || [];
+      const contextRow = rows.find(row => row.role === 'system' && row.content.startsWith('EQ_SESSION_CONTEXT:'));
+      let context: unknown = undefined;
+      if (contextRow) {
+        try { context = JSON.parse(contextRow.content.slice('EQ_SESSION_CONTEXT:'.length)).context; } catch { /* ignore malformed context */ }
+      }
+      const messages = rows
+        .filter(row => row.role === 'user' || row.role === 'assistant')
+        .map(row => ({
+          id: row.id,
+          role: row.role as 'user' | 'assistant',
+          content: row.content,
+          timestamp: row.created_at,
+          model: row.model_used || undefined,
+        }));
+      sessionStorage.setItem('eq_resume_session', JSON.stringify({
+        project_id: chat.project_id,
+        project_name: chat.project_name,
+        messages,
+        context,
+      }));
+      window.dispatchEvent(new CustomEvent('eq:resume-session', { detail: { project_id: chat.project_id, messages, context } }));
+      toast({ title: 'Chat restaurado', description: `${chat.project_name} listo para continuar.` });
+      onClose();
+    } catch (err: any) {
+      toast({ title: 'Error', description: err.message || 'No se pudo restaurar el chat.', variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const deleteAsset = async (id: string) => {
@@ -221,7 +265,7 @@ export const ProjectManagerModal = ({ isOpen, onClose }: ProjectManagerModalProp
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
             className={`relative z-10 modal-cyber mx-4 flex w-full flex-col overflow-hidden rounded-2xl ${
-              tab === 'maps' || tab === 'bunker' ? 'max-w-7xl h-[88vh]' : 'max-w-lg max-h-[80vh]'
+              tab === 'maps' || tab === 'archive' ? 'max-w-7xl h-[88vh]' : 'max-w-lg max-h-[80vh]'
             }`}
           >
             <div className="flex items-center justify-between p-4 border-b border-cyan-400/15">
@@ -231,7 +275,7 @@ export const ProjectManagerModal = ({ isOpen, onClose }: ProjectManagerModalProp
 
             {/* Tabs */}
             <div className="flex border-b border-border/20">
-              {(['bunker', 'maps', 'chats', 'assets'] as Tab[]).map(t => (
+              {(['archive', 'maps', 'chats', 'assets'] as Tab[]).map(t => (
                 <button
                   key={t}
                   onClick={() => setTab(t)}
@@ -240,8 +284,8 @@ export const ProjectManagerModal = ({ isOpen, onClose }: ProjectManagerModalProp
                   }`}
                   style={tab === t ? { borderColor: '#22d3ee', color: '#22d3ee' } : {}}
                 >
-                  {t === 'bunker'
-                    ? 'Bunker'
+                  {t === 'archive'
+                    ? 'Archivero'
                     : t === 'maps'
                       ? 'Root Maps'
                       : t === 'chats'
@@ -251,9 +295,13 @@ export const ProjectManagerModal = ({ isOpen, onClose }: ProjectManagerModalProp
               ))}
             </div>
 
-            <div className={`flex-1 ${tab === 'maps' || tab === 'bunker' ? 'min-h-0 overflow-hidden' : 'overflow-y-auto p-4 space-y-2 scrollbar-thin'}`}>
-              {tab === 'bunker' ? (
-                <AppBunkerPanel isOpen={isOpen} />
+            <div className={`flex-1 ${tab === 'maps' || tab === 'archive' ? 'min-h-0 overflow-hidden' : 'overflow-y-auto p-4 space-y-2 scrollbar-thin'}`}>
+              {tab === 'archive' ? (
+                <ClientArchivePanel
+                  isOpen={isOpen}
+                  onOpenHistory={() => setTab('chats')}
+                  onOpenAssets={() => setTab('assets')}
+                />
               ) : tab === 'maps' ? (
                 <ProjectMindMapStudio isOpen={isOpen} />
               ) : (
@@ -263,13 +311,14 @@ export const ProjectManagerModal = ({ isOpen, onClose }: ProjectManagerModalProp
               ) : tab === 'chats' ? (
                 chats.length === 0 ? <p className="text-center text-muted-foreground/50 py-8 text-sm">No saved chats</p> :
                 chats.map(c => (
-                  <div key={c.project_id} className="flex items-center gap-3 p-3 rounded-xl bg-muted/20 border border-border/20">
+                  <div key={c.project_id} role="button" tabIndex={0} onClick={() => resumeChat(c)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') void resumeChat(c); }} className="w-full flex items-center gap-3 p-3 rounded-xl bg-muted/20 border border-border/20 text-left hover:border-cyan-300/40 hover:bg-cyan-300/8 transition-colors cursor-pointer">
                     <MessageSquare className="w-4 h-4 text-primary shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-foreground/90 truncate">{c.project_name}</p>
                       <p className="text-xs text-muted-foreground/50">{c.count} messages</p>
                     </div>
-                    <Button variant="ghost" size="icon" onClick={() => deleteChat(c.project_id)} className="h-7 w-7 text-destructive/60 hover:text-destructive">
+                    <Play className="w-3.5 h-3.5 text-emerald-300 shrink-0" />
+                    <Button variant="ghost" size="icon" onClick={(event) => { event.stopPropagation(); void deleteChat(c.project_id); }} className="h-7 w-7 text-destructive/60 hover:text-destructive">
                       <Trash2 className="w-3.5 h-3.5" />
                     </Button>
                   </div>

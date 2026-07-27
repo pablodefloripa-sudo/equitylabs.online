@@ -117,7 +117,7 @@ export const ToolsMenu = ({ onAfterSelect, variant = 'compact', open: openProp, 
         if (error) throw error;
         if (data?.error) throw new Error(data.error);
         window.dispatchEvent(new CustomEvent('eq:tool-result', {
-          detail: { tool: activeTool.label, model: data.model || 'gemini-2.5-flash', content: data.content }
+          detail: { tool: activeTool.label, model: data.model || 'qwen/qwen3-vl-8b-thinking', content: data.content }
         }));
       }
       closeAll();

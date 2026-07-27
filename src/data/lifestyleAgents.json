@@ -26,18 +26,10 @@
       "category": "Innovation",
       "badge": "ENTREPRENEURSHIP",
       "freeModels": [
-        "Llama 3.3",
-        "Gemma 4",
-        "Nemotron 3 Nano"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "Nemotron 3 Super",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -140,10 +132,10 @@
         ]
       },
       "engines": {
-        "free": "Llama 3.3 + Gemma 4 + Nemotron 3 Nano",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, Nemotron 3 Super, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -172,17 +164,10 @@
       "category": "Education",
       "badge": "CAREER",
       "freeModels": [
-        "DeepSeek R1",
-        "Llama 3.3"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "Nemotron 3 Super",
-        "GLM-5",
-        "Kimi K2.5",
-        "MiniMax M2.7",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -285,10 +270,10 @@
         ]
       },
       "engines": {
-        "free": "DeepSeek R1 + Llama 3.3",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, Nemotron 3 Super, GLM-5, Kimi K2.5, MiniMax M2.7, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -317,17 +302,10 @@
       "category": "Business",
       "badge": "BUSINESS",
       "freeModels": [
-        "Qwen3 Coder",
-        "Mistral Nemo"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "Nemotron 3 Super",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -430,10 +408,10 @@
         ]
       },
       "engines": {
-        "free": "Qwen3 Coder + Mistral Nemo",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, Nemotron 3 Super, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -462,16 +440,10 @@
       "category": "Creative",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "StepFun 3.5 Flash",
-        "Phi-3"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "MiniMax M2.7",
-        "Grok 4.1 Fast",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -566,10 +538,10 @@
         ]
       },
       "engines": {
-        "free": "StepFun 3.5 Flash + Phi-3",
-        "pro": "MiniMax M2.7"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "MiniMax M2.7, Grok 4.1 Fast, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -598,16 +570,10 @@
       "category": "Business",
       "badge": "BUSINESS",
       "freeModels": [
-        "Llama 3.3",
-        "Gemma 4"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Kimi K2.5",
-        "Grok 4.1 Fast",
-        "Nemotron 3 Super",
-        "GLM-5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -702,10 +668,10 @@
         ]
       },
       "engines": {
-        "free": "Llama 3.3 + Gemma 4",
-        "pro": "Kimi K2.5"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Kimi K2.5, Grok 4.1 Fast, Nemotron 3 Super, GLM-5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -734,17 +700,10 @@
       "category": "Career",
       "badge": "CAREER",
       "freeModels": [
-        "Arcee Trinity",
-        "Qwen2"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "Nemotron 3 Super",
-        "GLM-5",
-        "MiniMax M2.7",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -831,10 +790,10 @@
         ]
       },
       "engines": {
-        "free": "Arcee Trinity + Qwen2",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, Nemotron 3 Super, GLM-5, MiniMax M2.7, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -863,16 +822,10 @@
       "category": "Income",
       "badge": "BUSINESS",
       "freeModels": [
-        "MiMo-V2-Flash",
-        "DeepSeek R1"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "DeepSeek V3.2",
-        "Grok 4.1 Fast",
-        "GLM-5",
-        "Kimi K2.5",
-        "MiniMax M2.7",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -959,10 +912,10 @@
         ]
       },
       "engines": {
-        "free": "MiMo-V2-Flash + DeepSeek R1",
-        "pro": "DeepSeek V3.2"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "DeepSeek V3.2, Grok 4.1 Fast, GLM-5, Kimi K2.5, MiniMax M2.7, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -991,16 +944,10 @@
       "category": "Business",
       "badge": "BUSINESS",
       "freeModels": [
-        "tencent/hy3:free"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "Nemotron 3 Super",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -1087,10 +1034,10 @@
         ]
       },
       "engines": {
-        "free": "Z.ai GLM 4.5 Air + Llama 3.3",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, Nemotron 3 Super, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -1119,16 +1066,10 @@
       "category": "Finance",
       "badge": "BUSINESS",
       "freeModels": [
-        "Qwen3 Next",
-        "Mistral Nemo"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "GLM-5",
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -1231,10 +1172,10 @@
         ]
       },
       "engines": {
-        "free": "Qwen3 Next + Mistral Nemo",
-        "pro": "GLM-5"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "GLM-5, Grok 4.1 Fast, MiniMax M2.7, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -1263,16 +1204,10 @@
       "category": "Lifestyle",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "DeepSeek R1",
-        "Qwen2"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -1375,10 +1310,10 @@
         ]
       },
       "engines": {
-        "free": "DeepSeek R1 + Qwen2",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -1407,16 +1342,10 @@
       "category": "Lifestyle",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "DeepSeek R1",
-        "Mistral Nemo"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "GLM-5",
-        "MiniMax M2.7",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -1503,10 +1432,10 @@
         ]
       },
       "engines": {
-        "free": "DeepSeek R1 + Mistral Nemo",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, GLM-5, MiniMax M2.7, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -1535,16 +1464,10 @@
       "category": "Lifestyle",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "DeepSeek R1",
-        "Gemma 4"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -1647,10 +1570,10 @@
         ]
       },
       "engines": {
-        "free": "DeepSeek R1 + Gemma 4",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -1679,18 +1602,10 @@
       "category": "Tech",
       "badge": "ENTREPRENEURSHIP",
       "freeModels": [
-        "Llama 3.3",
-        "Gemma 4",
-        "Nemotron 3 Nano"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "Nemotron 3 Super",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -1793,10 +1708,10 @@
         ]
       },
       "engines": {
-        "free": "Llama 3.3 + Gemma 4 + Nemotron 3 Nano",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, Nemotron 3 Super, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -1825,16 +1740,10 @@
       "category": "Marketing",
       "badge": "BUSINESS",
       "freeModels": [
-        "Llama 3.3",
-        "Gemma 4"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -1937,10 +1846,10 @@
         ]
       },
       "engines": {
-        "free": "Llama 3.3 + Gemma 4",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -1969,16 +1878,10 @@
       "category": "Marketing",
       "badge": "BUSINESS",
       "freeModels": [
-        "DeepSeek R1",
-        "Qwen2"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -2081,10 +1984,10 @@
         ]
       },
       "engines": {
-        "free": "DeepSeek R1 + Qwen2",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -2113,16 +2016,10 @@
       "category": "Marketing",
       "badge": "BUSINESS",
       "freeModels": [
-        "DeepSeek R1",
-        "Qwen2"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -2225,10 +2122,10 @@
         ]
       },
       "engines": {
-        "free": "DeepSeek R1 + Qwen2",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -2257,16 +2154,10 @@
       "category": "Health",
       "badge": "WELLNESS",
       "freeModels": [
-        "DeepSeek R1",
-        "Qwen2"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -2369,10 +2260,10 @@
         ]
       },
       "engines": {
-        "free": "DeepSeek R1 + Qwen2",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -2401,16 +2292,10 @@
       "category": "Finance",
       "badge": "BUSINESS",
       "freeModels": [
-        "Qwen3 Next",
-        "Mistral Nemo"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -2513,10 +2398,10 @@
         ]
       },
       "engines": {
-        "free": "Qwen3 Next + Mistral Nemo",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -2545,16 +2430,10 @@
       "category": "Personal",
       "badge": "CAREER",
       "freeModels": [
-        "Llama 3.3",
-        "Gemma 4"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -2657,10 +2536,10 @@
         ]
       },
       "engines": {
-        "free": "Llama 3.3 + Gemma 4",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -2689,16 +2568,10 @@
       "category": "Finance",
       "badge": "BUSINESS",
       "freeModels": [
-        "Qwen3 Next",
-        "Mistral Nemo"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -2801,10 +2674,10 @@
         ]
       },
       "engines": {
-        "free": "Qwen3 Next + Mistral Nemo",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -2833,16 +2706,10 @@
       "category": "Education",
       "badge": "CAREER",
       "freeModels": [
-        "StepFun 3.5 Flash",
-        "DeepSeek R1"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -2945,10 +2812,10 @@
         ]
       },
       "engines": {
-        "free": "StepFun 3.5 Flash + DeepSeek R1",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -2977,16 +2844,10 @@
       "category": "Lifestyle",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "DeepSeek R1",
-        "StepFun 3.5 Flash"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -3081,10 +2942,10 @@
         ]
       },
       "engines": {
-        "free": "DeepSeek R1 + StepFun 3.5 Flash",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -3113,18 +2974,10 @@
       "category": "Tech",
       "badge": "ENTREPRENEURSHIP",
       "freeModels": [
-        "Gemini 2.5 Flash",
-        "Llama 3.3",
-        "Nemotron 3 Nano"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "Nemotron 3 Super",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -3227,10 +3080,10 @@
         ]
       },
       "engines": {
-        "free": "Gemini 2.5 Flash + Llama 3.3 + Nemotron 3 Nano",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, Nemotron 3 Super, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -3259,16 +3112,10 @@
       "category": "Creative",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "Llama 3.3",
-        "DeepSeek R1"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -3371,10 +3218,10 @@
         ]
       },
       "engines": {
-        "free": "Llama 3.3 + DeepSeek R1",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -3403,16 +3250,10 @@
       "category": "Health",
       "badge": "WELLNESS",
       "freeModels": [
-        "Qwen3 Next",
-        "StepFun 3.5 Flash"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -3515,10 +3356,10 @@
         ]
       },
       "engines": {
-        "free": "Qwen3 Next + StepFun 3.5 Flash",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -3547,16 +3388,10 @@
       "category": "Marketing",
       "badge": "BUSINESS",
       "freeModels": [
-        "Arcee Trinity",
-        "DeepSeek R1"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -3659,10 +3494,10 @@
         ]
       },
       "engines": {
-        "free": "Arcee Trinity + DeepSeek R1",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -3691,16 +3526,10 @@
       "category": "Lifestyle",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "Z.ai GLM 4.5 Air",
-        "Llama 3.3"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -3803,10 +3632,10 @@
         ]
       },
       "engines": {
-        "free": "Z.ai GLM 4.5 Air + Llama 3.3",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -3835,17 +3664,10 @@
       "category": "Tech",
       "badge": "ENTREPRENEURSHIP",
       "freeModels": [
-        "MiMo-V2-Flash",
-        "StepFun 3.5 Flash"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "Nemotron 3 Super",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -3948,10 +3770,10 @@
         ]
       },
       "engines": {
-        "free": "MiMo-V2-Flash + StepFun 3.5 Flash",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, Nemotron 3 Super, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -3980,16 +3802,10 @@
       "category": "Creative",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "Devstral 2",
-        "DeepSeek R1"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -4092,10 +3908,10 @@
         ]
       },
       "engines": {
-        "free": "Devstral 2 + DeepSeek R1",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -4124,16 +3940,10 @@
       "category": "Health",
       "badge": "WELLNESS",
       "freeModels": [
-        "Qwen3 Coder",
-        "Gemini 2.5 Flash"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -4236,10 +4046,10 @@
         ]
       },
       "engines": {
-        "free": "Qwen3 Coder + Gemini 2.5 Flash",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -4268,16 +4078,10 @@
       "category": "Creative",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "DeepSeek R1",
-        "StepFun 3.5 Flash"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -4380,10 +4184,10 @@
         ]
       },
       "engines": {
-        "free": "DeepSeek R1 + StepFun 3.5 Flash",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -4412,16 +4216,10 @@
       "category": "Creative",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "StepFun 3.5 Flash",
-        "Qwen3 Next"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -4524,10 +4322,10 @@
         ]
       },
       "engines": {
-        "free": "StepFun 3.5 Flash + Qwen3 Next",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -4556,16 +4354,10 @@
       "category": "Personal",
       "badge": "CAREER",
       "freeModels": [
-        "Gemini 2.5 Flash",
-        "Llama 3.3"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -4668,10 +4460,10 @@
         ]
       },
       "engines": {
-        "free": "Gemini 2.5 Flash + Llama 3.3",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -4700,16 +4492,10 @@
       "category": "Lifestyle",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "Llama 3.3",
-        "DeepSeek R1"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -4812,10 +4598,10 @@
         ]
       },
       "engines": {
-        "free": "Llama 3.3 + DeepSeek R1",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -4844,16 +4630,10 @@
       "category": "Creative",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "Qwen3 Next",
-        "Arcee Trinity"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -4956,10 +4736,10 @@
         ]
       },
       "engines": {
-        "free": "Qwen3 Next + Arcee Trinity",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -4988,16 +4768,10 @@
       "category": "Health",
       "badge": "WELLNESS",
       "freeModels": [
-        "Arcee Trinity",
-        "Qwen3 Next"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -5100,10 +4874,10 @@
         ]
       },
       "engines": {
-        "free": "Arcee Trinity + Qwen3 Next",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -5132,16 +4906,10 @@
       "category": "Business",
       "badge": "BUSINESS",
       "freeModels": [
-        "Z.ai GLM 4.5 Air",
-        "DeepSeek R1"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -5244,10 +5012,10 @@
         ]
       },
       "engines": {
-        "free": "Z.ai GLM 4.5 Air + DeepSeek R1",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -5276,16 +5044,10 @@
       "category": "Creative",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "MiMo-V2-Flash",
-        "StepFun 3.5 Flash"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -5388,10 +5150,10 @@
         ]
       },
       "engines": {
-        "free": "MiMo-V2-Flash + StepFun 3.5 Flash",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -5420,16 +5182,10 @@
       "category": "Lifestyle",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "Devstral 2",
-        "Llama 3.3"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -5532,10 +5288,10 @@
         ]
       },
       "engines": {
-        "free": "Devstral 2 + Llama 3.3",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -5564,16 +5320,10 @@
       "category": "Lifestyle",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "Qwen3 Coder",
-        "Gemini 2.5 Flash"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -5676,10 +5426,10 @@
         ]
       },
       "engines": {
-        "free": "Qwen3 Coder + Gemini 2.5 Flash",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     },
     {
@@ -5708,17 +5458,10 @@
       "category": "Equity",
       "badge": "BUSINESS",
       "freeModels": [
-        "Llama 3.3",
-        "Nemotron 3 Nano"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "proModels": [
-        "Grok 4.1 Fast",
-        "Nemotron 3 Super",
-        "MiniMax M2.7",
-        "GLM-5",
-        "Kimi K2.5",
-        "DeepSeek V3.2",
-        "Claude Sonnet 4.6"
+        "qwen/qwen3-vl-8b-thinking"
       ],
       "freeTasks": {
         "en": [
@@ -5821,10 +5564,10 @@
         ]
       },
       "engines": {
-        "free": "Llama 3.3 + Nemotron 3 Nano",
-        "pro": "Grok 4.1 Fast"
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
       },
-      "proStack": "Grok 4.1 Fast, Nemotron 3 Super, MiniMax M2.7, GLM-5, Kimi K2.5, DeepSeek V3.2, Claude Sonnet 4.6",
+      "proStack": "qwen/qwen3-vl-8b-thinking",
       "isPro": true
     }
   ],

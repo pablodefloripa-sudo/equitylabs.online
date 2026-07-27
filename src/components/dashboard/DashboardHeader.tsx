@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link2, LogOut, Search, ZoomIn, ZoomOut, Crown, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage, getLanguageName, type Language } from '@/hooks/useLanguage';
+import { HEADER_UI_COPY } from './dashboardI18n';
 
 interface DashboardHeaderProps {
   onOpenDocs?: () => void;
@@ -23,8 +24,9 @@ export const DashboardHeader = ({
   onFocusConsole,
   onOpenSubscriptions,
 }: DashboardHeaderProps = {}) => {
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const [langOpen, setLangOpen] = useState(false);
+  const headerCopy = HEADER_UI_COPY[language];
 
   const languageOptions: Array<{ code: Language; flag: string }> = [
     { code: 'EN', flag: '🇺🇸' },
@@ -60,16 +62,16 @@ export const DashboardHeader = ({
             onClick={onOpenSubscriptions}
           >
             <Crown className="w-4 h-4" />
-            Suscripciones
+            {headerCopy.subscriptions}
           </Button>
           <Button variant="ghost" size="sm" className="text-sm" onClick={onOpenDocs}>
-            Mis Documentos
+            {t('nav.docs')}
           </Button>
           <Button variant="ghost" size="sm" className="text-sm" onClick={onSettings}>
-            Ajustes
+            {t('nav.settings')}
           </Button>
           <Button variant="ghost" size="sm" className="text-sm" onClick={onHistory}>
-            Historial
+            {t('nav.history')}
           </Button>
         </div>
 
@@ -83,7 +85,7 @@ export const DashboardHeader = ({
                 window.dispatchEvent(new CustomEvent('eq:open-task-panel'));
                 onFocusConsole?.();
               }}
-              title="Abrir hoja de ruta"
+              title={headerCopy.openRoadmap}
             >
               <Search className="w-4 h-4" />
             </Button>
@@ -95,7 +97,7 @@ export const DashboardHeader = ({
                 window.dispatchEvent(new CustomEvent('eq:response-zoom-in'));
                 window.dispatchEvent(new CustomEvent('eq:task-panel-zoom-in'));
               }}
-              title="Agrandar hoja de ruta"
+              title={headerCopy.zoomIn}
             >
               <ZoomIn className="w-4 h-4" />
             </Button>
@@ -107,17 +109,23 @@ export const DashboardHeader = ({
                 window.dispatchEvent(new CustomEvent('eq:response-zoom-out'));
                 window.dispatchEvent(new CustomEvent('eq:task-panel-zoom-out'));
               }}
-              title="Achicar hoja de ruta"
+              title={headerCopy.zoomOut}
             >
               <ZoomOut className="w-4 h-4" />
             </Button>
           </div>
 
-          <Button variant="ghost" size="icon" className="h-9 w-9" onClick={onOpenIntegrations}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9"
+            onClick={onOpenIntegrations}
+            title={t('nav.integrations')}
+          >
             <Link2 className="w-5 h-5" />
           </Button>
 
-          <Button variant="ghost" size="icon" className="h-9 w-9" onClick={onExit} title="Salir">
+          <Button variant="ghost" size="icon" className="h-9 w-9" onClick={onExit} title={t('nav.exit')}>
             <LogOut className="w-5 h-5" />
           </Button>
 

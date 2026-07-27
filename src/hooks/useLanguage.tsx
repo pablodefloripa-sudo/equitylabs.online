@@ -1,7 +1,8 @@
-import React, { useState, useCallback, createContext, useContext, ReactNode } from 'react';
+import React, { useState, useCallback, createContext, useContext, ReactNode, useEffect } from 'react';
 import { getBrowserLandingLang, getStoredLandingLang } from '@/components/landing/landingContent';
 
 export type Language = 'EN' | 'ES' | 'PT' | 'DE' | 'IT' | 'FR' | 'NL' | 'PL';
+const APP_LANGUAGES: Language[] = ['EN', 'ES', 'PT', 'DE', 'IT', 'FR', 'NL', 'PL'];
 
 interface LanguageContextType {
   language: Language;
@@ -52,6 +53,14 @@ const mapAppLanguageToLandingLang = (lang: Language): string => {
       return 'en';
   }
 };
+
+const normalizeAppLanguage = (value: string | null | undefined): Language | null => {
+  if (!value) return null;
+  const upper = value.trim().toUpperCase();
+  return APP_LANGUAGES.includes(upper as Language) ? upper as Language : null;
+};
+
+export const toApiLanguage = (lang: Language): string => mapAppLanguageToLandingLang(lang);
 
 // Common keys for sidebars (Metrics + Dashboard) and Operative Order
 const sidebarKeys = {
@@ -472,20 +481,35 @@ interface LanguageProviderProps {
 export function LanguageProvider({ children }: LanguageProviderProps) {
   const [language, setLanguageState] = useState<Language>(() => {
     const saved = localStorage.getItem('app_language');
-    if (saved) return saved as Language;
+    const savedLanguage = normalizeAppLanguage(saved);
+    if (savedLanguage) return savedLanguage;
 
     const landingLang = getStoredLandingLang() || getBrowserLandingLang();
     return mapLandingLangToAppLanguage(landingLang);
   });
 
   const setLanguage = useCallback((lang: Language) => {
-    setLanguageState(lang);
-    localStorage.setItem('app_language', lang);
-    localStorage.setItem('eq_landing_lang', mapAppLanguageToLandingLang(lang));
+    const next = normalizeAppLanguage(lang) || 'ES';
+    setLanguageState(next);
+    localStorage.setItem('app_language', next);
+    localStorage.setItem('eq_landing_lang', mapAppLanguageToLandingLang(next));
+  }, []);
+
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key !== 'app_language' || !event.newValue) return;
+      const next = normalizeAppLanguage(event.newValue);
+      if (!next) return;
+      setLanguageState(next);
+      localStorage.setItem('eq_landing_lang', mapAppLanguageToLandingLang(next));
+    };
+
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
   const t = useCallback((key: string): string => {
-    return translations[language][key] || key;
+    return translations[language]?.[key] || translations.ES[key] || key;
   }, [language]);
 
   const value: LanguageContextType = { language, setLanguage, t };

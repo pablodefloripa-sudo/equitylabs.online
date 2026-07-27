@@ -88,6 +88,7 @@ interface Props {
 }
 
 const ACTIVE_AGENT_STORAGE_KEY = 'eq_active_agent_context';
+const SINGLE_AGENT_ENGINE = 'qwen/qwen3-vl-8b-thinking';
 
 type Agent = {
   id: string | number;
@@ -105,6 +106,7 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const navigate = useNavigate();
+  const viewportRef = useRef<HTMLDivElement>(null);
   const agents = data.agents as Agent[];
   const activeLang = resolveLandingLang(lang);
   const phrases = (data.heroPhrase as Record<string, string[]>)[activeLang] || data.heroPhrase.en;
@@ -127,6 +129,10 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
     };
   }, [resetAuto]);
 
+  useEffect(() => {
+    viewportRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [activeIndex, activeLang]);
+
   const go = (dir: number) => {
     setActiveIndex((previous) => (previous + dir + agents.length) % agents.length);
     resetAuto();
@@ -140,7 +146,7 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
     const persistedAgent = {
       id: String(agent.id),
       name,
-      engine: agent.freeModels?.[0] || 'modelo disponible',
+      engine: SINGLE_AGENT_ENGINE,
       tasks: freeTasks,
       selectedAt: new Date().toISOString(),
     };
@@ -157,7 +163,7 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
     const persistedAgent = {
       id: String(agent.id),
       name,
-      engine: agent.proModels?.[0] || agent.freeModels?.[0] || 'modelo disponible',
+      engine: SINGLE_AGENT_ENGINE,
       tasks,
       selectedAt: new Date().toISOString(),
     };
@@ -174,12 +180,15 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
   };
 
   const visible = getVisible();
-  const heroBandHeight = `${Math.max(16, Number((24 - Math.max(0, visualScale - 1) * 10).toFixed(2)))}vh`;
-  const heroBandMinHeight = `${Math.max(108, Number((168 - Math.max(0, visualScale - 1) * 86).toFixed(0)))}px`;
-  const heroBottomOffset = `${Math.max(8, Number((24 - Math.max(0, visualScale - 1) * 18).toFixed(0)))}px`;
+  const heroBandHeight = '24vh';
+  const heroBandMinHeight = '168px';
+  const heroBottomOffset = '24px';
 
   return (
-    <div className="flex h-screen w-full flex-col overflow-hidden relative pb-[38px]">
+    <div
+      ref={viewportRef}
+      className="relative flex min-h-screen w-full flex-col overflow-x-hidden overflow-y-auto pb-[38px]"
+    >
       <div
         className="pointer-events-none relative z-0 flex items-start justify-center"
         style={{
@@ -197,7 +206,7 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
       </div>
 
       <div className="relative z-20 flex min-h-0 flex-1 flex-col items-center justify-center px-4">
-        <div className="relative flex h-full min-h-[500px] w-full max-w-7xl items-center justify-center">
+        <div className="relative flex min-h-[500px] w-full max-w-7xl items-center justify-center pb-4">
           <AnimatePresence mode="popLayout">
             {visible.map((idx, pos) => {
               const agent = agents[idx];
@@ -215,7 +224,7 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
               const freeTasks: string[] = freeTasksMap[activeLang] || freeTasksMap.en || [];
               const proTasks: string[] = proTasksMap[activeLang] || proTasksMap.en || [];
               const baseScale = isCenter ? visualScale : 0.56 - Math.abs(offset) * 0.04;
-              const finalScale = isHovered ? baseScale * 1.06 : baseScale;
+              const finalScale = baseScale;
 
               return (
                 <motion.div
@@ -237,23 +246,23 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
                 >
                   <div
                     className={[
-                      'w-[min(92vw,472px)] md:w-[min(95vw,1180px)] overflow-hidden rounded-lg border backdrop-blur-xl transition-all duration-500',
+                      'w-full overflow-hidden rounded-lg border transition-all duration-500',
                       isCenter
-                        ? 'bg-black/50 border-cyan-400/30'
+                        ? 'border-cyan-300/45 bg-[#092733]/90'
                         : isHovered
-                          ? 'bg-black/50 border-yellow-300/45'
-                          : 'bg-black/30 border-white/5',
+                          ? 'border-yellow-300/45 bg-[#0b2029]/85'
+                          : 'border-white/8 bg-[#071820]/78',
                     ].join(' ')}
                     style={
                       isCenter
-                        ? { boxShadow: '0 0 25px rgba(34,211,238,0.15)' }
+                        ? { boxShadow: '0 0 24px rgba(34,211,238,0.18)', width: 'min(92vw, 1080px)' }
                         : isHovered
                           ? { boxShadow: '0 0 34px rgba(250,204,21,0.22)' }
                           : undefined
                     }
                   >
-                    <div className="p-4 pb-4 sm:p-5 sm:pb-4">
-                      <div className="mb-3 flex items-center gap-3 border-b border-cyan-300/10 pb-3">
+                    <div className="p-3 pb-3 sm:p-3.5 sm:pb-3">
+                      <div className="mb-2 flex items-center gap-3 border-b border-cyan-300/15 pb-2">
                         <div
                           className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-xl ${
                             isCenter ? 'bg-cyan-400/15 text-cyan-200 border border-cyan-300/35' : 'bg-white/5 text-muted-foreground'
@@ -266,7 +275,7 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
                             <span className={`font-mono ${isCenter ? 'text-[15px] md:text-[16px] text-cyan-200/90' : 'text-[11px] text-yellow-200/78'}`}>
                               #{String(agent.numId || idx + 1).padStart(2, '0')}
                             </span>
-                            <h3 className={`truncate font-display font-bold ${isCenter ? 'text-[26px] md:text-[30px] text-white' : 'text-[18px] md:text-[1.3rem] text-slate-300/85'}`}>
+                            <h3 className={`truncate font-display font-bold ${isCenter ? 'text-[22px] md:text-[25px] text-white' : 'text-[18px] md:text-[1.3rem] text-slate-300/85'}`}>
                               {name}
                             </h3>
                           </div>
@@ -276,44 +285,44 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
                         </div>
                       </div>
 
-                      <p className={`mb-4 line-clamp-3 ${isCenter ? 'text-[17px] md:text-[19px] leading-[1.38] text-cyan-50/88' : 'text-[14px] md:text-[15px] leading-relaxed text-slate-300/68'}`}>
+                      <p className={`mb-2 line-clamp-2 ${isCenter ? 'text-[14px] md:text-[15px] leading-[1.3] text-cyan-50/88' : 'text-[14px] md:text-[15px] leading-relaxed text-slate-300/68'}`}>
                         {mission}
                       </p>
 
                       {isCenter ? (
-                        <div className="grid gap-4 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-                          <div className="flex h-full flex-col rounded-lg border border-emerald-300/25 bg-emerald-300/10 p-4">
+                        <div className="grid gap-2 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+                          <div className="flex h-full flex-col rounded-lg border border-emerald-300/30 bg-emerald-300/10 p-3">
                             <div className="mb-3 flex flex-wrap items-center gap-2">
-                              <span className="rounded bg-emerald-300/18 px-3 py-1 text-[16px] md:text-[18px] font-bold tracking-wider text-emerald-100">
+                              <span className="rounded bg-emerald-300/18 px-2.5 py-1 text-[12px] md:text-[13px] font-bold tracking-wider text-emerald-100">
                                 {planCopy.trialLabel}
                               </span>
-                              <span className="rounded-full border border-cyan-300/18 px-3 py-1 text-[16px] md:text-[18px] font-semibold tracking-wide text-cyan-50/90">
+                              <span className="rounded-full border border-cyan-300/25 px-2.5 py-1 text-[12px] md:text-[13px] font-semibold tracking-wide text-cyan-50/90">
                                 {planCopy.freeLabel}
                               </span>
-                              <span className="truncate font-mono text-[14px] md:text-[15px] text-emerald-50/85">{freeModels.join(' - ')}</span>
+                              <span className="truncate font-mono text-[10px] md:text-[11px] text-emerald-50/85">{freeModels.join(' - ')}</span>
                             </div>
 
-                            <ul className="space-y-2.5">
+                            <ul className="space-y-1.5">
                               {freeTasks.map((task, index) => (
-                                <li key={index} className="flex gap-2 text-[16px] md:text-[17px] leading-[1.24] text-emerald-50/90">
+                                <li key={index} className="flex gap-2 text-[12px] md:text-[13px] leading-[1.22] text-emerald-50/90">
                                   <span className="shrink-0 text-cyan-100/90">{'>'}</span>
                                   <span>{task}</span>
                                 </li>
                               ))}
                             </ul>
 
-                            <div className="mt-auto grid gap-2 pt-4 sm:grid-cols-3">
+                            <div className="mt-auto grid gap-1.5 pt-3 sm:grid-cols-3">
                               {planCopy.freeHighlights.map((item, index) => {
                                 const accent = accentCards[index % accentCards.length];
                                 return (
                                 <div
                                   key={item.title}
-                                  className={`flex h-full flex-col rounded-lg border px-3 py-3 ${accent.border} ${accent.bg}`}
+                                  className={`flex h-full flex-col rounded-lg border px-2 py-2 ${accent.border} ${accent.bg}`}
                                 >
-                                  <p className={`text-[13px] md:text-[14px] font-semibold uppercase tracking-[0.12em] ${accent.title}`}>
+                                    <p className={`text-[9px] md:text-[10px] font-semibold uppercase tracking-[0.1em] ${accent.title}`}>
                                     {item.title}
                                   </p>
-                                  <p className={`mt-1.5 text-[13px] md:text-[14px] leading-[1.3] ${accent.body}`}>
+                                    <p className={`mt-1 text-[10px] md:text-[11px] leading-[1.25] ${accent.body}`}>
                                     {item.detail}
                                   </p>
                                 </div>
@@ -322,32 +331,32 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
                             </div>
                           </div>
 
-                          <div className="flex h-full flex-col rounded-lg border border-cyan-300/25 bg-cyan-300/10 p-4">
-                            <div className="mb-3 flex flex-wrap items-center gap-2">
-                              <span className="rounded bg-cyan-300/18 px-3 py-1 text-[16px] md:text-[18px] font-bold tracking-wider text-cyan-100">
+                          <div className="flex h-full flex-col rounded-lg border border-cyan-300/30 bg-cyan-300/10 p-3">
+                            <div className="mb-2 flex flex-wrap items-center gap-2">
+                              <span className="rounded bg-cyan-300/18 px-2.5 py-1 text-[12px] md:text-[13px] font-bold tracking-wider text-cyan-100">
                                 {planCopy.paidLabel}
                               </span>
-                              <span className="truncate font-mono text-[14px] md:text-[15px] text-cyan-50/90">
+                              <span className="truncate font-mono text-[10px] md:text-[11px] text-cyan-50/90">
                                 {proModels.slice(0, 4).join(' - ')}
                                 {proModels.length > 4 ? ' ...' : ''}
                               </span>
                             </div>
 
-                            <ul className="grid gap-x-4 gap-y-2 xl:grid-cols-2">
+                            <ul className="grid gap-x-4 gap-y-1.5 xl:grid-cols-2">
                               {proTasks.map((task, index) => (
-                                <li key={index} className="flex gap-2 text-[16px] md:text-[17px] leading-[1.24] text-cyan-50/92">
+                                <li key={index} className="flex gap-2 text-[12px] md:text-[13px] leading-[1.22] text-cyan-50/92">
                                   <span className={index % 4 === 0 ? 'shrink-0 text-cyan-200' : index % 4 === 1 ? 'shrink-0 text-emerald-200' : index % 4 === 2 ? 'shrink-0 text-yellow-200' : 'shrink-0 text-red-200'}>*</span>
                                   <span>{task}</span>
                                 </li>
                               ))}
                             </ul>
 
-                            <div className="mt-auto flex flex-wrap gap-2 pt-4">
+                            <div className="mt-auto flex flex-wrap gap-1.5 pt-3">
                               {planCopy.paidHighlights.map((item, index) => (
                                 <span
                                   key={item}
                                   className={[
-                                    'rounded-md border px-3 py-1.5 text-[14px] md:text-[15px] font-semibold tracking-wide',
+                                    'rounded-md border px-2.5 py-1 text-[10px] md:text-[11px] font-semibold tracking-wide',
                                     index === 0
                                       ? 'border-cyan-300/25 bg-cyan-300/10 text-cyan-100/90'
                                       : index === 1
@@ -379,17 +388,17 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
                       <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex flex-col gap-2 px-4 pb-4 sm:flex-row sm:px-5"
+                        className="flex flex-col gap-2 px-3 pb-3 sm:flex-row sm:px-3"
                       >
                         <button
                           onClick={handleFree}
-                          className="flex-1 rounded-lg border border-emerald-300/40 bg-emerald-300/15 py-3 text-[14px] md:text-[15px] font-bold uppercase tracking-[0.16em] text-emerald-100 transition-all hover:bg-emerald-300/25"
+                          className="flex-1 rounded-lg border border-emerald-300/40 bg-emerald-300/15 py-2 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.16em] text-emerald-100 transition-all hover:bg-emerald-300/25"
                         >
                           {planCopy.freeCta}
                         </button>
                         <button
                           onClick={handleUpgrade}
-                          className="flex-1 rounded-lg border border-cyan-300/70 bg-black/45 py-3 text-[14px] md:text-[15px] font-bold uppercase tracking-[0.16em] text-cyan-100 transition-all hover:border-yellow-200/70 hover:text-yellow-100"
+                          className="flex-1 rounded-lg border border-cyan-300/70 bg-black/45 py-2 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.16em] text-cyan-100 transition-all hover:border-yellow-200/70 hover:text-yellow-100"
                           style={{ boxShadow: '0 0 18px rgba(34,211,238,0.4), inset 0 0 12px rgba(34,211,238,0.08)' }}
                         >
                           <span className="flex items-center justify-center gap-1">{planCopy.upgradeCta}</span>

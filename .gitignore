@@ -18,6 +18,11 @@ secrets-backup*/
 dist/
 dist-ssr/
 
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
 # Nested local clones / legacy copies
 Equidaddistribuida/
 EquityLabs20261/

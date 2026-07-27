@@ -16,7 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const STORAGE_KEY = 'eq_project_mindmaps_v1';
 const ACTIVE_AGENT_STORAGE_KEY = 'eq_active_agent_context';
-const DEFAULT_ENGINE = 'tencent/hy3:free';
+const DEFAULT_ENGINE = 'qwen/qwen3-vl-8b-thinking';
 
 type MapMode = 'private' | 'client';
 
@@ -332,7 +332,7 @@ const buildContext = (
   return {
     agentId: agent?.id || 'equitylabs-core',
     agentName: agent?.name || 'EquityLabs Core',
-    agentEngine: agent?.engine || DEFAULT_ENGINE,
+    agentEngine: DEFAULT_ENGINE,
     agentTasks: Array.isArray(agent?.tasks) ? agent.tasks : [],
     subscriptionPlan: subscription?.displayPlan || subscription?.tier || 'FREE',
     userName,

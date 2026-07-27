@@ -1,60 +1,17 @@
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/hooks/useLanguage';
+import mascotImage from '@/assets/mascot/assistant-dog.png';
 
 interface MascotGreetingProps {
   onPickTask?: (task: string) => void;
 }
 
-const JackRussell = () => (
-  // Stylized SVG of a Jack Russell Terrier (white & tan), with gentle tail wag
-  <svg viewBox="0 0 220 180" className="w-32 h-28">
-    <defs>
-      <radialGradient id="bodyG" cx="50%" cy="40%" r="60%">
-        <stop offset="0%" stopColor="#fafafa" />
-        <stop offset="100%" stopColor="#d8d4cc" />
-      </radialGradient>
-    </defs>
-    {/* tail (wagging) */}
-    <motion.g
-      style={{ originX: '170px', originY: '95px' }}
-      animate={{ rotate: [-15, 25, -15] }}
-      transition={{ duration: 0.6, repeat: Infinity, ease: 'easeInOut' }}
-    >
-      <path d="M165 95 q20 -25 28 -8 q-12 8 -22 18 z" fill="url(#bodyG)" stroke="#a89b85" strokeWidth="1" />
-    </motion.g>
-    {/* body */}
-    <ellipse cx="110" cy="115" rx="55" ry="32" fill="url(#bodyG)" stroke="#a89b85" strokeWidth="1.2" />
-    {/* tan patch on back */}
-    <path d="M85 95 q25 -18 55 5 q-10 12 -30 12 q-18 0 -25 -17z" fill="#c89567" opacity="0.85" />
-    {/* legs */}
-    <rect x="78" y="138" width="10" height="22" rx="4" fill="url(#bodyG)" stroke="#a89b85" strokeWidth="0.8" />
-    <rect x="132" y="138" width="10" height="22" rx="4" fill="url(#bodyG)" stroke="#a89b85" strokeWidth="0.8" />
-    {/* head */}
-    <ellipse cx="60" cy="80" rx="34" ry="30" fill="url(#bodyG)" stroke="#a89b85" strokeWidth="1.2" />
-    {/* tan ears + face mask */}
-    <path d="M40 55 q-8 18 4 32 q8 -6 8 -22 z" fill="#c89567" />
-    <path d="M82 55 q10 16 0 34 q-10 -8 -10 -22 z" fill="#c89567" />
-    <path d="M45 78 q15 -14 32 0 q-4 18 -16 18 q-12 0 -16 -18z" fill="#c89567" opacity="0.7" />
-    {/* snout */}
-    <ellipse cx="38" cy="92" rx="14" ry="10" fill="#fafafa" stroke="#a89b85" strokeWidth="0.8" />
-    {/* nose */}
-    <ellipse cx="27" cy="89" rx="4" ry="3" fill="#1a1a1a" />
-    {/* eyes */}
-    <motion.circle cx="55" cy="78" r="2.6" fill="#1a1a1a"
-      animate={{ scaleY: [1, 0.1, 1] }} transition={{ duration: 0.25, repeat: Infinity, repeatDelay: 3 }} />
-    <motion.circle cx="72" cy="78" r="2.6" fill="#1a1a1a"
-      animate={{ scaleY: [1, 0.1, 1] }} transition={{ duration: 0.25, repeat: Infinity, repeatDelay: 3 }} />
-    {/* mouth */}
-    <path d="M30 96 q6 6 14 4" stroke="#1a1a1a" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-    <path d="M27 92 q-3 6 2 9" stroke="#1a1a1a" strokeWidth="1" fill="none" strokeLinecap="round" />
-  </svg>
-);
-
 export const MascotGreeting = ({ onPickTask }: MascotGreetingProps) => {
   const { language } = useLanguage();
 
   type Lang = 'es' | 'en' | 'pt' | 'fr' | 'de' | 'it' | 'zh' | 'ja';
-  const lang = (['es','en','pt','fr','de','it','zh','ja'].includes(language) ? language : 'es') as Lang;
+  const normalizedLanguage = language.toLowerCase();
+  const lang = (['es','en','pt','fr','de','it','zh','ja'].includes(normalizedLanguage) ? normalizedLanguage : 'en') as Lang;
 
   const copy: Record<Lang, { hello: string; intro: string; tasks: string[] }> = {
     es: {
@@ -92,11 +49,15 @@ export const MascotGreeting = ({ onPickTask }: MascotGreetingProps) => {
       className="w-full rounded-2xl border border-cyan-400/30 bg-black/70 backdrop-blur-xl p-4 flex gap-4 items-start"
     >
       <motion.div
-        animate={{ y: [0, -4, 0] }}
-        transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-        className="shrink-0"
+        animate={{ y: [0, -4, 0], rotate: [0, -1, 1, 0] }}
+        transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+        className="shrink-0 relative"
       >
-        <JackRussell />
+        <img
+          src={mascotImage}
+          alt="Mascota asistente"
+          className="w-32 h-32 rounded-2xl object-cover object-center border border-cyan-300/25 shadow-[0_0_24px_rgba(34,211,238,0.18)]"
+        />
       </motion.div>
       <div className="flex-1 min-w-0">
         <p className="text-sm text-cyan-200 font-semibold tracking-wide">{c.hello}</p>

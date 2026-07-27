@@ -1,4 +1,3 @@
-import { GoogleGenerativeAI } from "https://esm.sh/@google/generative-ai@0.24.1";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 export type SubscriptionPlanKey =
@@ -36,7 +35,7 @@ export interface UserPlanState {
 
 export interface ChatMessage {
   role: string;
-  content: string;
+  content: string | Array<Record<string, unknown>>;
 }
 
 export type PaidProviderName = 'openrouter' | 'gateway';
@@ -46,7 +45,7 @@ export interface AIProviderResult {
     choices?: Array<{ message?: { content?: string } }>;
     usage?: unknown;
     model?: string;
-    provider?: PaidProviderName | 'google-free-tier';
+    provider?: PaidProviderName;
     requestedModel?: string;
   };
   error?: string;
@@ -55,111 +54,38 @@ export interface AIProviderResult {
 
 export const LOVABLE_AI_GATEWAY_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 export const OPENROUTER_CHAT_URL = 'https://openrouter.ai/api/v1/chat/completions';
-export const OPENROUTER_FALLBACK_MODEL = Deno.env.get('OPENROUTER_FALLBACK_MODEL') || 'openai/gpt-4o-mini';
+export const EQUITYLABS_PRIMARY_MODEL = 'qwen/qwen3-vl-8b-thinking';
+export const OPENROUTER_FALLBACK_MODEL = EQUITYLABS_PRIMARY_MODEL;
+
+const SINGLE_MODEL_AGENTS: Record<AgentKey, string> = {
+  orquestador: EQUITYLABS_PRIMARY_MODEL,
+  analista: EQUITYLABS_PRIMARY_MODEL,
+  escritor: EQUITYLABS_PRIMARY_MODEL,
+  investigador: EQUITYLABS_PRIMARY_MODEL,
+  desarrollador: EQUITYLABS_PRIMARY_MODEL,
+  disenador: EQUITYLABS_PRIMARY_MODEL,
+  revisor: EQUITYLABS_PRIMARY_MODEL,
+  asistente: EQUITYLABS_PRIMARY_MODEL,
+  architect: EQUITYLABS_PRIMARY_MODEL,
+  logic: EQUITYLABS_PRIMARY_MODEL,
+  recepcionista: EQUITYLABS_PRIMARY_MODEL,
+};
+
+function singleModelRouting(): PlanModelRouting {
+  return {
+    greeting: EQUITYLABS_PRIMARY_MODEL,
+    default: EQUITYLABS_PRIMARY_MODEL,
+    agents: { ...SINGLE_MODEL_AGENTS },
+  };
+}
 
 export const PLAN_MODEL_ROUTING: Record<SubscriptionPlanKey, PlanModelRouting> = {
-  FREE_30_DAYS: {
-    greeting: 'google/gemini-2.5-flash-lite',
-    default: 'qwen/qwen2.5-7b',
-    agents: {
-      orquestador: 'openai/gpt-4o-mini',
-      analista: 'meta/llama-3.3-70b',
-      escritor: 'qwen/qwen2.5-7b',
-      investigador: 'deepseek/deepseek-r1',
-      desarrollador: 'openai/gpt-4o-mini',
-      disenador: 'google/gemini-2.5-flash-lite',
-      revisor: 'meta/llama-3.3-70b',
-      asistente: 'google/gemini-2.5-flash-lite',
-      architect: 'deepseek/deepseek-r1',
-      logic: 'deepseek/deepseek-r1',
-      recepcionista: 'openai/gpt-4o-mini',
-    },
-  },
-  TACTICAL_25: {
-    greeting: 'google/gemini-2.5-flash',
-    default: 'deepseek/deepseek-v3',
-    agents: {
-      orquestador: 'cognitive/dolphin-2.9',
-      analista: 'mistral/mistral-large',
-      escritor: 'cognitive/dolphin-2.9',
-      investigador: 'xai/grok-2',
-      desarrollador: 'anthropic/claude-3.5-haiku',
-      disenador: 'nvidia/nemotron-4',
-      revisor: 'deepseek/deepseek-v3',
-      asistente: 'google/gemini-2.5-flash',
-      architect: 'mistral/mistral-large',
-      logic: 'deepseek/deepseek-v3',
-      recepcionista: 'anthropic/claude-3.5-haiku',
-    },
-  },
-  PREMIUM_50: {
-    greeting: 'openai/gpt-4o',
-    default: 'google/gemini-2.5-pro',
-    agents: {
-      orquestador: 'openai/gpt-4o',
-      analista: 'anthropic/claude-3.5-sonnet',
-      escritor: 'cohere/command-r-plus',
-      investigador: 'google/gemini-2.5-pro',
-      desarrollador: 'anthropic/claude-3.5-sonnet',
-      disenador: 'openai/gpt-4o',
-      revisor: 'qwen/qwen2.5-72b',
-      asistente: 'microsoft/phi-4',
-      architect: 'anthropic/claude-3.5-sonnet',
-      logic: 'snowflake/arctic',
-      recepcionista: 'microsoft/phi-4',
-    },
-  },
-  MASTERMIND_100: {
-    greeting: 'openai/o1-mini',
-    default: 'anthropic/claude-4-sonnet',
-    agents: {
-      orquestador: 'openai/o1-mini',
-      analista: 'meta/llama-4-405b',
-      escritor: 'gryphe/mythomax',
-      investigador: 'xai/grok-3',
-      desarrollador: 'anthropic/claude-4-sonnet',
-      disenador: 'nvidia/nemotron-70b',
-      revisor: 'databricks/dbrx',
-      asistente: 'alignment/recursal-32b',
-      architect: 'meta/llama-4-405b',
-      logic: 'openai/o1-mini',
-      recepcionista: 'alignment/recursal-32b',
-    },
-  },
-  ENTERPRISE_500: {
-    greeting: 'perplexity/sonar',
-    default: 'openai/gpt-4.5-preview',
-    agents: {
-      orquestador: 'openai/o1',
-      analista: 'google/gemini-2.5-pro-preview',
-      escritor: 'cognitive/dolphin-2.9.1',
-      investigador: 'perplexity/sonar',
-      desarrollador: 'anthropic/claude-4-opus',
-      disenador: 'nvidia/cosmos',
-      revisor: 'openai/o1',
-      asistente: 'cognitive/dolphin-2.9.1',
-      architect: 'openai/o1',
-      logic: 'openai/o1',
-      recepcionista: 'perplexity/sonar',
-    },
-  },
-  ALLIANCE_1000: {
-    greeting: 'perplexity/sonar',
-    default: 'openai/gpt-4.5-preview',
-    agents: {
-      orquestador: 'openai/o1',
-      analista: 'google/gemini-2.5-pro-preview',
-      escritor: 'cognitive/dolphin-2.9.3',
-      investigador: 'xai/grok-3',
-      desarrollador: 'anthropic/claude-4-opus',
-      disenador: 'nvidia/cosmos',
-      revisor: 'openai/o1',
-      asistente: 'cognitive/dolphin-2.9.3',
-      architect: 'openai/o1',
-      logic: 'openai/o1',
-      recepcionista: 'perplexity/sonar',
-    },
-  },
+  FREE_30_DAYS: singleModelRouting(),
+  TACTICAL_25: singleModelRouting(),
+  PREMIUM_50: singleModelRouting(),
+  MASTERMIND_100: singleModelRouting(),
+  ENTERPRISE_500: singleModelRouting(),
+  ALLIANCE_1000: singleModelRouting(),
 };
 
 const LEGACY_PLAN_MAP: Record<string, SubscriptionPlanKey> = {
@@ -170,9 +96,6 @@ const LEGACY_PLAN_MAP: Record<string, SubscriptionPlanKey> = {
   enterprise: 'ENTERPRISE_500',
   alliance: 'ALLIANCE_1000',
 };
-
-export const GOOGLE_FREE_MODEL = Deno.env.get('FREE_GOOGLE_MODEL') || 'gemini-2.5-flash-lite';
-const localFreeUsage = new Map<string, { day: string; count: number }>();
 
 function getOpenRouterHeaders(): Record<string, string> {
   const headers: Record<string, string> = {
@@ -240,6 +163,14 @@ async function executePaidChatCompletion(
   messages: ChatMessage[],
   maxTokens = 500,
 ) {
+  const outputTokenBudget = Math.max(maxTokens, 256);
+  const requestBody: Record<string, unknown> = {
+    model,
+    messages,
+    max_tokens: outputTokenBudget,
+    temperature: 0.7,
+  };
+
   const headers: Record<string, string> = {
     Authorization: `Bearer ${provider.apiKey}`,
     'Content-Type': 'application/json',
@@ -249,12 +180,7 @@ async function executePaidChatCompletion(
   const response = await fetch(provider.gatewayUrl, {
     method: 'POST',
     headers,
-    body: JSON.stringify({
-      model,
-      messages,
-      max_tokens: maxTokens,
-      temperature: 0.7,
-    }),
+    body: JSON.stringify(requestBody),
   });
 
   return {
@@ -305,40 +231,6 @@ export function resolveModel(plan: SubscriptionPlanKey, route: 'greeting' | 'def
   if (route === 'greeting') return routing.greeting;
   if (route === 'default') return routing.default;
   return routing.agents[route];
-}
-
-export async function consumeFreeQuota(
-  supabaseUrl: string,
-  supabaseServiceRoleKey: string,
-  userId: string,
-): Promise<boolean> {
-  const limit = Number(Deno.env.get('FREE_AI_DAILY_LIMIT') || '50');
-  const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
-  const { data, error } = await supabase.rpc('consume_free_ai_quota', {
-    p_user_id: userId,
-    p_daily_limit: limit,
-  });
-
-  if (error) {
-    console.error('[EquityLabs] Free quota RPC failed:', error);
-    return consumeLocalFreeQuota(userId, limit);
-  }
-
-  return data === true;
-}
-
-function consumeLocalFreeQuota(userId: string, limit: number): boolean {
-  const day = new Date().toISOString().slice(0, 10);
-  const current = localFreeUsage.get(userId);
-
-  if (!current || current.day !== day) {
-    localFreeUsage.set(userId, { day, count: 1 });
-    return true;
-  }
-
-  if (current.count >= limit) return false;
-  current.count += 1;
-  return true;
 }
 
 export async function callPaidGateway(
@@ -418,63 +310,6 @@ export async function callPaidGateway(
   }
 }
 
-export async function callFreeGoogleAI(
-  supabaseUrl: string,
-  supabaseServiceRoleKey: string,
-  userId: string,
-  messages: ChatMessage[],
-  maxTokens = 500,
-): Promise<AIProviderResult> {
-  if (!(await consumeFreeQuota(supabaseUrl, supabaseServiceRoleKey, userId))) {
-    return {
-      error: 'Limite gratuito alcanzado. Intenta nuevamente manana o actualiza tu plan.',
-      status: 429,
-    };
-  }
-
-  const googleFreeApiKey = Deno.env.get('GOOGLE_FREE_API_KEY') || Deno.env.get('GOOGLE_API_KEY');
-  if (!googleFreeApiKey) {
-    return {
-      error: 'El proveedor gratuito de Google no esta configurado para el plan FREE.',
-      status: 503,
-    };
-  }
-
-  try {
-    const genAI = new GoogleGenerativeAI(googleFreeApiKey);
-    const model = genAI.getGenerativeModel({
-      model: GOOGLE_FREE_MODEL,
-      generationConfig: {
-        maxOutputTokens: maxTokens,
-        temperature: 0.7,
-      },
-    });
-    const system = messages.find((item) => item.role === 'system')?.content || '';
-    const transcript = messages
-      .filter((item) => item.role !== 'system')
-      .map((item) => `${item.role === 'assistant' ? 'Assistant' : 'User'}: ${item.content}`)
-      .join('\n\n');
-    const result = await model.generateContent(`${system}\n\n${transcript}`);
-    const content = result.response.text();
-
-    return {
-      data: {
-        choices: [{ message: { content } }],
-        usage: { provider: 'google-free-tier' },
-        provider: 'google-free-tier',
-        model: GOOGLE_FREE_MODEL,
-        requestedModel: GOOGLE_FREE_MODEL,
-      },
-      status: 200,
-    };
-  } catch (error) {
-    return {
-      error: error instanceof Error ? error.message : 'Google free-tier request failed',
-      status: 500,
-    };
-  }
-}
-
 export async function callAIWithCostControl(
   params: {
     userId: string;
@@ -488,20 +323,10 @@ export async function callAIWithCostControl(
     maxTokens?: number;
   },
 ): Promise<AIProviderResult> {
-  if (isFreePlan(params.plan)) {
-    return callFreeGoogleAI(
-      params.supabaseUrl,
-      params.supabaseServiceRoleKey,
-      params.userId,
-      params.messages,
-      params.maxTokens,
-    );
-  }
-
   return callPaidGateway(
     params.gatewayUrl,
     params.paidApiKey,
-    params.model,
+    EQUITYLABS_PRIMARY_MODEL,
     params.messages,
     params.maxTokens,
   );

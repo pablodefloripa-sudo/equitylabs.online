@@ -2,202 +2,582 @@
   "equity_labs_v1": [
     {
       "id": "ag_01",
-      "name": { "es": "Architect", "en": "Architect", "it": "Architetto" },
-      "engines": { "free": "tencent/hy3:free", "pro": "tencent/hy3:free" },
+      "name": {
+        "es": "Architect",
+        "en": "Architect",
+        "it": "Architetto"
+      },
+      "engines": {
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
+      },
       "tasks": {
-        "es": ["Modelado espacial lógico", "Planos técnicos eficientes", "Simulación de estabilidad"],
-        "en": ["Logical spatial modeling", "Efficient technical blueprints", "Stability simulation"],
-        "it": ["Modellazione spaziale logica", "Planimetrie tecniche efficienti", "Simulazione di stabilità"]
+        "es": [
+          "Modelado espacial lógico",
+          "Planos técnicos eficientes",
+          "Simulación de estabilidad"
+        ],
+        "en": [
+          "Logical spatial modeling",
+          "Efficient technical blueprints",
+          "Stability simulation"
+        ],
+        "it": [
+          "Modellazione spaziale logica",
+          "Planimetrie tecniche efficienti",
+          "Simulazione di stabilità"
+        ]
       }
     },
     {
       "id": "ag_02",
-      "name": { "es": "Urban Explorer", "en": "Urban Explorer", "it": "Esploratore Urbano" },
-      "engines": { "free": "DeepSeek R1 0528", "pro": "GLM 5" },
+      "name": {
+        "es": "Urban Explorer",
+        "en": "Urban Explorer",
+        "it": "Esploratore Urbano"
+      },
+      "engines": {
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
+      },
       "tasks": {
-        "es": ["Escaneo de tendencias urbanas", "Mapeo de flujos sociales", "Detección de zonas de valor"],
-        "en": ["Urban trend scanning", "Social flow mapping", "Value zone detection"],
-        "it": ["Scansione tendenze urbane", "Mappatura flussi sociali", "Rilevamento zone di valore"]
+        "es": [
+          "Escaneo de tendencias urbanas",
+          "Mapeo de flujos sociales",
+          "Detección de zonas de valor"
+        ],
+        "en": [
+          "Urban trend scanning",
+          "Social flow mapping",
+          "Value zone detection"
+        ],
+        "it": [
+          "Scansione tendenze urbane",
+          "Mappatura flussi sociali",
+          "Rilevamento zone di valore"
+        ]
       }
     },
     {
       "id": "ag_03",
-      "name": { "es": "Environmental Detective", "en": "Environmental Detective", "it": "Detective Ambientale" },
-      "engines": { "free": "Arcee Trinity Large", "pro": "Qwen 3.5 Plus" },
+      "name": {
+        "es": "Environmental Detective",
+        "en": "Environmental Detective",
+        "it": "Detective Ambientale"
+      },
+      "engines": {
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
+      },
       "tasks": {
-        "es": ["Auditoría de impacto CO2", "Detección de riesgos eco", "Cumplimiento normativo"],
-        "en": ["CO2 impact audit", "Eco-risk detection", "Regulatory compliance"],
-        "it": ["Audit impatto CO2", "Rilevamento rischi eco", "Conformità normativa"]
+        "es": [
+          "Auditoría de impacto CO2",
+          "Detección de riesgos eco",
+          "Cumplimiento normativo"
+        ],
+        "en": [
+          "CO2 impact audit",
+          "Eco-risk detection",
+          "Regulatory compliance"
+        ],
+        "it": [
+          "Audit impatto CO2",
+          "Rilevamento rischi eco",
+          "Conformità normativa"
+        ]
       }
     },
     {
       "id": "ag_04",
-      "name": { "es": "Intelligent Appraiser", "en": "Intelligent Appraiser", "it": "Perito Intelligente" },
-      "engines": { "free": "Qwen 3 Next 80B", "pro": "DeepSeek V3.2" },
+      "name": {
+        "es": "Intelligent Appraiser",
+        "en": "Intelligent Appraiser",
+        "it": "Perito Intelligente"
+      },
+      "engines": {
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
+      },
       "tasks": {
-        "es": ["Valoración de activos IA", "Análisis de mercado real", "Predicción de plusvalía"],
-        "en": ["AI asset valuation", "Real market analysis", "Capital gain prediction"],
-        "it": ["Valutazione asset IA", "Analisi di mercato reale", "Predizione plusvalenza"]
+        "es": [
+          "Valoración de activos IA",
+          "Análisis de mercado real",
+          "Predicción de plusvalía"
+        ],
+        "en": [
+          "AI asset valuation",
+          "Real market analysis",
+          "Capital gain prediction"
+        ],
+        "it": [
+          "Valutazione asset IA",
+          "Analisi di mercato reale",
+          "Predizione plusvalenza"
+        ]
       }
     },
     {
       "id": "ag_05",
-      "name": { "es": "Infrastructure Analyst", "en": "Infrastructure Analyst", "it": "Analista Infrastrutture" },
-      "engines": { "free": "Llama 3.3 70B", "pro": "Mistral Large 3" },
+      "name": {
+        "es": "Infrastructure Analyst",
+        "en": "Infrastructure Analyst",
+        "it": "Analista Infrastrutture"
+      },
+      "engines": {
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
+      },
       "tasks": {
-        "es": ["Diagnóstico de redes", "Optimización de suministros", "Prevención de fallos"],
-        "en": ["Network diagnostics", "Supply optimization", "Failure prevention"],
-        "it": ["Diagnostica di rete", "Ottimizzazione forniture", "Prevenzione guasti"]
+        "es": [
+          "Diagnóstico de redes",
+          "Optimización de suministros",
+          "Prevención de fallos"
+        ],
+        "en": [
+          "Network diagnostics",
+          "Supply optimization",
+          "Failure prevention"
+        ],
+        "it": [
+          "Diagnostica di rete",
+          "Ottimizzazione forniture",
+          "Prevenzione guasti"
+        ]
       }
     },
     {
       "id": "ag_06",
-      "name": { "es": "Economic Forecaster", "en": "Economic Forecaster", "it": "Previsore Economico" },
-      "engines": { "free": "Qwen 3 Coder 480B", "pro": "GLM 5" },
+      "name": {
+        "es": "Economic Forecaster",
+        "en": "Economic Forecaster",
+        "it": "Previsore Economico"
+      },
+      "engines": {
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
+      },
       "tasks": {
-        "es": ["Modelado macroeconómico", "Análisis de volatilidad", "Detección de cisnes negros"],
-        "en": ["Macroeconomic modeling", "Volatility analysis", "Black swan detection"],
-        "it": ["Modellazione macro", "Analisi volatilità", "Rilevamento cigni neri"]
+        "es": [
+          "Modelado macroeconómico",
+          "Análisis de volatilidad",
+          "Detección de cisnes negros"
+        ],
+        "en": [
+          "Macroeconomic modeling",
+          "Volatility analysis",
+          "Black swan detection"
+        ],
+        "it": [
+          "Modellazione macro",
+          "Analisi volatilità",
+          "Rilevamento cigni neri"
+        ]
       }
     },
     {
       "id": "ag_07",
-      "name": { "es": "Tax Optimizer", "en": "Tax Optimizer", "it": "Ottimizzatore Fiscale" },
-      "engines": { "free": "DeepSeek R1 0528", "pro": "Qwen 3.5 397B" },
+      "name": {
+        "es": "Tax Optimizer",
+        "en": "Tax Optimizer",
+        "it": "Ottimizzatore Fiscale"
+      },
+      "engines": {
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
+      },
       "tasks": {
-        "es": ["Ingeniería fiscal legal", "Estructuras internacionales", "Auditoría preventiva"],
-        "en": ["Legal tax engineering", "International structures", "Preventive audit"],
-        "it": ["Ingegneria fiscale legale", "Strutture internazionali", "Audit preventivo"]
+        "es": [
+          "Ingeniería fiscal legal",
+          "Estructuras internacionales",
+          "Auditoría preventiva"
+        ],
+        "en": [
+          "Legal tax engineering",
+          "International structures",
+          "Preventive audit"
+        ],
+        "it": [
+          "Ingegneria fiscale legale",
+          "Strutture internazionali",
+          "Audit preventivo"
+        ]
       }
     },
     {
       "id": "ag_08",
-      "name": { "es": "Financial Architect", "en": "Financial Architect", "it": "Architetto Finanziario" },
-      "engines": { "free": "MiMo-V2-Flash", "pro": "Grok 4.1 Fast" },
+      "name": {
+        "es": "Financial Architect",
+        "en": "Financial Architect",
+        "it": "Architetto Finanziario"
+      },
+      "engines": {
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
+      },
       "tasks": {
-        "es": ["Diseño de carteras IP", "Estructuración de riqueza", "Algoritmos de balanceo"],
-        "en": ["IP portfolio design", "Wealth structuring", "Balancing algorithms"],
-        "it": ["Design portafoglio IP", "Strutturazione ricchezza", "Algoritmi di bilanciamento"]
+        "es": [
+          "Diseño de carteras IP",
+          "Estructuración de riqueza",
+          "Algoritmos de balanceo"
+        ],
+        "en": [
+          "IP portfolio design",
+          "Wealth structuring",
+          "Balancing algorithms"
+        ],
+        "it": [
+          "Design portafoglio IP",
+          "Strutturazione ricchezza",
+          "Algoritmi di bilanciamento"
+        ]
       }
     },
     {
       "id": "ag_09",
-      "name": { "es": "Liquidity Guardian", "en": "Liquidity Guardian", "it": "Guardiano Liquidità" },
-      "engines": { "free": "Z.ai GLM 4.5 Air", "pro": "Claude 4.6 Sonnet" },
+      "name": {
+        "es": "Liquidity Guardian",
+        "en": "Liquidity Guardian",
+        "it": "Guardiano Liquidità"
+      },
+      "engines": {
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
+      },
       "tasks": {
-        "es": ["Monitoreo de flujo caja", "Planes de contingencia", "Gestión de tesorería"],
-        "en": ["Cash flow monitoring", "Contingency plans", "Treasury management"],
-        "it": ["Monitoraggio cash flow", "Piani di contingenza", "Gestione tesoreria"]
+        "es": [
+          "Monitoreo de flujo caja",
+          "Planes de contingencia",
+          "Gestión de tesorería"
+        ],
+        "en": [
+          "Cash flow monitoring",
+          "Contingency plans",
+          "Treasury management"
+        ],
+        "it": [
+          "Monitoraggio cash flow",
+          "Piani di contingenza",
+          "Gestione tesoreria"
+        ]
       }
     },
     {
       "id": "ag_10",
-      "name": { "es": "Astute Negotiator", "en": "Astute Negotiator", "it": "Negoziatore Astuto" },
-      "engines": { "free": "Devstral 2", "pro": "Claude 4.6 Opus" },
+      "name": {
+        "es": "Astute Negotiator",
+        "en": "Astute Negotiator",
+        "it": "Negoziatore Astuto"
+      },
+      "engines": {
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
+      },
       "tasks": {
-        "es": ["Simulación teoría juegos", "Análisis psicológico", "Optimización cláusulas"],
-        "en": ["Game theory simulation", "Psychological analysis", "Clause optimization"],
-        "it": ["Simulazione teoria giochi", "Analisi psicologica", "Ottimizzazione clausole"]
+        "es": [
+          "Simulación teoría juegos",
+          "Análisis psicológico",
+          "Optimización cláusulas"
+        ],
+        "en": [
+          "Game theory simulation",
+          "Psychological analysis",
+          "Clause optimization"
+        ],
+        "it": [
+          "Simulazione teoria giochi",
+          "Analisi psicologica",
+          "Ottimizzazione clausole"
+        ]
       }
     },
     {
       "id": "ag_11",
-      "name": { "es": "Opportunity Hunter", "en": "Opportunity Hunter", "it": "Cacciatore Opportunità" },
-      "engines": { "free": "Qwen 3 Next 80B", "pro": "MiniMax M2.5" },
+      "name": {
+        "es": "Opportunity Hunter",
+        "en": "Opportunity Hunter",
+        "it": "Cacciatore Opportunità"
+      },
+      "engines": {
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
+      },
       "tasks": {
-        "es": ["Rastreo de arbitraje", "Identificación startups", "Alertas de inversión"],
-        "en": ["Arbitrage tracking", "Startup identification", "Investment alerts"],
-        "it": ["Tracking arbitraggio", "Identificazione startup", "Avvisi investimento"]
+        "es": [
+          "Rastreo de arbitraje",
+          "Identificación startups",
+          "Alertas de inversión"
+        ],
+        "en": [
+          "Arbitrage tracking",
+          "Startup identification",
+          "Investment alerts"
+        ],
+        "it": [
+          "Tracking arbitraggio",
+          "Identificazione startup",
+          "Avvisi investimento"
+        ]
       }
     },
     {
       "id": "ag_12",
-      "name": { "es": "Project Coordinator", "en": "Project Coordinator", "it": "Coordinatore Progetti" },
-      "engines": { "free": "StepFun 3.5 Flash", "pro": "Kimi K2.5" },
+      "name": {
+        "es": "Project Coordinator",
+        "en": "Project Coordinator",
+        "it": "Coordinatore Progetti"
+      },
+      "engines": {
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
+      },
       "tasks": {
-        "es": ["Orquestación agéntica", "Resolución cuellos botella", "Sincronización dinámica"],
-        "en": ["Agentic orchestration", "Bottleneck resolution", "Dynamic sync"],
-        "it": ["Orchestrazione agenti", "Risoluzione colli bottiglia", "Sincronizzazione dinamica"]
+        "es": [
+          "Orquestación agéntica",
+          "Resolución cuellos botella",
+          "Sincronización dinámica"
+        ],
+        "en": [
+          "Agentic orchestration",
+          "Bottleneck resolution",
+          "Dynamic sync"
+        ],
+        "it": [
+          "Orchestrazione agenti",
+          "Risoluzione colli bottiglia",
+          "Sincronizzazione dinamica"
+        ]
       }
     },
     {
       "id": "ag_13",
-      "name": { "es": "Personalized Advisor", "en": "Personalized Advisor", "it": "Consulente Personale" },
-      "engines": { "free": "Llama 3.3 70B", "pro": "Claude 4.6 Opus" },
+      "name": {
+        "es": "Personalized Advisor",
+        "en": "Personalized Advisor",
+        "it": "Consulente Personale"
+      },
+      "engines": {
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
+      },
       "tasks": {
-        "es": ["Coaching ADN usuario", "Resolución de dilemas", "Planes de crecimiento"],
-        "en": ["User DNA coaching", "Dilemma resolution", "Growth plans"],
-        "it": ["Coaching DNA utente", "Risoluzione dilemmi", "Piani di crescita"]
+        "es": [
+          "Coaching ADN usuario",
+          "Resolución de dilemas",
+          "Planes de crecimiento"
+        ],
+        "en": [
+          "User DNA coaching",
+          "Dilemma resolution",
+          "Growth plans"
+        ],
+        "it": [
+          "Coaching DNA utente",
+          "Risoluzione dilemmi",
+          "Piani di crescita"
+        ]
       }
     },
     {
       "id": "ag_14",
-      "name": { "es": "Risk Simulator", "en": "Risk Simulator", "it": "Simulatore di Rischio" },
-      "engines": { "free": "DeepSeek R1 0528", "pro": "DeepSeek V3.2" },
+      "name": {
+        "es": "Risk Simulator",
+        "en": "Risk Simulator",
+        "it": "Simulatore di Rischio"
+      },
+      "engines": {
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
+      },
       "tasks": {
-        "es": ["Simulación Monte Carlo", "Análisis peor escenario", "Evaluación sistémica"],
-        "en": ["Monte Carlo simulation", "Worst-case analysis", "Systemic evaluation"],
-        "it": ["Simulazione Monte Carlo", "Analisi scenario peggiore", "Valutazione sistemica"]
+        "es": [
+          "Simulación Monte Carlo",
+          "Análisis peor escenario",
+          "Evaluación sistémica"
+        ],
+        "en": [
+          "Monte Carlo simulation",
+          "Worst-case analysis",
+          "Systemic evaluation"
+        ],
+        "it": [
+          "Simulazione Monte Carlo",
+          "Analisi scenario peggiore",
+          "Valutazione sistemica"
+        ]
       }
     },
     {
       "id": "ag_15",
-      "name": { "es": "Tokenization Engineer", "en": "Tokenization Engineer", "it": "Ingegnere Tokenizzazione" },
-      "engines": { "free": "Qwen 3 Coder 480B", "pro": "Qwen 3.5 Plus" },
+      "name": {
+        "es": "Tokenization Engineer",
+        "en": "Tokenization Engineer",
+        "it": "Ingegnere Tokenizzazione"
+      },
+      "engines": {
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
+      },
       "tasks": {
-        "es": ["Conversión activos RWA", "Lógica Smart Contracts", "Ingeniería de seguridad"],
-        "en": ["RWA asset conversion", "Smart Contract logic", "Security engineering"],
-        "it": ["Conversione asset RWA", "Logica Smart Contracts", "Ingegneria sicurezza"]
+        "es": [
+          "Conversión activos RWA",
+          "Lógica Smart Contracts",
+          "Ingeniería de seguridad"
+        ],
+        "en": [
+          "RWA asset conversion",
+          "Smart Contract logic",
+          "Security engineering"
+        ],
+        "it": [
+          "Conversione asset RWA",
+          "Logica Smart Contracts",
+          "Ingegneria sicurezza"
+        ]
       }
     },
     {
       "id": "ag_16",
-      "name": { "es": "Exit Strategist", "en": "Exit Strategist", "it": "Stratega d'Uscita" },
-      "engines": { "free": "Arcee Trinity Large", "pro": "GPT-5.2 mini" },
+      "name": {
+        "es": "Exit Strategist",
+        "en": "Exit Strategist",
+        "it": "Stratega d'Uscita"
+      },
+      "engines": {
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
+      },
       "tasks": {
-        "es": ["Planificación M&A/IPO", "Ajustes de valor salida", "Estructuras de retiro"],
-        "en": ["M&A/IPO planning", "Exit value adjustment", "Withdrawal structures"],
-        "it": ["Pianificazione M&A/IPO", "Aggiustamento valore", "Strutture di ritiro"]
+        "es": [
+          "Planificación M&A/IPO",
+          "Ajustes de valor salida",
+          "Estructuras de retiro"
+        ],
+        "en": [
+          "M&A/IPO planning",
+          "Exit value adjustment",
+          "Withdrawal structures"
+        ],
+        "it": [
+          "Pianificazione M&A/IPO",
+          "Aggiustamento valore",
+          "Strutture di ritiro"
+        ]
       }
     },
     {
       "id": "ag_17",
-      "name": { "es": "Legal Tracker", "en": "Legal Tracker", "it": "Tracker Legale" },
-      "engines": { "free": "Z.ai GLM 4.5 Air", "pro": "Claude 4.6 Sonnet" },
+      "name": {
+        "es": "Legal Tracker",
+        "en": "Legal Tracker",
+        "it": "Tracker Legale"
+      },
+      "engines": {
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
+      },
       "tasks": {
-        "es": ["Monitoreo legislativo", "Síntesis jurisprudencia", "Auditoría contractual"],
-        "en": ["Legislative monitoring", "Case law synthesis", "Contract audit"],
-        "it": ["Monitoraggio legislativo", "Sintesi giurisprudenza", "Audit contrattuale"]
+        "es": [
+          "Monitoreo legislativo",
+          "Síntesis jurisprudencia",
+          "Auditoría contractual"
+        ],
+        "en": [
+          "Legislative monitoring",
+          "Case law synthesis",
+          "Contract audit"
+        ],
+        "it": [
+          "Monitoraggio legislativo",
+          "Sintesi giurisprudenza",
+          "Audit contrattuale"
+        ]
       }
     },
     {
       "id": "ag_18",
-      "name": { "es": "Zoning Cartographer", "en": "Zoning Cartographer", "it": "Cartografo Zonale" },
-      "engines": { "free": "Gemini 2.0 Flash", "pro": "Gemini 2.5 Pro" },
+      "name": {
+        "es": "Zoning Cartographer",
+        "en": "Zoning Cartographer",
+        "it": "Cartografo Zonale"
+      },
+      "engines": {
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
+      },
       "tasks": {
-        "es": ["Análisis de uso suelo", "Mapeo de regulaciones", "Identificación permisos"],
-        "en": ["Land use analysis", "Regulation mapping", "Permit identification"],
-        "it": ["Analisi uso suolo", "Mappatura regolamenti", "Identificazione permessi"]
+        "es": [
+          "Análisis de uso suelo",
+          "Mapeo de regulaciones",
+          "Identificación permisos"
+        ],
+        "en": [
+          "Land use analysis",
+          "Regulation mapping",
+          "Permit identification"
+        ],
+        "it": [
+          "Analisi uso suolo",
+          "Mappatura regolamenti",
+          "Identificazione permessi"
+        ]
       }
     },
     {
       "id": "ag_19",
-      "name": { "es": "Field Agent", "en": "Field Agent", "it": "Agente sul Campo" },
-      "engines": { "free": "MiMo-V2-Flash", "pro": "Mistral Large 3" },
+      "name": {
+        "es": "Field Agent",
+        "en": "Field Agent",
+        "it": "Agente sul Campo"
+      },
+      "engines": {
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
+      },
       "tasks": {
-        "es": ["Procesamiento datos crudos", "Validación multi-fuente", "Reportes tácticos"],
-        "en": ["Raw data processing", "Multi-source validation", "Tactical reports"],
-        "it": ["Elaborazione dati grezzi", "Validazione multi-fonte", "Report tattici"]
+        "es": [
+          "Procesamiento datos crudos",
+          "Validación multi-fuente",
+          "Reportes tácticos"
+        ],
+        "en": [
+          "Raw data processing",
+          "Multi-source validation",
+          "Tactical reports"
+        ],
+        "it": [
+          "Elaborazione dati grezzi",
+          "Validazione multi-fonte",
+          "Report tattici"
+        ]
       }
     },
     {
       "id": "ag_20",
-      "name": { "es": "Investor Concierge", "en": "Investor Concierge", "it": "Concierge Investitori" },
-      "engines": { "free": "DeepSeek R1 0528", "pro": "Claude 4.6 Sonnet" },
+      "name": {
+        "es": "Investor Concierge",
+        "en": "Investor Concierge",
+        "it": "Concierge Investitori"
+      },
+      "engines": {
+        "free": "qwen/qwen3-vl-8b-thinking",
+        "pro": "qwen/qwen3-vl-8b-thinking"
+      },
       "tasks": {
-        "es": ["Gestión relaciones LP", "Reporting de alto nivel", "Automatización pitch decks"],
-        "en": ["LP relations management", "High-level reporting", "Pitch deck automation"],
-        "it": ["Gestione relazioni LP", "Reporting di alto livello", "Automazione pitch deck"]
+        "es": [
+          "Gestión relaciones LP",
+          "Reporting de alto nivel",
+          "Automatización pitch decks"
+        ],
+        "en": [
+          "LP relations management",
+          "High-level reporting",
+          "Pitch deck automation"
+        ],
+        "it": [
+          "Gestione relazioni LP",
+          "Reporting di alto livello",
+          "Automazione pitch deck"
+        ]
       }
     }
   ],
