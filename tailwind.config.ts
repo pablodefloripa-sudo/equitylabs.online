@@ -15,9 +15,10 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['Space Grotesk', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
-      },
+              display: ['Quicksand', 'Space Grotesk', 'system-ui', 'sans-serif'],
+              quick: ['Quicksand', 'sans-serif'],
+              mono: ['JetBrains Mono', 'monospace'],
+            },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

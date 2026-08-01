@@ -5,8 +5,9 @@ import { AgentEliteCarousel } from '@/components/landing/AgentEliteCarousel';
 import { LanguageFloater, type LandingLang } from '@/components/landing/LanguageFloater';
 import { getLandingLang, setStoredLandingLang } from '@/components/landing/landingContent';
 import { useLanguage, type Language } from '@/hooks/useLanguage';
+import { LandingIntro } from '@/components/landing/LandingIntro';
 
-const agentsBg = '/slides/base.jpg';
+const agentsBg = '/slides/leather-bg.jpg';
 
 const landingLangToAppLanguage = (lang: LandingLang): Language => {
   switch (lang) {
@@ -32,8 +33,13 @@ const landingLangToAppLanguage = (lang: LandingLang): Language => {
 const Landing = () => {
   const { setLanguage } = useLanguage();
   const [lang, setLang] = useState<LandingLang>(() => getLandingLang());
+  const [introDone, setIntroDone] = useState(false);
   const visualScale = 1;
   const navigate = useNavigate();
+
+  if (!introDone) {
+    return <LandingIntro lang={lang} onComplete={() => setIntroDone(true)} />;
+  }
 
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">
