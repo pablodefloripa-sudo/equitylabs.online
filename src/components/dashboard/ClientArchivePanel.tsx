@@ -23,6 +23,7 @@ import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/runtime-client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { getArchiveSession, listArchiveSessions } from '@/integrations/firebase';
 
 const ACTIVE_AGENT_STORAGE_KEY = 'eq_active_agent_context';
 const SUBSCRIPTION_STORAGE_KEY = 'eq_subscription_context';
@@ -45,6 +46,12 @@ type ArchiveSession = {
   last_message: string;
   models: string[];
   context?: unknown;
+  messages?: Array<{
+    role: 'user' | 'assistant' | 'system';
+    content: string;
+    timestamp: string;
+    model?: string;
+  }>;
 };
 
 type ArchiveDocument = {
@@ -144,9 +151,15 @@ export function ClientArchivePanel({ isOpen, onOpenHistory, onOpenAssets }: Clie
           .eq('user_id', user.id),
       ]);
 
-      if (chatResult.error) throw chatResult.error;
-      if (docsResult.error) throw docsResult.error;
-      if (integrationsResult.error) throw integrationsResult.error;
+      if (chatResult.error) {
+        console.warn('Archive chat history fallback to Firestore:', chatResult.error);
+      }
+      if (docsResult.error) {
+        console.warn('Archive documents query failed:', docsResult.error);
+      }
+      if (integrationsResult.error) {
+        console.warn('Archive integrations query failed:', integrationsResult.error);
+      }
 
       const rows = (chatResult.data || []) as SessionRow[];
       const docs = (docsResult.data || []) as ArchiveDocument[];
@@ -185,20 +198,40 @@ export function ClientArchivePanel({ isOpen, onOpenHistory, onOpenAssets }: Clie
         }
       }
 
-      const nextSessions = Array.from(grouped.values())
+      let nextSessions = Array.from(grouped.values())
         .sort((a, b) => b.updated_at.localeCompare(a.updated_at))
         .map((session) => ({
           ...session,
           context: parseSessionContext(rows.filter((row) => (row.project_id || 'default') === session.project_id)),
         }));
 
+      if (nextSessions.length === 0) {
+        const firestoreSessions = await listArchiveSessions(user.id);
+        nextSessions = firestoreSessions.map((session) => ({
+          project_id: session.projectId,
+          project_name: session.projectName,
+          message_count: session.messageCount,
+          updated_at: session.updatedAt,
+          last_message: session.lastMessage,
+          models: session.models || [],
+          context: session.context,
+          messages: session.messages.map((message) => ({
+            role: message.role,
+            content: message.content,
+            timestamp: message.timestamp || session.updatedAt,
+            model: message.model,
+          })),
+        }));
+      }
+
+      const totalMessagesNext = nextSessions.reduce((count, session) => count + session.message_count, 0);
       setSessions(nextSessions);
       setDocuments(docs);
-      setTotalMessages(messageCount);
+      setTotalMessages(messageCount > 0 ? messageCount : totalMessagesNext);
       setIntegrationsConnected(`${connectedCount}/4`);
       loadLocalContext();
 
-      const lastChat = rows[0]?.created_at || null;
+      const lastChat = rows[0]?.created_at || nextSessions[0]?.updated_at || null;
       const lastDoc = docs[0]?.created_at || null;
       if (!lastChat && !lastDoc) {
         setLastActivityAt(null);
@@ -278,42 +311,69 @@ export function ClientArchivePanel({ isOpen, onOpenHistory, onOpenAssets }: Clie
   const resumeSession = async (session: ArchiveSession) => {
     if (!user) return;
     try {
-      const { data, error } = await supabase
-        .from('chat_history')
-        .select('id, role, content, created_at, model_used')
-        .eq('user_id', user.id)
-        .eq('project_id', session.project_id)
-        .order('created_at', { ascending: true });
-      if (error) throw error;
+      let context = session.context;
+      let messages = session.messages?.filter((row) => row.role === 'user' || row.role === 'assistant').map((row, index) => ({
+        id: `${session.project_id}-${index}`,
+        role: row.role as 'user' | 'assistant',
+        content: row.content,
+        timestamp: row.timestamp,
+        model: row.model,
+      })) || [];
 
-      const rows = (data || []) as Array<{
-        id: string;
-        role: string;
-        content: string;
-        created_at: string;
-        model_used: string | null;
-      }>;
+      if (messages.length === 0) {
+        const { data, error } = await supabase
+          .from('chat_history')
+          .select('id, role, content, created_at, model_used')
+          .eq('user_id', user.id)
+          .eq('project_id', session.project_id)
+          .order('created_at', { ascending: true });
+        if (error) throw error;
 
-      const context = parseSessionContext(
-        rows.map((row) => ({
-          project_id: session.project_id,
-          project_name: session.project_name,
-          content: row.content,
-          created_at: row.created_at,
-          role: row.role,
-          model_used: row.model_used,
-        })),
-      );
+        const rows = (data || []) as Array<{
+          id: string;
+          role: string;
+          content: string;
+          created_at: string;
+          model_used: string | null;
+        }>;
 
-      const messages = rows
-        .filter((row) => row.role === 'user' || row.role === 'assistant')
-        .map((row) => ({
-          id: row.id,
-          role: row.role as 'user' | 'assistant',
-          content: row.content,
-          timestamp: row.created_at,
-          model: row.model_used || undefined,
-        }));
+        context = parseSessionContext(
+          rows.map((row) => ({
+            project_id: session.project_id,
+            project_name: session.project_name,
+            content: row.content,
+            created_at: row.created_at,
+            role: row.role,
+            model_used: row.model_used,
+          })),
+        );
+
+        messages = rows
+          .filter((row) => row.role === 'user' || row.role === 'assistant')
+          .map((row) => ({
+            id: row.id,
+            role: row.role as 'user' | 'assistant',
+            content: row.content,
+            timestamp: row.created_at,
+            model: row.model_used || undefined,
+          }));
+      }
+
+      if ((messages.length === 0 || !context) && session.project_id) {
+        const firestoreSnapshot = await getArchiveSession(user.id, session.project_id);
+        if (firestoreSnapshot) {
+          context = firestoreSnapshot.context;
+          messages = firestoreSnapshot.messages
+            .filter((row) => row.role === 'user' || row.role === 'assistant')
+            .map((row, index) => ({
+              id: `${session.project_id}-${index}`,
+              role: row.role as 'user' | 'assistant',
+              content: row.content,
+              timestamp: row.timestamp || firestoreSnapshot.updatedAt,
+              model: row.model || undefined,
+            }));
+        }
+      }
 
       sessionStorage.setItem(
         'eq_resume_session',

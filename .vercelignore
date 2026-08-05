@@ -1,0 +1,9 @@
+.pytest_cache
+.git
+.github
+node_modules
+.vscode
+docs
+tests
+bun.lock
+bun.lockb

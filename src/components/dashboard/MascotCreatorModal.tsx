@@ -8,6 +8,7 @@ import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { getLatestMascotSnapshot, saveMascotSnapshot } from '@/integrations/firebase';
 
 interface MascotCreatorModalProps {
   open: boolean;
@@ -93,9 +94,17 @@ export const MascotCreatorModal = ({ open, onClose }: MascotCreatorModalProps) =
     // Restore the user's latest mascot from Supabase when Companion Forge opens.
     // This keeps the companion available across browsers and sessions.
     let cancelled = false;
+    let restored = false;
+    const applyRestoredMascot = (config: Record<string, unknown>) => {
+      if (cancelled || restored) return;
+      restored = true;
+      localStorage.setItem('eq:active-mascot', JSON.stringify(config));
+      window.dispatchEvent(new CustomEvent('eq:mascot-restored', { detail: config }));
+    };
+
     const restoreSavedMascot = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user || cancelled) return;
+      if (!user || cancelled || restored) return;
 
       const { data, error } = await supabase
         .from('agent_configs')
@@ -107,14 +116,25 @@ export const MascotCreatorModal = ({ open, onClose }: MascotCreatorModalProps) =
         .limit(1)
         .maybeSingle();
 
-      if (error || !data?.config || cancelled) return;
-      const restored = data.config as Record<string, unknown>;
-      localStorage.setItem('eq:active-mascot', JSON.stringify(restored));
-      window.dispatchEvent(new CustomEvent('eq:mascot-restored', { detail: restored }));
+      if (error || !data?.config) return;
+      applyRestoredMascot(data.config as Record<string, unknown>);
+    };
+
+    const restoreFromFirestore = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || cancelled || restored) return;
+
+      const snapshot = await getLatestMascotSnapshot(user.id);
+      if (!snapshot?.config) return;
+
+      applyRestoredMascot(snapshot.config as Record<string, unknown>);
     };
 
     void restoreSavedMascot();
-    return () => { cancelled = true; };
+    void restoreFromFirestore();
+    return () => {
+      cancelled = true;
+    };
   }, [open]);
 
   const toggleFn = (id: string) =>
@@ -162,6 +182,12 @@ export const MascotCreatorModal = ({ open, onClose }: MascotCreatorModalProps) =
       if (user) {
         await supabase.from('agent_configs').insert({
           user_id: user.id, agent_type: 'mascot', name, config: config as any, is_active: isActive,
+        });
+        void saveMascotSnapshot({
+          userId: user.id,
+          name,
+          isActive,
+          config,
         });
       }
       window.dispatchEvent(new CustomEvent('eq:mascot-created', { detail: config }));

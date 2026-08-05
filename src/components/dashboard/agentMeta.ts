@@ -1,4 +1,5 @@
 import { icons, type LucideIcon } from 'lucide-react';
+import { planMeetsMinimum, type SubscriptionPlanKey } from '@/lib/subscription-plans';
 
 const agentIconMap: Record<string, string> = {
   ag_01: 'Building2',
@@ -45,3 +46,11 @@ export const getAgentIcon = (id: string) => {
 };
 
 export const isProAgent = (id: string) => proAgentIds.has(id);
+
+export const getAgentRequiredPlan = (id: string): SubscriptionPlanKey =>
+  isProAgent(id) ? 'TACTICAL_25' : 'FREE_30_DAYS';
+
+export const isAgentAllowedForPlan = (
+  id: string,
+  plan: string | null | undefined,
+) => planMeetsMinimum(plan, getAgentRequiredPlan(id));

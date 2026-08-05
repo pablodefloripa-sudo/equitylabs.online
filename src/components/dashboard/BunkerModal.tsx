@@ -1,19 +1,23 @@
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Shield, Zap, Lock, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAgentI18n, type Agent } from '@/hooks/useAgentI18n';
-import { getAgentIcon, isProAgent } from './agentMeta';
+import { getAgentIcon } from './agentMeta';
+import { planMeetsMinimum, type SubscriptionPlanKey } from '@/lib/subscription-plans';
 
 interface BunkerModalProps {
   agent: Agent | null;
+  subscriptionPlan: SubscriptionPlanKey;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const BunkerModal = ({ agent, isOpen, onClose }: BunkerModalProps) => {
+export const BunkerModal = ({ agent, subscriptionPlan, isOpen, onClose }: BunkerModalProps) => {
   const [engine, setEngine] = useState<'free' | 'pro'>('free');
   const { t, getAgentName, getAgentTasks, getEngine } = useAgentI18n();
+  const navigate = useNavigate();
 
   if (!agent) return null;
 
@@ -21,8 +25,12 @@ export const BunkerModal = ({ agent, isOpen, onClose }: BunkerModalProps) => {
   const name = getAgentName(agent);
   const IconComponent = getAgentIcon(agent.id);
   const activeEngine = getEngine(agent, engine);
-  const isPro = isProAgent(agent.id);
-  const needsUpgrade = engine === 'pro' && isPro;
+  const canUsePro = planMeetsMinimum(subscriptionPlan, 'TACTICAL_25');
+  const needsUpgrade = engine === 'pro' && !canUsePro;
+  const goToUpgrade = () => {
+    onClose();
+    navigate('/suscripciones');
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -100,7 +108,7 @@ export const BunkerModal = ({ agent, isOpen, onClose }: BunkerModalProps) => {
                 }`}
                 style={engine === 'pro' ? { boxShadow: '0 0 20px hsl(280 100% 60% / 0.3)' } : {}}
               >
-                <Shield className="w-4 h-4 inline mr-1.5" />
+                {canUsePro ? <Shield className="w-4 h-4 inline mr-1.5" /> : <Lock className="w-4 h-4 inline mr-1.5" />}
                 {t('modal.pro')}
               </button>
             </div>
@@ -138,6 +146,7 @@ export const BunkerModal = ({ agent, isOpen, onClose }: BunkerModalProps) => {
               >
                 <div className="px-6 pb-6">
                   <button
+                    onClick={goToUpgrade}
                     className="w-full py-3 rounded-xl font-mono text-sm font-bold tracking-widest transition-all duration-300"
                     style={{
                       background: 'linear-gradient(135deg, hsl(280 100% 60%), hsl(320 100% 50%))',

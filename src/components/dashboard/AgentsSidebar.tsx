@@ -1,20 +1,24 @@
 import { useState, useCallback, memo } from 'react';
-import { Wrench, Zap, Shield } from 'lucide-react';
+import { Lock, Wrench, Zap, Shield } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { CollapsibleSidebar } from './CollapsibleSidebar';
 import { BunkerModal } from './BunkerModal';
-import { getAgentIcon, isProAgent } from './agentMeta';
+import { getAgentIcon, isAgentAllowedForPlan, isProAgent } from './agentMeta';
 import { useAgentI18n, type Agent } from '@/hooks/useAgentI18n';
+import { useAuth } from '@/hooks/useAuth';
 
 const AgentCard = memo(({
   agent,
   isSelected,
   onClick,
   name,
+  isLocked,
 }: {
   agent: Agent;
   isSelected: boolean;
   onClick: () => void;
   name: string;
+  isLocked: boolean;
 }) => {
   const IconComponent = getAgentIcon(agent.id);
   const isPro = isProAgent(agent.id);
@@ -22,10 +26,13 @@ const AgentCard = memo(({
   return (
     <button
       onClick={onClick}
+      title={isLocked ? 'Requiere plan pago' : name}
       className={`w-full text-left p-3 rounded-xl transition-all duration-200 ${
         isSelected
           ? 'dashboard-neon-card bg-primary/18 border-primary/45 shadow-[0_0_22px_rgba(34,211,238,0.12)]'
-          : 'dashboard-neon-card border-cyan-400/15 hover:border-cyan-300/35'
+          : isLocked
+            ? 'dashboard-neon-card border-amber-300/25 opacity-75 hover:border-amber-200/45'
+            : 'dashboard-neon-card border-cyan-400/15 hover:border-cyan-300/35'
       } border`}
     >
       <div className="flex items-center gap-3">
@@ -51,7 +58,7 @@ const AgentCard = memo(({
               boxShadow: '0 0 8px hsl(280 100% 60% / 0.3)',
             }}
           >
-            <Shield className="w-2.5 h-2.5" />
+            {isLocked ? <Lock className="w-2.5 h-2.5" /> : <Shield className="w-2.5 h-2.5" />}
             PRO
           </div>
         )}
@@ -65,8 +72,15 @@ export const AgentsSidebar = memo(() => {
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const { t, getAgentName, getAgentTasks, getEngine, agents } = useAgentI18n();
+  const { subscriptionPlan } = useAuth();
+  const navigate = useNavigate();
 
   const handleClick = useCallback((agent: Agent) => {
+    if (!isAgentAllowedForPlan(agent.id, subscriptionPlan)) {
+      navigate('/suscripciones');
+      return;
+    }
+
     const name = getAgentName(agent);
     const tasks = getAgentTasks(agent);
 
@@ -80,7 +94,7 @@ export const AgentsSidebar = memo(() => {
         engine: getEngine(agent, 'free'),
       },
     }));
-  }, [getAgentName, getAgentTasks, getEngine]);
+  }, [getAgentName, getAgentTasks, getEngine, navigate, subscriptionPlan]);
 
   return (
     <>
@@ -104,6 +118,7 @@ export const AgentsSidebar = memo(() => {
                 isSelected={selectedAgent?.id === agent.id}
                 onClick={() => handleClick(agent)}
                 name={getAgentName(agent)}
+                isLocked={!isAgentAllowedForPlan(agent.id, subscriptionPlan)}
               />
             ))}
           </div>
@@ -112,6 +127,7 @@ export const AgentsSidebar = memo(() => {
 
       <BunkerModal
         agent={selectedAgent}
+        subscriptionPlan={subscriptionPlan}
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
       />

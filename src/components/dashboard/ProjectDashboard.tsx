@@ -18,9 +18,6 @@ import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/hooks/useLanguage';
-import { MascotAssistant } from './MascotAssistant';
-import { emitMascotEvent, MASCOT_EVENTS } from '@/lib/mascot-events';
-import { useMascotState } from '@/hooks/useMascotState';
 
 export const ProjectDashboard = () => {
   const [isFocusMode, setIsFocusMode] = useState(false);
@@ -34,8 +31,6 @@ export const ProjectDashboard = () => {
   const { signOut, user } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const mascot = useMascotState();
-
   const userName = user?.user_metadata?.full_name
     || user?.user_metadata?.name
     || user?.user_metadata?.preferred_name
@@ -90,12 +85,6 @@ export const ProjectDashboard = () => {
       window.removeEventListener('eq:response-zoom-out', zoomOut);
     };
   }, []);
-
-  useEffect(() => {
-    emitMascotEvent(MASCOT_EVENTS.DASHBOARD_ENTERED, {
-      userName,
-    });
-  }, [userName]);
 
   return (
     <div
@@ -180,13 +169,6 @@ export const ProjectDashboard = () => {
       <ProjectManagerModal 
         isOpen={isProjectManagerOpen} 
         onClose={() => setIsProjectManagerOpen(false)} 
-      />
-
-      <MascotAssistant
-        state={mascot.state}
-        message={mascot.message}
-        userName={mascot.userName || userName}
-        pulseKey={mascot.pulseKey}
       />
     </div>
   );

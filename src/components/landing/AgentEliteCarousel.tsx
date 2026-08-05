@@ -22,6 +22,7 @@ import {
   Megaphone,
   Search,
   Layers,
+  CheckCircle2,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { GhostTyper } from './GhostTyper';
@@ -151,7 +152,7 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
       selectedAt: new Date().toISOString(),
     };
     localStorage.setItem(ACTIVE_AGENT_STORAGE_KEY, JSON.stringify(persistedAgent));
-    navigate('/suscripciones#free');
+    navigate('/dashboard');
   };
 
   const handleUpgrade = () => {
@@ -168,7 +169,7 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
       selectedAt: new Date().toISOString(),
     };
     localStorage.setItem(ACTIVE_AGENT_STORAGE_KEY, JSON.stringify(persistedAgent));
-    navigate('/suscripciones');
+    navigate('/dashboard');
   };
 
   const getVisible = () => {
@@ -205,8 +206,8 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
         />
       </div>
 
-      <div className="relative z-20 flex min-h-0 flex-1 flex-col items-center justify-center px-4">
-        <div className="relative flex min-h-[500px] w-full max-w-7xl items-center justify-center pb-4">
+      <div className="relative z-20 flex min-h-0 flex-1 flex-col items-center px-4">
+        <div className="relative flex min-h-[500px] w-full max-w-7xl flex-1 items-start justify-center pb-4">
           <AnimatePresence mode="popLayout">
             {visible.map((idx, pos) => {
               const agent = agents[idx];
@@ -248,34 +249,37 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
                     className={[
                       'w-full overflow-hidden rounded-lg border transition-all duration-500',
                       isCenter
-                        ? 'border-cyan-300/45 bg-[#092733]/90'
+                        ? 'border-cyan-300/45 bg-[linear-gradient(135deg,rgba(3,24,33,0.96),rgba(8,38,49,0.9)_45%,rgba(11,17,33,0.94))]'
                         : isHovered
                           ? 'border-yellow-300/45 bg-[#0b2029]/85'
                           : 'border-white/8 bg-[#071820]/78',
                     ].join(' ')}
                     style={
                       isCenter
-                        ? { boxShadow: '0 0 24px rgba(34,211,238,0.18)', width: 'min(92vw, 1080px)' }
+                        ? { boxShadow: '0 22px 70px rgba(0,0,0,0.48), 0 0 34px rgba(34,211,238,0.22)', width: 'min(94vw, 1180px)' }
                         : isHovered
                           ? { boxShadow: '0 0 34px rgba(250,204,21,0.22)' }
                           : undefined
                     }
                   >
-                    <div className="p-3 pb-3 sm:p-3.5 sm:pb-3">
-                      <div className="mb-2 flex items-center gap-3 border-b border-cyan-300/15 pb-2">
+                    <div className="p-4 pb-4 sm:p-5 sm:pb-4">
+                      <div className="mb-4 flex flex-col gap-3 border-b border-cyan-300/16 pb-4 lg:flex-row lg:items-center lg:justify-between">
+                        <div className="flex min-w-0 items-center gap-4">
                         <div
-                          className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-xl ${
+                          className={`flex shrink-0 items-center justify-center rounded-lg ${
+                            isCenter ? 'h-16 w-16' : 'h-14 w-14'
+                          } ${
                             isCenter ? 'bg-cyan-400/15 text-cyan-200 border border-cyan-300/35' : 'bg-white/5 text-muted-foreground'
                           }`}
                         >
-                          <Icon className="h-7 w-7" />
+                          <Icon className={isCenter ? 'h-8 w-8' : 'h-7 w-7'} />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2">
+                          <div className="flex flex-wrap items-center gap-2">
                             <span className={`font-mono ${isCenter ? 'text-[15px] md:text-[16px] text-cyan-200/90' : 'text-[11px] text-yellow-200/78'}`}>
                               #{String(agent.numId || idx + 1).padStart(2, '0')}
                             </span>
-                            <h3 className={`truncate font-display font-bold ${isCenter ? 'text-[22px] md:text-[25px] text-white' : 'text-[18px] md:text-[1.3rem] text-slate-300/85'}`}>
+                            <h3 className={`font-display font-bold leading-tight ${isCenter ? 'text-[28px] md:text-[34px] text-white' : 'text-[18px] md:text-[1.3rem] text-slate-300/85'}`}>
                               {name}
                             </h3>
                           </div>
@@ -283,46 +287,71 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
                             {agent.badge}
                           </span>
                         </div>
+                        </div>
+
+                        {isCenter ? (
+                          <div className="grid shrink-0 grid-cols-3 gap-2">
+                            {planCopy.paidHighlights.map((item, index) => (
+                              <div
+                                key={item}
+                                className={[
+                                  'rounded-lg border px-3 py-2 text-center',
+                                  index === 0
+                                    ? 'border-cyan-300/35 bg-cyan-300/12'
+                                    : index === 1
+                                      ? 'border-amber-300/40 bg-amber-300/13'
+                                      : 'border-rose-300/40 bg-rose-300/13',
+                                ].join(' ')}
+                              >
+                                <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/55">
+                                  {index === 0 ? 'Start' : index === 1 ? 'Scale' : 'Lead'}
+                                </p>
+                                <p className="mt-1 text-[15px] font-black leading-none text-white md:text-[18px]">
+                                  {item}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        ) : null}
                       </div>
 
-                      <p className={`mb-2 line-clamp-2 ${isCenter ? 'text-[14px] md:text-[15px] leading-[1.3] text-cyan-50/88' : 'text-[14px] md:text-[15px] leading-relaxed text-slate-300/68'}`}>
+                      <p className={`mb-4 ${isCenter ? 'max-w-5xl text-[17px] md:text-[19px] leading-[1.45] text-cyan-50/92' : 'line-clamp-2 text-[14px] md:text-[15px] leading-relaxed text-slate-300/68'}`}>
                         {mission}
                       </p>
 
                       {isCenter ? (
-                        <div className="grid gap-2 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-                          <div className="flex h-full flex-col rounded-lg border border-emerald-300/30 bg-emerald-300/10 p-3">
-                            <div className="mb-3 flex flex-wrap items-center gap-2">
-                              <span className="rounded bg-emerald-300/18 px-2.5 py-1 text-[12px] md:text-[13px] font-bold tracking-wider text-emerald-100">
+                        <div className="grid gap-3 xl:grid-cols-[minmax(0,0.96fr)_minmax(0,1.04fr)]">
+                          <div className="flex h-full flex-col rounded-lg border border-emerald-300/35 bg-[linear-gradient(145deg,rgba(16,185,129,0.18),rgba(4,120,87,0.08))] p-4">
+                            <div className="mb-4 flex flex-wrap items-center gap-2">
+                              <span className="rounded-md bg-emerald-300/18 px-3 py-1.5 text-[13px] md:text-[14px] font-bold tracking-wider text-emerald-100">
                                 {planCopy.trialLabel}
                               </span>
-                              <span className="rounded-full border border-cyan-300/25 px-2.5 py-1 text-[12px] md:text-[13px] font-semibold tracking-wide text-cyan-50/90">
+                              <span className="rounded-full border border-cyan-300/25 px-3 py-1.5 text-[12px] md:text-[13px] font-semibold tracking-wide text-cyan-50/90">
                                 {planCopy.freeLabel}
                               </span>
-                              <span className="truncate font-mono text-[10px] md:text-[11px] text-emerald-50/85">{freeModels.join(' - ')}</span>
                             </div>
 
-                            <ul className="space-y-1.5">
+                            <ul className="space-y-2.5">
                               {freeTasks.map((task, index) => (
-                                <li key={index} className="flex gap-2 text-[12px] md:text-[13px] leading-[1.22] text-emerald-50/90">
-                                  <span className="shrink-0 text-cyan-100/90">{'>'}</span>
+                                <li key={index} className="flex gap-2 text-[14px] md:text-[15px] leading-[1.35] text-emerald-50/92">
+                                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-200" />
                                   <span>{task}</span>
                                 </li>
                               ))}
                             </ul>
 
-                            <div className="mt-auto grid gap-1.5 pt-3 sm:grid-cols-3">
+                            <div className="mt-auto grid gap-2 pt-4 sm:grid-cols-3">
                               {planCopy.freeHighlights.map((item, index) => {
                                 const accent = accentCards[index % accentCards.length];
                                 return (
                                 <div
                                   key={item.title}
-                                  className={`flex h-full flex-col rounded-lg border px-2 py-2 ${accent.border} ${accent.bg}`}
+                                  className={`flex h-full flex-col rounded-lg border px-3 py-3 ${accent.border} ${accent.bg}`}
                                 >
-                                    <p className={`text-[9px] md:text-[10px] font-semibold uppercase tracking-[0.1em] ${accent.title}`}>
+                                    <p className={`text-[10px] md:text-[11px] font-bold uppercase tracking-[0.1em] ${accent.title}`}>
                                     {item.title}
                                   </p>
-                                    <p className={`mt-1 text-[10px] md:text-[11px] leading-[1.25] ${accent.body}`}>
+                                    <p className={`mt-1.5 text-[12px] md:text-[13px] leading-[1.35] ${accent.body}`}>
                                     {item.detail}
                                   </p>
                                 </div>
@@ -331,37 +360,36 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
                             </div>
                           </div>
 
-                          <div className="flex h-full flex-col rounded-lg border border-cyan-300/30 bg-cyan-300/10 p-3">
-                            <div className="mb-2 flex flex-wrap items-center gap-2">
-                              <span className="rounded bg-cyan-300/18 px-2.5 py-1 text-[12px] md:text-[13px] font-bold tracking-wider text-cyan-100">
+                          <div className="flex h-full flex-col rounded-lg border border-cyan-300/35 bg-[linear-gradient(145deg,rgba(34,211,238,0.18),rgba(168,85,247,0.11)_55%,rgba(250,204,21,0.1))] p-4">
+                            <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+                              <span className="rounded-md bg-cyan-300/18 px-3 py-1.5 text-[13px] md:text-[14px] font-bold tracking-wider text-cyan-100">
                                 {planCopy.paidLabel}
                               </span>
-                              <span className="truncate font-mono text-[10px] md:text-[11px] text-cyan-50/90">
-                                {proModels.slice(0, 4).join(' - ')}
-                                {proModels.length > 4 ? ' ...' : ''}
+                              <span className="rounded-full border border-amber-300/40 bg-amber-300/14 px-3 py-1 text-[12px] font-bold uppercase tracking-[0.12em] text-amber-100">
+                                Upgrade
                               </span>
                             </div>
 
-                            <ul className="grid gap-x-4 gap-y-1.5 xl:grid-cols-2">
+                            <ul className="grid gap-x-5 gap-y-2.5 xl:grid-cols-2">
                               {proTasks.map((task, index) => (
-                                <li key={index} className="flex gap-2 text-[12px] md:text-[13px] leading-[1.22] text-cyan-50/92">
-                                  <span className={index % 4 === 0 ? 'shrink-0 text-cyan-200' : index % 4 === 1 ? 'shrink-0 text-emerald-200' : index % 4 === 2 ? 'shrink-0 text-yellow-200' : 'shrink-0 text-red-200'}>*</span>
+                                <li key={index} className="flex gap-2 text-[14px] md:text-[15px] leading-[1.35] text-cyan-50/94">
+                                  <CheckCircle2 className={index % 4 === 0 ? 'mt-0.5 h-4 w-4 shrink-0 text-cyan-200' : index % 4 === 1 ? 'mt-0.5 h-4 w-4 shrink-0 text-emerald-200' : index % 4 === 2 ? 'mt-0.5 h-4 w-4 shrink-0 text-amber-200' : 'mt-0.5 h-4 w-4 shrink-0 text-rose-200'} />
                                   <span>{task}</span>
                                 </li>
                               ))}
                             </ul>
 
-                            <div className="mt-auto flex flex-wrap gap-1.5 pt-3">
+                            <div className="mt-auto grid gap-2 pt-4 sm:grid-cols-3">
                               {planCopy.paidHighlights.map((item, index) => (
                                 <span
                                   key={item}
                                   className={[
-                                    'rounded-md border px-2.5 py-1 text-[10px] md:text-[11px] font-semibold tracking-wide',
+                                    'rounded-lg border px-3 py-3 text-center text-[14px] md:text-[16px] font-black tracking-wide',
                                     index === 0
                                       ? 'border-cyan-300/25 bg-cyan-300/10 text-cyan-100/90'
                                       : index === 1
-                                        ? 'border-yellow-300/25 bg-yellow-300/10 text-yellow-100/90'
-                                        : 'border-red-300/25 bg-red-300/10 text-red-100/90',
+                                        ? 'border-amber-300/25 bg-amber-300/10 text-amber-100/90'
+                                        : 'border-rose-300/25 bg-rose-300/10 text-rose-100/90',
                                   ].join(' ')}
                                 >
                                   {item}

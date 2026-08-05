@@ -1,3 +1,5 @@
+import { trackFirebaseEvent } from "@/integrations/firebase";
+
 export const MASCOT_EVENTS = {
   WELCOME: "eq:welcome",
   DASHBOARD_ENTERED: "eq:dashboard-entered",
@@ -51,6 +53,60 @@ export const emitMascotEvent = <T extends MascotEventName>(
   if (typeof window === "undefined") return;
 
   window.dispatchEvent(new CustomEvent(name, { detail }));
+  const analyticsEventName: Record<MascotEventName, string> = {
+    [MASCOT_EVENTS.WELCOME]: "eq_welcome",
+    [MASCOT_EVENTS.DASHBOARD_ENTERED]: "eq_dashboard_entered",
+    [MASCOT_EVENTS.THINKING]: "eq_thinking",
+    [MASCOT_EVENTS.TASK_SUGGESTED]: "eq_task_suggested",
+    [MASCOT_EVENTS.PROGRESS_DETECTED]: "eq_progress_detected",
+    [MASCOT_EVENTS.SUCCESS]: "eq_success",
+    [MASCOT_EVENTS.ERROR]: "eq_error",
+    [MASCOT_EVENTS.GUIDE_WEB]: "eq_guide_web",
+  };
+
+  const analyticsPayload = (() => {
+    switch (name) {
+      case MASCOT_EVENTS.WELCOME:
+      case MASCOT_EVENTS.DASHBOARD_ENTERED:
+        return {
+          user_name: (detail as MascotEventPayloadMap[typeof MASCOT_EVENTS.WELCOME]).userName || null,
+          agent_id: (detail as MascotEventPayloadMap[typeof MASCOT_EVENTS.WELCOME]).agentId || null,
+        };
+      case MASCOT_EVENTS.THINKING:
+        return { reason: detail.reason || null };
+      case MASCOT_EVENTS.TASK_SUGGESTED:
+        return {
+          source: detail.source || null,
+          agent_name: detail.agentName || null,
+          proposal_count: detail.proposals?.length || detail.tasks?.length || 0,
+        };
+      case MASCOT_EVENTS.PROGRESS_DETECTED:
+        return {
+          source: detail.source || null,
+          milestone: detail.milestone,
+          progress: detail.progress ?? null,
+        };
+      case MASCOT_EVENTS.SUCCESS:
+        return {
+          label: detail.label || null,
+          reward_type: detail.rewardType || null,
+        };
+      case MASCOT_EVENTS.ERROR:
+        return {
+          code: detail.code || null,
+          message: detail.message,
+        };
+      case MASCOT_EVENTS.GUIDE_WEB:
+        return {
+          route: detail.route || null,
+          topic: detail.topic || null,
+        };
+      default:
+        return {};
+    }
+  })();
+
+  void trackFirebaseEvent(analyticsEventName[name], analyticsPayload);
 };
 
 const PROGRESS_KEYWORDS = [
@@ -83,4 +139,3 @@ export const detectProgressMilestone = (text: string) => {
   const sentenceMatch = text.match(/[^.!?\n]+(?:[.!?]|\n|$)/);
   return sentenceMatch?.[0]?.trim() || match;
 };
-

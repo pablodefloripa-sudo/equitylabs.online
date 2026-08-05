@@ -233,19 +233,8 @@ const Suscripciones = () => {
           </div>
         </section>
 
-        {/* ─── Title ─── */}
-        <section className="mx-auto max-w-[70rem] px-4 pt-10 pb-2 text-center">
-          <h1 className="text-5xl md:text-7xl font-black tracking-tight">
-            <span className="text-white">CHOOSE YOUR</span>{' '}
-            <span className="text-[#00d2ff]">PLAN</span>
-          </h1>
-          <p className="mt-3 text-xs text-white/40 font-bold uppercase tracking-widest bg-[#ff007f]/8 inline-block px-4 py-1.5 rounded-full border border-[#ff007f]/20">
-            Warhol Pop-Art Edition
-          </p>
-        </section>
-
         {/* ─── Cards ─── */}
-        <section className="mx-auto max-w-[70rem] px-4 pb-10 pt-6">
+        <section className="mx-auto max-w-[75rem] px-4 pb-6 pt-4">
           <div className="relative">
             <button onClick={() => setIdx(v => Math.max(0, v - vis))} disabled={idx <= 0}
               className="group absolute left-0 top-1/2 z-20 -translate-y-1/2 inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-[#00d2ff] bg-black/50 text-[#00d2ff] shadow-[3px_3px_0px_0px_#00d2ff] hover:shadow-[1px_1px_0px_0px_#00d2ff] disabled:opacity-20 disabled:cursor-not-allowed transition-all md:-left-5"
@@ -270,7 +259,7 @@ const Suscripciones = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
-                    className={`relative bg-[#120e2e] rounded-2xl p-6 border-2 ${a.border} ${a.glow} transition-all duration-300 hover:-translate-y-1 ${plan.spotlight ? 'scale-[1.02]' : ''}`}
+                    className={`relative bg-[#120e2e] rounded-2xl p-7 border-2 ${a.border} ${a.glow} transition-all duration-300 hover:-translate-y-1 ${plan.spotlight ? 'scale-[1.02]' : ''}`}
                   >
                     {/* Badge */}
                     {plan.badge && (
@@ -279,45 +268,38 @@ const Suscripciones = () => {
                       </div>
                     )}
 
-                    {/* Icon + Name */}
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className={`rounded-xl bg-gradient-to-br ${a.badge} p-[2px]`}>
-                        <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-[#120e2e]">
-                          <Icon className="h-5 w-5 text-white" />
+                    {/* Icon + Name + Price + Tagline — misma linea */}
+                    <div className="flex items-start gap-3 mb-5">
+                      <div className={`rounded-xl bg-gradient-to-br ${a.badge} p-[2px] flex-shrink-0`}>
+                        <div className="flex h-12 w-12 items-center justify-center rounded-[10px] bg-[#120e2e]">
+                          <Icon className="h-6 w-6 text-white" />
                         </div>
                       </div>
-                      <div>
-                        <h2 className="text-2xl font-black text-white tracking-tight">{plan.name}</h2>
-                      </div>
-                    </div>
-
-                    {/* Price */}
-                    <div className="mb-3 p-4 rounded-xl bg-gradient-to-r from-[#ff007f]/10 to-[#00d2ff]/10 border-2 border-[#ff007f]">
-                      <div className="flex items-baseline justify-between">
-                        <div>
-                          <span className="text-5xl font-black text-white">{plan.price}</span>
-                          <span className="text-white/40 font-bold ml-1 text-sm">{plan.cadence}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-baseline justify-between gap-2 flex-wrap">
+                          <h2 className="text-3xl font-black text-white tracking-tight">{plan.name}</h2>
+                          <div className="flex items-baseline gap-1.5 flex-shrink-0">
+                            <span className="text-3xl font-black text-white">{plan.price}</span>
+                            <span className="text-white/40 font-bold text-sm">{plan.cadence}</span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Sparkles className="w-4 h-4 text-[#00d2ff]" />
-                        </div>
+                        <p className="text-xs text-white/40 font-bold uppercase tracking-widest mt-1">{plan.tagline}</p>
                       </div>
-                      <p className="text-[11px] text-white/30 font-bold uppercase tracking-widest mt-2">{plan.tagline}</p>
                     </div>
 
                     {/* Features */}
-                    <div className="space-y-2.5 mb-6 max-h-48 overflow-y-auto scrollbar-thin">
+                    <div className="space-y-2 mb-4">
                       {plan.features.map((f, i) => (
-                        <div key={i} className="flex items-start gap-2.5">
+                        <div key={i} className="flex items-start gap-2">
                           <span className={`flex-shrink-0 w-4 h-4 rounded-full ${a.dot} text-black font-black flex items-center justify-center text-[9px] mt-0.5`}>✓</span>
-                          <span className={`text-sm font-medium ${i === 0 ? 'text-[#ff007f] font-bold' : 'text-white/80'}`}>{f}</span>
+                          <span className={`text-xs font-medium ${i === 0 ? 'text-[#ff007f] font-bold' : 'text-white/70'}`}>{f}</span>
                         </div>
                       ))}
                     </div>
 
                     {/* CTA */}
                     <button onClick={() => handleSelect(plan)} disabled={loading === plan.key}
-                      className={`w-full py-3.5 font-black text-sm uppercase tracking-wider rounded-xl border-2 transition-all duration-200 ${a.btn} ${loading === plan.key ? 'opacity-60' : ''} active:translate-x-[0px] active:translate-y-[0px] active:shadow-none`}>
+                      className={`px-4 py-1.5 font-bold text-xs uppercase tracking-wider rounded-lg border-2 transition-all duration-200 ${a.btn} ${loading === plan.key ? 'opacity-60' : ''} active:translate-x-[0px] active:translate-y-[0px] active:shadow-none`}>
                       {loading === plan.key ? 'Processing...' : isSub ? '✓ Active' : plan.ctaLabel}
                     </button>
                   </motion.article>

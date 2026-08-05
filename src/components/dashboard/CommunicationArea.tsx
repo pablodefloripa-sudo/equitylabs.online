@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+﻿import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import QRCode from 'qrcode';
 import {
   Zap,
   Loader2,
@@ -25,6 +26,12 @@ import {
   Volume2,
   VolumeX,
   ChevronDown,
+  Mic,
+  MicOff,
+  Send,
+  Link2,
+  Copy,
+  Smartphone,
 } from 'lucide-react';
 import { InlineToolsPanel } from './InlineToolsPanel';
 import { AgentResponsePanel } from './AgentResponsePanel';
@@ -32,13 +39,23 @@ import { MascotGreeting } from './MascotGreeting';
 import { MascotTaskDialog } from './MascotTaskDialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 import { useAIChat } from '@/hooks/useAIChat';
 import { useKokoroTTS } from '@/hooks/useKokoroTTS';
+import { useVoiceCommands } from '@/hooks/useVoiceCommands';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage, type Language } from '@/hooks/useLanguage';
 import { useToast } from '@/hooks/use-toast';
+import { getDefaultModelForPlan } from '@/lib/subscription-plans';
 import { AGENT_UI_COPY, INLINE_TOOLS_COPY, type DashboardToolKey } from './dashboardI18n';
+import mascotImage from '@/assets/mascot/assistant-dog.png';
 import {
   emitMascotEvent,
   MASCOT_EVENTS,
@@ -153,7 +170,6 @@ const emptyAgentProjectForm: AgentProjectForm = {
   dataSource: '',
 };
 
-const DEFAULT_ENGINE = 'qwen/qwen3-vl-8b-thinking';
 const ACTIVE_AGENT_STORAGE_KEY = 'eq_active_agent_context';
 const PROJECT_ROOTS_STORAGE_KEY = 'eq_project_roots';
 const INLINE_TOOL_ICONS: Record<InlineToolKey, React.ComponentType<{ className?: string }>> = {
@@ -195,19 +211,19 @@ const ORCHESTRATOR_ROLE_OPTIONS = [
 ];
 
 const OPERATION_MODES = [
-  'SEO EstratÃƒÆ’Ã‚Â©gico',
+  'SEO EstratÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©gico',
   'Full-Stack Dev',
   'Copywriter',
   'Debug Mode',
   'Creatividad',
-  'PrecisiÃƒÆ’Ã‚Â³n QuirÃƒÆ’Ã‚Âºrgica',
+  'PrecisiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n QuirÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Âºrgica',
 ] as const;
 
 const STYLE_MODES = [
   'Equilibrado',
   'Lluvia de Ideas',
-  'ConcisiÃƒÆ’Ã‚Â³n Extrema',
-  'ExplicaciÃƒÆ’Ã‚Â³n Humana',
+  'ConcisiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n Extrema',
+  'ExplicaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n Humana',
   'Formato Markdown',
 ] as const;
 
@@ -481,6 +497,10 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
   const [responseScale, setResponseScale] = useState(1);
   const [selectedInlineTool, setSelectedInlineTool] = useState<{ key: InlineToolKey; label: string } | null>(null);
   const [chatAttachments, setChatAttachments] = useState<ChatAttachment[]>([]);
+  const [mascotPrompt, setMascotPrompt] = useState('');
+  const [liveVoicePrompt, setLiveVoicePrompt] = useState('');
+  const [paseoOpen, setPaseoOpen] = useState(false);
+  const [paseoQr, setPaseoQr] = useState('');
   const [soundEnabled, setSoundEnabled] = useState(() => (
     typeof window !== 'undefined' && window.localStorage.getItem(SOUND_PREFERENCE_KEY) === 'true'
   ));
@@ -490,10 +510,10 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
   ));
   const [activeAgentName, setActiveAgentName] = useState<string | null>(null);
   const [activeAgentId, setActiveAgentId] = useState<string | null>(null);
-  const [activeAgentEngine, setActiveAgentEngine] = useState<string>(DEFAULT_ENGINE);
+  const [activeAgentEngine, setActiveAgentEngine] = useState<string>('');
   const [agentProjectForm, setAgentProjectForm] = useState<AgentProjectForm>(emptyAgentProjectForm);
-  const [operationMode, setOperationMode] = useState<(typeof OPERATION_MODES)[number]>('SEO EstratÃƒÆ’Ã‚Â©gico');
-  const [styleMode, setStyleMode] = useState<(typeof STYLE_MODES)[number]>('ExplicaciÃƒÆ’Ã‚Â³n Humana');
+  const [operationMode, setOperationMode] = useState<(typeof OPERATION_MODES)[number]>('SEO EstratÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©gico');
+  const [styleMode, setStyleMode] = useState<(typeof STYLE_MODES)[number]>('ExplicaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n Humana');
   const [missionToday, setMissionToday] = useState('');
   const [timeLimitEnabled, setTimeLimitEnabled] = useState(false);
   const [timeLimitDate, setTimeLimitDate] = useState('');
@@ -507,11 +527,32 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
   const inlineToolsCopy = INLINE_TOOLS_COPY[language];
   const inlineToolLabels = inlineToolsCopy.tools;
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user, subscriptionPlan } = useAuth();
+  const planEngine = useMemo(() => getDefaultModelForPlan(subscriptionPlan), [subscriptionPlan]);
   
   const { sendMessage, isLoading: aiLoading } = useAIChat();
   const { speak, stop, voices } = useKokoroTTS();
+  const {
+    isListening: isMascotVoiceListening,
+    transcript: mascotVoiceTranscript,
+    isSupported: isMascotVoiceSupported,
+    toggleListening: toggleMascotVoice,
+  } = useVoiceCommands({
+    onCommand: (command) => {
+      const cleaned = command.trim();
+      if (!cleaned) return;
+      setMascotPrompt((current) => {
+        const existing = current.trim();
+        return existing ? `${existing} ${cleaned}` : cleaned;
+      });
+      forceFocus();
+    },
+  });
   const spokenMessageRef = useRef<string | null>(null);
+  useEffect(() => {
+    setActiveAgentEngine(current => current || planEngine);
+  }, [planEngine]);
+
   // Permanent auto-focus
   const forceFocus = useCallback(() => {
     setTimeout(() => textareaRef.current?.focus(), 50);
@@ -524,6 +565,15 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
     window.addEventListener('eq:focus-console', handleFocusConsole);
     return () => window.removeEventListener('eq:focus-console', handleFocusConsole);
   }, [forceFocus]);
+
+  useEffect(() => {
+    if (isMascotVoiceListening) {
+      setLiveVoicePrompt(mascotVoiceTranscript);
+      return;
+    }
+
+    setLiveVoicePrompt('');
+  }, [isMascotVoiceListening, mascotVoiceTranscript]);
 
   useEffect(() => {
     const zoomIn = () => setResponseScale(value => Math.min(1.45, Number((value + 0.08).toFixed(2))));
@@ -560,7 +610,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
         engine?: string;
       }>).detail || {};
       const agentName = detail.name || 'Agente';
-      const engine = DEFAULT_ENGINE;
+      const engine = planEngine;
       const operatorName = getOperatorName(user);
       const command = buildAgentCommand(agentName, detail.tasks || [], engine, operatorName, language);
       const subscriptionRaw = localStorage.getItem('eq_subscription_context');
@@ -609,7 +659,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
 
     window.addEventListener('eq:agent-selected', handleAgentSelected);
     return () => window.removeEventListener('eq:agent-selected', handleAgentSelected);
-  }, [forceFocus, language, user]);
+  }, [forceFocus, language, planEngine, user]);
 
   useEffect(() => {
     if (messages.length > 0) return;
@@ -631,7 +681,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
       const command = buildAgentCommand(
         activeAgent.name,
         activeAgent.tasks || [],
-        DEFAULT_ENGINE,
+        planEngine,
         operatorName,
         language,
       );
@@ -641,7 +691,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
         role: 'assistant',
         content: command.content,
         timestamp: new Date(),
-        model: DEFAULT_ENGINE,
+        model: planEngine,
         agentCommand: {
           agentName: activeAgent.name,
           userName: operatorName,
@@ -651,11 +701,11 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
       announceTaskSuggestions(activeAgent.name, command.proposals, 'cached-agent');
       setActiveAgentName(activeAgent.name);
       setActiveAgentId(activeAgent.id || null);
-      setActiveAgentEngine(DEFAULT_ENGINE);
+      setActiveAgentEngine(planEngine);
     } catch {
       // ignore malformed active agent cache
     }
-  }, [language, messages.length, user]);
+  }, [language, messages.length, planEngine, user]);
 
   const autoResize = useCallback(() => {
     const el = textareaRef.current;
@@ -808,7 +858,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
           if (restoredAgent) {
             setActiveAgentName(restoredAgent.name || null);
             setActiveAgentId(restoredAgent.id || null);
-            setActiveAgentEngine(restoredAgent.engine || DEFAULT_ENGINE);
+            setActiveAgentEngine(restoredAgent.engine || planEngine);
           }
         }
         sessionStorage.removeItem('eq_resume_session');
@@ -819,7 +869,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
     const handler = (e: Event) => loadResume((e as CustomEvent).detail);
     window.addEventListener('eq:resume-session', handler);
     return () => window.removeEventListener('eq:resume-session', handler);
-  }, [forceFocus, inlineToolsCopy.tools]);
+  }, [forceFocus, inlineToolsCopy.tools, planEngine]);
 
   // Listen for tool prompts/results from ToolsMenu
   useEffect(() => {
@@ -829,7 +879,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
       setMessages(prev => [...prev, {
         id: crypto.randomUUID(),
         role: 'user',
-        content: `**${tool}** ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â ${prompt}`,
+        content: `**${tool}** ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ${prompt}`,
         timestamp: new Date(),
       }]);
       forceFocus();
@@ -948,18 +998,17 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
     forceFocus();
   };
 
-  const handleSend = async () => {
-    const currentInput = inputValue.trim();
-    const currentAttachments = chatAttachments;
+  const sendComposerMessage = async (currentInput: string, currentAttachments: ChatAttachment[] = []) => {
     if ((!currentInput && currentAttachments.length === 0) || aiLoading) return;
 
     if (selectedInlineTool && currentAttachments.length === 0) {
       setInputValue('');
+      setMascotPrompt('');
       forceFocus();
       window.dispatchEvent(new CustomEvent('eq:run-selected-tool', {
         detail: {
           prompt: currentInput,
-          preferredModel: activeAgentEngine || DEFAULT_ENGINE,
+          preferredModel: activeAgentEngine || planEngine,
           agentId: activeAgentId || undefined,
         },
       }));
@@ -977,11 +1026,18 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
     setMessages(prev => [...prev, userMessage]);
     setInputValue('');
     setChatAttachments([]);
+    setMascotPrompt('');
     forceFocus();
 
     try {
       const history = messages.map(m => ({ role: m.role, content: m.content }));
-      const result = await sendMessage(currentInput, history, activeAgentId || undefined, currentAttachments);
+      const result = await sendMessage(
+        currentInput,
+        history,
+        activeAgentId || undefined,
+        currentAttachments,
+        activeAgentEngine || planEngine,
+      );
       
       const assistantMessage: Message = {
         id: crypto.randomUUID(),
@@ -1022,6 +1078,17 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
     }
   };
 
+  const handleSend = async () => {
+    const currentInput = inputValue.trim();
+    await sendComposerMessage(currentInput, chatAttachments);
+  };
+
+  const handleMascotPromptSend = async () => {
+    const currentInput = mascotPrompt.trim();
+    if (!currentInput || aiLoading) return;
+    await sendComposerMessage(currentInput, []);
+  };
+
   const updateAgentProjectField = (key: keyof AgentProjectForm, value: string) => {
     setAgentProjectForm(prev => ({ ...prev, [key]: value }));
   };
@@ -1041,9 +1108,10 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
     ].join('\n');
     const currentAgentName = activeAgentName;
     const currentAgentId = activeAgentId;
+    const currentAgentEngine = activeAgentEngine || planEngine;
     const currentInput = [
       `Activar ${currentAgentName} con este proyecto y llevar metricas operativas.`,
-      `Motor configurado: ${activeAgentEngine || DEFAULT_ENGINE}.`,
+      `Motor configurado: ${currentAgentEngine}.`,
       '',
       'Instruccion 1:',
       instructionOne,
@@ -1058,7 +1126,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
       id: crypto.randomUUID(),
       role: 'user',
       content: [
-        `**${currentAgentName} ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â tablero de metricas**`,
+        `**${currentAgentName} ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â tablero de metricas**`,
         '',
         filled,
       ].join('\n'),
@@ -1070,7 +1138,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
 
     try {
       const history = messages.map(m => ({ role: m.role, content: m.content }));
-      const result = await sendMessage(currentInput, history, currentAgentId || undefined);
+      const result = await sendMessage(currentInput, history, currentAgentId || undefined, [], currentAgentEngine);
       setMessages(prev => [...prev, {
         id: crypto.randomUUID(),
         role: 'assistant',
@@ -1117,7 +1185,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
 
     const nextEntry = {
       id: crypto.randomUUID(),
-      title: `${operationMode} Ãƒâ€šÃ‚Â· ${styleMode}`,
+      title: `${operationMode} ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· ${styleMode}`,
       prompt,
       savedAt: new Date().toISOString(),
     };
@@ -1166,6 +1234,34 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
   const historyMessages = activeResponseMessage
     ? messages.filter((msg) => msg.id !== activeResponseMessage.id && msg.role === 'assistant')
     : messages.filter((msg) => msg.role === 'assistant');
+  const paseoLink = useMemo(() => {
+    if (typeof window === 'undefined') return '/mascota-paseo';
+    const agentName = activeResponseMessage?.agentCommand?.agentName || activeAgentName || 'Mascota';
+    const params = new URLSearchParams({ agent: agentName });
+    return `${window.location.origin}/mascota-paseo?${params.toString()}`;
+  }, [activeAgentName, activeResponseMessage?.agentCommand?.agentName]);
+
+  useEffect(() => {
+    if (!paseoOpen) return;
+    let cancelled = false;
+
+    void QRCode.toDataURL(paseoLink, {
+      width: 256,
+      margin: 1,
+      errorCorrectionLevel: 'M',
+      color: { dark: '#06101a', light: '#ffffff' },
+    })
+      .then((dataUrl) => {
+        if (!cancelled) setPaseoQr(dataUrl);
+      })
+      .catch(() => {
+        if (!cancelled) setPaseoQr('');
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [paseoLink, paseoOpen]);
   const historyTitleByLanguage: Record<Language, string> = {
     ES: 'Historial',
     EN: 'History',
@@ -1227,7 +1323,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
                             <div className="mb-1 flex items-center gap-2">
                               <Cpu className="h-3 w-3 text-cyan-300/65" />
                               <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-cyan-200/60">
-                                {msg.model || DEFAULT_ENGINE}
+                                {msg.model || planEngine}
                               </span>
                               {(msg.agentId || msg.route) && (
                                 <span className="rounded border border-emerald-300/15 bg-emerald-300/8 px-1.5 py-0.5 text-[8px] font-mono uppercase tracking-[0.12em] text-emerald-200/60">
@@ -1329,67 +1425,32 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
                         </div>
                       ) : (
                         <>
-                          <AgentResponsePanel
-                            content={activeResponseMessage.content}
-                            model={activeResponseMessage.model}
-                            mascot={activeResponseMessage.mascot}
-                            responseScale={responseScale}
-                            isThinking={aiLoading}
-                            onSpeak={() => {
-                              const text = speechText(activeResponseMessage.content);
-                              if (text) void speak(text, selectedVoiceName || undefined);
-                            }}
-                          />
-                          {activeResponseMessage.agentCommand && (
-                            <div className="mt-2 rounded-2xl border border-cyan-400/20 bg-black/45 p-3 backdrop-blur-xl">
-                              <div className="mb-2 flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.18em] text-cyan-300/75">
-                                <ShieldCheck className="h-3.5 w-3.5" />
-                                {agentUiCopy.startupOptions}
+                          <div className="space-y-3">
+                            <AgentResponsePanel
+                              content={activeResponseMessage.content}
+                              model={activeResponseMessage.model}
+                              mascot={activeResponseMessage.mascot}
+                              responseScale={responseScale}
+                              isThinking={aiLoading}
+                              onSpeak={() => {
+                                const text = speechText(activeResponseMessage.content);
+                                if (text) void speak(text, selectedVoiceName || undefined);
+                              }}
+                            />
+                            {activeResponseMessage.agentCommand && (
+                              <div className="mt-2 flex justify-end">
+                                <a
+                                  href={paseoLink}
+                                  target="_blank"
+                                  rel="noreferrer noopener"
+                                  className="inline-flex items-center gap-2 rounded-full border border-cyan-300/15 bg-black/20 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-cyan-100/75 hover:border-cyan-300/30 hover:bg-cyan-400/10 hover:text-cyan-50"
+                                >
+                                  <Smartphone className="h-3.5 w-3.5" />
+                                  Mascota
+                                </a>
                               </div>
-                              <div className="grid gap-2 md:grid-cols-3">
-                                {activeResponseMessage.agentCommand.proposals.map((proposal, proposalIndex) => (
-                                  <button
-                                    key={proposal}
-                                    onClick={() => {
-                                      setInputValue(agentUiCopy.executeProposal(proposalIndex + 1, activeResponseMessage.agentCommand?.agentName || 'Agent', proposal));
-                                      forceFocus();
-                                    }}
-                                    className="rounded-xl border border-cyan-400/20 bg-cyan-400/5 px-3 py-2 text-left text-[11px] leading-snug text-cyan-50/80 transition hover:border-cyan-300/45 hover:bg-cyan-400/10"
-                                  >
-                                    <span className="mb-1 block font-mono text-cyan-300">0{proposalIndex + 1}</span>
-                                    {proposal}
-                                  </button>
-                                ))}
-                              </div>
-                              <div className="mt-3 border-t border-cyan-400/10 pt-3">
-                                <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.18em] text-cyan-300/60">
-                                  Mas opciones de trabajo
-                                </p>
-                                <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
-                                  {STARTUP_WORK_PRESETS.map((preset) => (
-                                    <button
-                                      key={preset.label}
-                                      onClick={() => {
-                                        setInputValue(preset.prompt);
-                                        forceFocus();
-                                      }}
-                                      className="group rounded-xl border border-cyan-400/20 bg-cyan-400/5 px-3 py-2 text-left text-[11px] leading-snug text-cyan-50/80 transition hover:border-cyan-300/45 hover:bg-cyan-400/10"
-                                    >
-                                      <preset.icon className="mb-1 h-4 w-4 text-cyan-300 transition-transform group-hover:scale-110" />
-                                      <span className="mb-1 block font-semibold text-cyan-50">{preset.label}</span>
-                                      <span className="block text-[10px] text-cyan-100/55">{preset.prompt}</span>
-                                    </button>
-                                  ))}
-                                </div>
-                              </div>
-                              <button
-                                onClick={() => requestIntegration('Google Workspace', agentUiCopy.googleWorkspaceReason)}
-                                className="mt-2 rounded-lg border border-fuchsia-300/25 bg-fuchsia-400/10 px-3 py-1.5 text-[11px] font-medium text-fuchsia-100 transition hover:border-fuchsia-200/45 hover:bg-fuchsia-400/15"
-                              >
-                                {agentUiCopy.connectPermissions}
-                              </button>
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </>
                       )}
 
@@ -1397,7 +1458,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
                         <div className="relative z-20 mt-3 flex items-center gap-2 rounded-b-[18px] px-5 pb-3 pt-1">
                           <Cpu className="h-3 w-3 text-cyan-400/70" />
                           <span className="font-mono text-[10px] tracking-wider text-cyan-300/70">
-                            {activeResponseMessage.model || DEFAULT_ENGINE}
+                            {activeResponseMessage.model || planEngine}
                           </span>
                           {(activeResponseMessage.agentId || activeResponseMessage.route) && (
                             <span className="rounded border border-emerald-300/15 bg-emerald-300/8 px-1.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.12em] text-emerald-200/70">
@@ -1526,7 +1587,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
                 <div className="hidden sm:flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1">
                   <Cpu className="h-3.5 w-3.5 text-emerald-300" />
                   <span className="text-[10px] font-mono uppercase tracking-[0.16em] text-emerald-100/70">
-                    {activeAgentEngine || DEFAULT_ENGINE}
+                    {activeAgentEngine || planEngine}
                   </span>
                 </div>
               </div>
@@ -1536,7 +1597,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
                     Motor configurado
                   </p>
                   <p className="mt-1 text-sm font-semibold text-emerald-50">
-                    {activeAgentEngine || DEFAULT_ENGINE}
+                    {activeAgentEngine || planEngine}
                   </p>
                   <p className="mt-2 text-[11px] leading-relaxed text-emerald-100/55">
                     Razonamiento multi-paso, orquestacion de agentes y ejecucion de largo recorrido.
@@ -1559,9 +1620,9 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
                     Perfil tecnico
                   </p>
                   <div className="mt-2 grid gap-2 text-[11px] text-cyan-50/72">
-                    <p>ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Modelo base para el proyecto nuevo: <span className="text-cyan-200">{activeAgentEngine || DEFAULT_ENGINE}</span></p>
-                    <p>ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Salida pensada para panel interno y trazabilidad operativa.</p>
-                    <p>ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Debe mantener respuestas directas y resumen ejecutivo.</p>
+                    <p>ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ Modelo base para el proyecto nuevo: <span className="text-cyan-200">{activeAgentEngine || planEngine}</span></p>
+                    <p>ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ Salida pensada para panel interno y trazabilidad operativa.</p>
+                    <p>ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ Debe mantener respuestas directas y resumen ejecutivo.</p>
                   </div>
                 </div>
               </div>
@@ -1570,8 +1631,8 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
             <div className="border-b border-cyan-300/12 px-3 py-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-cyan-200/60">Modo de OperaciÃƒÆ’Ã‚Â³n</p>
-                  <h3 className="mt-1 text-sm font-semibold text-cyan-50">InstrucciÃƒÆ’Ã‚Â³n 1 del nuevo proyecto</h3>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-cyan-200/60">Modo de OperaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n</p>
+                  <h3 className="mt-1 text-sm font-semibold text-cyan-50">InstrucciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n 1 del nuevo proyecto</h3>
                 </div>
                 <button
                   type="button"
@@ -1640,12 +1701,12 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
                 <div className="grid gap-3 md:grid-cols-[1.2fr_0.8fr]">
                   <label className="rounded-xl border border-cyan-300/16 bg-cyan-300/7 px-3 py-2">
                     <span className="mb-1 block font-mono text-[10px] uppercase tracking-[0.16em] text-cyan-200/70">
-                      Escribe la misiÃƒÆ’Ã‚Â³n de hoy...
+                      Escribe la misiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n de hoy...
                     </span>
                     <Textarea
                       value={missionToday}
                       onChange={(event) => setMissionToday(event.target.value)}
-                      placeholder="Escribe la misiÃƒÆ’Ã‚Â³n de hoy..."
+                      placeholder="Escribe la misiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n de hoy..."
                       className="min-h-[100px] border-0 bg-transparent p-0 text-sm text-cyan-50 placeholder:text-cyan-100/24 focus-visible:ring-0"
                     />
                   </label>
@@ -1689,7 +1750,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
 
                     {!timeLimitEnabled && (
                       <p className="text-xs leading-relaxed text-emerald-100/50">
-                        PresionÃƒÆ’Ã‚Â¡ <span className="text-emerald-200">Time Limit</span> para abrir el selector de fecha.
+                        PresionÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ <span className="text-emerald-200">Time Limit</span> para abrir el selector de fecha.
                       </p>
                     )}
                   </div>
@@ -1704,7 +1765,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
                     Guardar Prompt Ganador
                   </button>
                   <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-cyan-200/40">
-                    Todo esto se envÃƒÆ’Ã‚Â­a como instrucciÃƒÆ’Ã‚Â³n 1 del proyecto
+                    Todo esto se envÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­a como instrucciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n 1 del proyecto
                   </span>
                 </div>
               </div>
@@ -1754,7 +1815,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
                     ))
                   ) : (
                     <p className="py-4 text-center text-xs text-cyan-50/45">
-                      Sin prompts guardados aÃƒÆ’Ã‚Âºn.
+                      Sin prompts guardados aÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Âºn.
                     </p>
                   )}
                 </div>
@@ -1960,7 +2021,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
                       </span>
                       </button>
                     )) : (
-                      <p className="px-2 py-2 text-[10px] text-cyan-100/55">El navegador todavía no informó voces.</p>
+                      <p className="px-2 py-2 text-[10px] text-cyan-100/55">El navegador todavÃ­a no informÃ³ voces.</p>
                     )}
                   </div>
                 )}
@@ -2003,6 +2064,63 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
         )}
       </div>
 
+      <Dialog open={paseoOpen} onOpenChange={setPaseoOpen}>
+        <DialogContent className="max-w-md border-cyan-300/20 bg-slate-950 text-cyan-50">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-cyan-50">
+              <Smartphone className="h-4 w-4 text-cyan-300" />
+              Paseo mÃ³vil
+            </DialogTitle>
+            <DialogDescription className="text-cyan-50/60">
+              Escanee el cÃ³digo para abrir la mascota en el telÃ©fono con una vista vertical pensada para conversar sin distracciones.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-cyan-300/15 bg-white p-3">
+              {paseoQr ? (
+                <img
+                  src={paseoQr}
+                  alt="CÃ³digo QR del paseo mÃ³vil"
+                  className="mx-auto h-56 w-56 rounded-xl"
+                />
+              ) : (
+                <div className="flex h-56 items-center justify-center rounded-xl border border-dashed border-cyan-300/25 bg-cyan-400/5 text-center text-sm text-cyan-50/55">
+                  Generando cÃ³digo QR...
+                </div>
+              )}
+            </div>
+            <div className="rounded-2xl border border-cyan-300/12 bg-black/25 p-3 text-sm leading-relaxed text-cyan-50/72">
+              Este enlace abre la vista mÃ³vil segura de la mascota. Desde ahÃ­ puede escribir o dictar y continuar el mismo flujo operativo.
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(paseoLink);
+                    toast({ title: 'Enlace copiado', description: 'Ya puede pegarlo o compartirlo.' });
+                  } catch {
+                    toast({ title: 'No pude copiar', description: 'Puede usar el enlace manualmente.' });
+                  }
+                }}
+                className="inline-flex items-center gap-2 rounded-full bg-cyan-400/18 px-4 text-cyan-50 hover:bg-cyan-400/28"
+              >
+                <Copy className="h-3.5 w-3.5" />
+                Copiar link
+              </Button>
+              <Button
+                type="button"
+                onClick={() => window.open(paseoLink, '_blank', 'noopener,noreferrer')}
+                className="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-white/5 px-4 text-cyan-50 hover:bg-white/10"
+              >
+                <Link2 className="h-3.5 w-3.5" />
+                Abrir
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <MascotTaskDialog
         open={!!mascotTask}
         task={mascotTask}
@@ -2026,7 +2144,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
           forceFocus();
           try {
             const history = messages.map(m => ({ role: m.role, content: m.content }));
-            const result = await sendMessage(task, history, activeAgentId || undefined);
+            const result = await sendMessage(task, history, activeAgentId || undefined, [], activeAgentEngine || planEngine);
             setMessages(prev => [...prev, {
               id: crypto.randomUUID(),
               role: 'assistant',

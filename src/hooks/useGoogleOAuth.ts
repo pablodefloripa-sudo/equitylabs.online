@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/runtime-client';
 import { useToast } from '@/hooks/use-toast';
 import { buildAuthRedirectUrl } from '@/lib/auth-redirect';
 import { clearPendingGoogleOAuth, markGoogleOAuthPending } from '@/lib/oauth-state';
+import { trackFirebaseEvent } from '@/integrations/firebase';
 import type { Session } from '@supabase/supabase-js';
 
 interface UseGoogleOAuthReturn {
@@ -117,6 +118,7 @@ export const useGoogleOAuth = (): UseGoogleOAuthReturn => {
 
   const connectGoogle = useCallback(async () => {
     try {
+      void trackFirebaseEvent('google_oauth_start', { scope: 'profile' });
       markGoogleOAuthPending();
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -132,6 +134,7 @@ export const useGoogleOAuth = (): UseGoogleOAuthReturn => {
     } catch (error) {
       clearPendingGoogleOAuth();
       console.error('Error connecting to Google:', error);
+      void trackFirebaseEvent('google_oauth_error', { scope: 'profile' });
       const message = error instanceof Error ? error.message : String(error);
       const isMissingSecret = message.toLowerCase().includes('missing oauth secret');
 
@@ -147,6 +150,7 @@ export const useGoogleOAuth = (): UseGoogleOAuthReturn => {
 
   const connectGoogleWorkspace = useCallback(async () => {
     try {
+      void trackFirebaseEvent('google_oauth_start', { scope: 'workspace' });
       markGoogleOAuthPending();
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -164,6 +168,7 @@ export const useGoogleOAuth = (): UseGoogleOAuthReturn => {
     } catch (error) {
       clearPendingGoogleOAuth();
       console.error('Error connecting Google Workspace:', error);
+      void trackFirebaseEvent('google_oauth_error', { scope: 'workspace' });
       toast({
         title: 'Error de conexión Google',
         description: error instanceof Error ? error.message : 'No se pudo abrir Google Workspace. Revisa OAuth en Supabase.',
@@ -222,6 +227,10 @@ export const useGoogleOAuth = (): UseGoogleOAuthReturn => {
       }
 
       await persistGoogleIntegrations(session);
+      void trackFirebaseEvent('google_oauth_complete', {
+        scope: 'workspace',
+        workspace_token: Boolean(session.provider_token),
+      });
 
       toast({
         title: 'Google conectado',

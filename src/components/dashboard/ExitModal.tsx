@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/runtime-client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { deleteArchiveSessionsForUser, saveArchiveSession } from '@/integrations/firebase';
 
 interface ExitModalProps {
   isOpen: boolean;
@@ -51,7 +52,7 @@ export const ExitModal = ({ isOpen, onClose, onConfirmExit }: ExitModalProps) =>
             content: m.content,
             project_id: projectId,
             project_name: projectName,
-            model_used: m.model || m.agentRoute || null,
+            model_used: m.model || m.agentRoute || undefined,
           }));
         const context = (window as unknown as { __eqDashboardContext?: unknown }).__eqDashboardContext || null;
 
@@ -65,6 +66,23 @@ export const ExitModal = ({ isOpen, onClose, onConfirmExit }: ExitModalProps) =>
           content: `EQ_SESSION_CONTEXT:${JSON.stringify({ context, savedAt: new Date().toISOString() })}`,
           project_id: projectId,
           project_name: projectName,
+        });
+
+        void saveArchiveSession({
+          userId: user.id,
+          projectId,
+          projectName,
+          messages: live
+            .filter((m) => (m.role === 'user' || m.role === 'assistant') && m.content?.trim())
+            .map((m) => ({
+              role: m.role as 'user' | 'assistant',
+              content: m.content,
+              timestamp: m.timestamp ? new Date(m.timestamp).toISOString() : new Date().toISOString(),
+              model: m.model || m.agentRoute || undefined,
+              agentRoute: m.agentRoute,
+            })),
+          context,
+          source: 'dashboard-exit',
         });
       }
       toast({ title: 'Session saved', description: 'Available in History.' });
@@ -89,6 +107,7 @@ export const ExitModal = ({ isOpen, onClose, onConfirmExit }: ExitModalProps) =>
           await supabase.storage.from('user-files').remove(paths);
         }
         await supabase.from('user_documents').delete().eq('user_id', user.id);
+        void deleteArchiveSessionsForUser(user.id);
       }
       toast({ title: 'Session cleared', description: 'No trace left.' });
       await finalizeExit();

@@ -54,8 +54,8 @@ export interface AIProviderResult {
 
 export const LOVABLE_AI_GATEWAY_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 export const OPENROUTER_CHAT_URL = 'https://openrouter.ai/api/v1/chat/completions';
-export const EQUITYLABS_PRIMARY_MODEL = 'qwen/qwen3-vl-8b-thinking';
-export const OPENROUTER_FALLBACK_MODEL = EQUITYLABS_PRIMARY_MODEL;
+export const EQUITYLABS_PRIMARY_MODEL = 'nvidia/nemotron-3-ultra-550b-a55b:free';
+export const OPENROUTER_FALLBACK_MODEL = 'nvidia/nemotron-3-ultra-550b-a55b:free';
 
 const SINGLE_MODEL_AGENTS: Record<AgentKey, string> = {
   orquestador: EQUITYLABS_PRIMARY_MODEL,
@@ -233,6 +233,56 @@ export function resolveModel(plan: SubscriptionPlanKey, route: 'greeting' | 'def
   return routing.agents[route];
 }
 
+export function getAllowedModelsForPlan(plan: SubscriptionPlanKey): string[] {
+  const routing = PLAN_MODEL_ROUTING[plan];
+  return Array.from(new Set([
+    routing.greeting,
+    routing.default,
+    ...Object.values(routing.agents),
+  ]));
+}
+
+export function isModelAllowedForPlan(plan: SubscriptionPlanKey, model: string): boolean {
+  return getAllowedModelsForPlan(plan).includes(model.trim());
+}
+
+export function resolvePreferredModelForPlan(
+  plan: SubscriptionPlanKey,
+  fallbackRoute: 'greeting' | 'default' | AgentKey,
+  preferredModel: unknown,
+): {
+  model: string;
+  requestedPreferredModel: string | null;
+  preferredModelAllowed: boolean;
+} {
+  const fallbackModel = resolveModel(plan, fallbackRoute);
+  const requestedPreferredModel = typeof preferredModel === 'string'
+    ? preferredModel.trim()
+    : '';
+
+  if (!requestedPreferredModel) {
+    return {
+      model: fallbackModel,
+      requestedPreferredModel: null,
+      preferredModelAllowed: false,
+    };
+  }
+
+  if (isModelAllowedForPlan(plan, requestedPreferredModel)) {
+    return {
+      model: requestedPreferredModel,
+      requestedPreferredModel,
+      preferredModelAllowed: true,
+    };
+  }
+
+  return {
+    model: fallbackModel,
+    requestedPreferredModel,
+    preferredModelAllowed: false,
+  };
+}
+
 export async function callPaidGateway(
   gatewayUrl: string,
   apiKey: string,
@@ -326,7 +376,7 @@ export async function callAIWithCostControl(
   return callPaidGateway(
     params.gatewayUrl,
     params.paidApiKey,
-    EQUITYLABS_PRIMARY_MODEL,
+    params.model,
     params.messages,
     params.maxTokens,
   );

@@ -9,6 +9,7 @@ import {
   getUserPlanState,
   hasPaidAIProvider,
   LOVABLE_AI_GATEWAY_URL,
+  resolvePreferredModelForPlan,
   resolveModel,
   type AgentKey,
   type ChatMessage,
@@ -325,6 +326,7 @@ const AGENT_KEYS: AgentKey[] = [
 ];
 
 const AGENT_ID_ROUTE_MAP: Record<string, AgentKey> = {
+  ag_01: 'architect',
   ag_02: 'investigador',
   ag_03: 'analista',
   ag_04: 'analista',
@@ -344,6 +346,26 @@ const AGENT_ID_ROUTE_MAP: Record<string, AgentKey> = {
   ag_18: 'investigador',
   ag_19: 'revisor',
   ag_20: 'recepcionista',
+  ls_01: 'orquestador',
+  ls_02: 'asistente',
+  ls_03: 'desarrollador',
+  ls_04: 'disenador',
+  ls_05: 'analista',
+  ls_06: 'orquestador',
+  ls_07: 'escritor',
+  ls_08: 'investigador',
+  ls_09: 'analista',
+  ls_10: 'logic',
+  ls_11: 'orquestador',
+  ls_12: 'recepcionista',
+  ls_13: 'asistente',
+  ls_14: 'investigador',
+  ls_15: 'desarrollador',
+  ls_16: 'orquestador',
+  ls_17: 'revisor',
+  ls_18: 'investigador',
+  ls_19: 'analista',
+  ls_20: 'recepcionista',
 };
 
 function isAgentKey(value: unknown): value is AgentKey {
@@ -353,7 +375,16 @@ function isAgentKey(value: unknown): value is AgentKey {
 function resolveAgentRoute(agentId: unknown): AgentKey | null {
   if (isAgentKey(agentId)) return agentId;
   if (typeof agentId !== 'string') return null;
-  return AGENT_ID_ROUTE_MAP[agentId] || null;
+  const normalized = agentId.trim();
+  if (AGENT_ID_ROUTE_MAP[normalized]) return AGENT_ID_ROUTE_MAP[normalized];
+
+  const numericMatch = normalized.match(/^(?:agent-|#)?(\d{1,2})$/i);
+  if (numericMatch) {
+    const index = numericMatch[1].padStart(2, '0');
+    return AGENT_ID_ROUTE_MAP[`ls_${index}`] || AGENT_ID_ROUTE_MAP[`ag_${index}`] || null;
+  }
+
+  return null;
 }
 
 function resolvePaidProviderLabel(apiKey: string): string {
@@ -411,7 +442,7 @@ serve(async (req) => {
   }
 
   try {
-    const { message, conversationHistory, agentId, language, attachments } = await req.json();
+    const { message, conversationHistory, agentId, language, attachments, preferredModel } = await req.json();
     const safeAttachments = sanitizeAttachments(attachments);
     const langMap: Record<string, string> = {
       es: 'español', en: 'English', pt: 'português', de: 'Deutsch',
@@ -442,10 +473,30 @@ serve(async (req) => {
     }
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const openRouterApiKey = Deno.env.get('OPENROUTER_API_KEY') || '';
+    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY') || '';
+
+    console.log('[EQuityLabs] Runtime env snapshot', {
+      hasSupabaseUrl: Boolean(supabaseUrl),
+      supabaseUrlHost: supabaseUrl ? new URL(supabaseUrl).host : null,
+      hasSupabaseServiceRoleKey: Boolean(supabaseKey),
+      serviceRolePrefix: supabaseKey ? supabaseKey.slice(0, 12) : null,
+      hasOpenRouterApiKey: Boolean(openRouterApiKey),
+      hasLovableApiKey: Boolean(lovableApiKey),
+      hasAuthHeader: Boolean(authHeader),
+      authHeaderPrefix: authHeader.slice(0, 16),
+    });
 
     const authToken: string = authHeader.replace('Bearer ', '');
     const supabase = createClient(supabaseUrl, supabaseKey);
-    const { data: { user } } = await supabase.auth.getUser(authToken);
+    const authResult = await supabase.auth.getUser(authToken);
+    const { data: { user }, error: authError } = authResult;
+    console.log('[EQuityLabs] Auth result', {
+      hasUser: Boolean(user),
+      authError: authError?.message || null,
+      userId: user?.id || null,
+      email: user?.email || null,
+    });
     const userId: string | null = user?.id || null;
     if (!userId) {
       return new Response(
@@ -456,7 +507,7 @@ serve(async (req) => {
 
     const userPlan = await getUserPlanState(supabaseUrl, supabaseKey, userId);
     const activePlan = userPlan.plan;
-    const apiKey = Deno.env.get('LOVABLE_API_KEY') || '';
+    const apiKey = lovableApiKey;
     const paidProvider = resolvePaidProviderLabel(apiKey);
 
     if (!hasPaidAIProvider(LOVABLE_AI_GATEWAY_URL, apiKey)) {
@@ -475,11 +526,18 @@ serve(async (req) => {
       if (userId) {
         availableTools = await checkGoogleIntegrations(supabaseUrl, supabaseKey, userId);
         
-        const { data: profile } = await supabase
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('display_name')
           .eq('user_id', userId)
           .single();
+
+        if (profileError) {
+          console.error('[EQuityLabs] Profile lookup failed', {
+            userId,
+            profileError: profileError.message,
+          });
+        }
         
         if (profile?.display_name) {
           userDisplayName = profile.display_name;
@@ -490,7 +548,9 @@ serve(async (req) => {
     const firstName = userDisplayName.trim().split(/\s+/)[0] || 'usuario';
     const isFirstMessage = !conversationHistory || conversationHistory.length === 0;
     const isSimpleGreeting = isGreeting(message);
-    const useAgentOne = isAgentOne(agentId) || !agentId;
+    const hasPreferredModel = typeof preferredModel === 'string' && preferredModel.trim().length > 0;
+    const isMascotPersona = agentId === 'mascota' || agentId === 'assistant-mascot';
+    const useAgentOne = !hasPreferredModel && (isAgentOne(agentId) || !agentId);
 
     if (useAgentOne) {
       const agentOnePrompt = `${AGENT_ONE_START_PROMPT}
@@ -553,7 +613,7 @@ ${isFirstMessage ? `En tu primera respuesta, comienza con "Hola ${firstName},".`
     }
 
     // Handle contextual greeting with available tools
-    if (isFirstMessage && isSimpleGreeting && userId) {
+    if (!hasPreferredModel && isFirstMessage && isSimpleGreeting && userId) {
       const toolsList = formatAvailableTools(availableTools);
       const greetingWithTools = toolsList 
         ? `¡Hola ${firstName}! 👋\n\nVeo que tengo acceso a tus integraciones:${toolsList}\n\n¿En qué trabajamos hoy?`
@@ -745,8 +805,17 @@ ${isFirstMessage ? `En tu primera respuesta, comienza con "Hola ${firstName},".`
     let modelToUse: string;
     let routingReason: string;
     const routedAgent = resolveAgentRoute(agentId);
+    const fallbackRoute: 'greeting' | 'default' | AgentKey = isFirstMessage && isSimpleGreeting
+      ? 'greeting'
+      : routedAgent || 'default';
+    const preferredResolution = resolvePreferredModelForPlan(activePlan, fallbackRoute, preferredModel);
 
-    if (isFirstMessage && isSimpleGreeting) {
+    if (hasPreferredModel) {
+      modelToUse = preferredResolution.model;
+      routingReason = preferredResolution.preferredModelAllowed
+        ? `preferred:${preferredResolution.requestedPreferredModel}`
+        : `preferred_rejected:${preferredResolution.requestedPreferredModel}->${fallbackRoute}`;
+    } else if (isFirstMessage && isSimpleGreeting) {
       modelToUse = resolveModel(activePlan, 'greeting');
       routingReason = 'greeting';
     } else if (routedAgent) {
@@ -760,6 +829,22 @@ ${isFirstMessage ? `En tu primera respuesta, comienza con "Hola ${firstName},".`
     console.log(`[EQuityLabs] Plan: ${activePlan} | Routing: ${routingReason} -> Model: ${modelToUse}`);
 
     const toolsInfo = formatAvailableTools(availableTools);
+    const mascotContext = `
+Eres la mascota asistente de EQuityLabs.
+
+## Tu Identidad
+- Rol: anfitrión elegante, simpático, divertido y proactivo
+- Tono: educado, fino, culto, con sarcasmo seco y amable cuando encaja
+- Estilo: breve, claro, orientado a acción y resultados
+- Regla: llama al usuario por su nombre de pila siempre que puedas
+- Enfoque: empuja al usuario a convertir ideas en tareas, pasos y retorno de inversión
+- Actitud: acompaña, propone, organiza y cuida el ritmo de trabajo sin ser pesado
+- Nunca te presentes como el asistente principal genérico.
+- Habla siempre como una mascota/agente independiente.
+- Si el usuario escribe un prompt, responde de forma directa, útil y ejecutable.
+- Si no hay suficiente contexto, pide una sola aclaración concreta.
+- Evita abrir con fórmulas vacías o respuestas corporativas.
+`;
     const equityLabsContext = `
 Eres el asistente principal de EQuityLabs, una plataforma de control de misiones y proyectos de alto rendimiento.
 
@@ -783,9 +868,10 @@ Eres el asistente principal de EQuityLabs, una plataforma de control de misiones
 - Si te preguntan quién eres, di que eres el asistente de EQuityLabs.
 ${agentId ? `\n## Modo Agente Activo: ${agentId}${routedAgent ? ` (${routedAgent})` : ''}` : ''}
 `;
+    const baseContext = isMascotPersona ? mascotContext : equityLabsContext;
 
     const messages: ChatMessage[] = [
-      { role: 'system', content: equityLabsContext },
+      { role: 'system', content: baseContext },
       ...(conversationHistory || []),
       { role: 'user', content: buildUserContent(message, safeAttachments) },
     ];
@@ -819,6 +905,10 @@ ${agentId ? `\n## Modo Agente Activo: ${agentId}${routedAgent ? ` (${routedAgent
           provider,
           requestedModel: modelToUse,
           effectiveModel,
+          preferredModelAllowed: preferredResolution.preferredModelAllowed,
+          rejectedPreferredModel: hasPreferredModel && !preferredResolution.preferredModelAllowed
+            ? preferredResolution.requestedPreferredModel
+            : null,
           plan: activePlan,
           route: routingReason,
           agentId: typeof agentId === 'string' ? agentId : null,
