@@ -181,14 +181,14 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
   };
 
   const visible = getVisible();
-  const heroBandHeight = '24vh';
-  const heroBandMinHeight = '168px';
-  const heroBottomOffset = '24px';
+  const heroBandHeight = '15vh';
+  const heroBandMinHeight = '108px';
+  const heroBottomOffset = '12px';
 
   return (
     <div
       ref={viewportRef}
-      className="relative flex min-h-screen w-full flex-col overflow-x-hidden overflow-y-auto pb-[38px]"
+      className="relative flex min-h-screen w-full flex-col overflow-x-hidden overflow-y-auto pb-4"
     >
       <div
         className="pointer-events-none relative z-0 flex items-start justify-center"
@@ -206,8 +206,8 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
         />
       </div>
 
-      <div className="relative z-20 flex min-h-0 flex-1 flex-col items-center px-4">
-        <div className="relative flex min-h-[500px] w-full max-w-7xl flex-1 items-start justify-center pb-4">
+      <div className="relative z-20 flex min-h-0 flex-1 flex-col items-center px-3">
+        <div className="relative flex min-h-[660px] w-full max-w-7xl flex-1 items-start justify-center pb-2">
           <AnimatePresence mode="popLayout">
             {visible.map((idx, pos) => {
               const agent = agents[idx];
@@ -256,34 +256,34 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
                     ].join(' ')}
                     style={
                       isCenter
-                        ? { boxShadow: '0 22px 70px rgba(0,0,0,0.48), 0 0 34px rgba(34,211,238,0.22)', width: 'min(94vw, 1180px)' }
+                        ? { boxShadow: '0 22px 70px rgba(0,0,0,0.48), 0 0 34px rgba(34,211,238,0.22)', width: 'min(92vw, 1000px)' }
                         : isHovered
                           ? { boxShadow: '0 0 34px rgba(250,204,21,0.22)' }
                           : undefined
                     }
                   >
-                    <div className="p-4 pb-4 sm:p-5 sm:pb-4">
-                      <div className="mb-4 flex flex-col gap-3 border-b border-cyan-300/16 pb-4 lg:flex-row lg:items-center lg:justify-between">
-                        <div className="flex min-w-0 items-center gap-4">
+                    <div className="p-3.5 pb-3 sm:p-4 sm:pb-3">
+                      <div className="mb-3 flex flex-col gap-2.5 border-b border-cyan-300/16 pb-3 lg:flex-row lg:items-center lg:justify-between">
+                        <div className="flex min-w-0 items-center gap-3.5">
                         <div
                           className={`flex shrink-0 items-center justify-center rounded-lg ${
-                            isCenter ? 'h-16 w-16' : 'h-14 w-14'
+                            isCenter ? 'h-12 w-12' : 'h-12 w-12'
                           } ${
                             isCenter ? 'bg-cyan-400/15 text-cyan-200 border border-cyan-300/35' : 'bg-white/5 text-muted-foreground'
                           }`}
                         >
-                          <Icon className={isCenter ? 'h-8 w-8' : 'h-7 w-7'} />
+                          <Icon className={isCenter ? 'h-6 w-6' : 'h-6 w-6'} />
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-center gap-2">
-                            <span className={`font-mono ${isCenter ? 'text-[15px] md:text-[16px] text-cyan-200/90' : 'text-[11px] text-yellow-200/78'}`}>
+                            <span className={`font-mono ${isCenter ? 'text-[13px] md:text-[14px] text-cyan-200/90' : 'text-[11px] text-yellow-200/78'}`}>
                               #{String(agent.numId || idx + 1).padStart(2, '0')}
                             </span>
-                            <h3 className={`font-display font-bold leading-tight ${isCenter ? 'text-[28px] md:text-[34px] text-white' : 'text-[18px] md:text-[1.3rem] text-slate-300/85'}`}>
+                            <h3 className={`font-display font-bold leading-tight ${isCenter ? 'text-[24px] md:text-[28px] text-white' : 'text-[18px] md:text-[1.3rem] text-slate-300/85'}`}>
                               {name}
                             </h3>
                           </div>
-                          <span className={`mt-1 inline-block rounded-full border bg-gradient-to-r font-bold uppercase ${isCenter ? 'px-3 py-1 text-[11px] tracking-[0.16em]' : 'px-2.5 py-1 text-[10px]'} ${badge}`}>
+                          <span className={`mt-1 inline-block rounded-full border bg-gradient-to-r font-bold uppercase ${isCenter ? 'px-2.5 py-0.5 text-[10px] tracking-[0.14em]' : 'px-2.5 py-1 text-[10px]'} ${badge}`}>
                             {agent.badge}
                           </span>
                         </div>
@@ -315,43 +315,43 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
                         ) : null}
                       </div>
 
-                      <p className={`mb-4 ${isCenter ? 'max-w-5xl text-[17px] md:text-[19px] leading-[1.45] text-cyan-50/92' : 'line-clamp-2 text-[14px] md:text-[15px] leading-relaxed text-slate-300/68'}`}>
+                      <p className={`mb-2.5 ${isCenter ? 'max-w-5xl text-[14px] md:text-[15px] leading-[1.4] text-cyan-50/92' : 'line-clamp-2 text-[14px] md:text-[15px] leading-relaxed text-slate-300/68'}`}>
                         {mission}
                       </p>
 
                       {isCenter ? (
-                        <div className="grid gap-3 xl:grid-cols-[minmax(0,0.96fr)_minmax(0,1.04fr)]">
-                          <div className="flex h-full flex-col rounded-lg border border-emerald-300/35 bg-[linear-gradient(145deg,rgba(16,185,129,0.18),rgba(4,120,87,0.08))] p-4">
-                            <div className="mb-4 flex flex-wrap items-center gap-2">
-                              <span className="rounded-md bg-emerald-300/18 px-3 py-1.5 text-[13px] md:text-[14px] font-bold tracking-wider text-emerald-100">
+                        <div className="grid gap-2.5 xl:grid-cols-[minmax(0,0.96fr)_minmax(0,1.04fr)]">
+                          <div className="flex h-full flex-col rounded-lg border border-emerald-300/35 bg-[linear-gradient(145deg,rgba(16,185,129,0.18),rgba(4,120,87,0.08))] p-3">
+                            <div className="mb-2.5 flex flex-wrap items-center gap-2">
+                              <span className="rounded-md bg-emerald-300/18 px-2.5 py-1 text-[12px] md:text-[13px] font-bold tracking-wider text-emerald-100">
                                 {planCopy.trialLabel}
                               </span>
-                              <span className="rounded-full border border-cyan-300/25 px-3 py-1.5 text-[12px] md:text-[13px] font-semibold tracking-wide text-cyan-50/90">
+                              <span className="rounded-full border border-cyan-300/25 px-2.5 py-1 text-[11px] md:text-[12px] font-semibold tracking-wide text-cyan-50/90">
                                 {planCopy.freeLabel}
                               </span>
                             </div>
 
-                            <ul className="space-y-2.5">
+                            <ul className="space-y-1.5">
                               {freeTasks.map((task, index) => (
-                                <li key={index} className="flex gap-2 text-[14px] md:text-[15px] leading-[1.35] text-emerald-50/92">
-                                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-200" />
+                                <li key={index} className="flex gap-2 text-[13px] md:text-[14px] leading-[1.35] text-emerald-50/92">
+                                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-200" />
                                   <span>{task}</span>
                                 </li>
                               ))}
                             </ul>
 
-                            <div className="mt-auto grid gap-2 pt-4 sm:grid-cols-3">
+                            <div className="mt-auto grid gap-1.5 pt-2.5 sm:grid-cols-3">
                               {planCopy.freeHighlights.map((item, index) => {
                                 const accent = accentCards[index % accentCards.length];
                                 return (
                                 <div
                                   key={item.title}
-                                  className={`flex h-full flex-col rounded-lg border px-3 py-3 ${accent.border} ${accent.bg}`}
+                                  className={`flex h-full flex-col rounded-lg border px-2 py-1.5 ${accent.border} ${accent.bg}`}
                                 >
-                                    <p className={`text-[10px] md:text-[11px] font-bold uppercase tracking-[0.1em] ${accent.title}`}>
+                                    <p className={`text-[9px] md:text-[10px] font-bold uppercase tracking-[0.08em] ${accent.title}`}>
                                     {item.title}
                                   </p>
-                                    <p className={`mt-1.5 text-[12px] md:text-[13px] leading-[1.35] ${accent.body}`}>
+                                    <p className={`mt-0.5 text-[10px] md:text-[11px] leading-[1.3] ${accent.body}`}>
                                     {item.detail}
                                   </p>
                                 </div>
@@ -360,31 +360,31 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
                             </div>
                           </div>
 
-                          <div className="flex h-full flex-col rounded-lg border border-cyan-300/35 bg-[linear-gradient(145deg,rgba(34,211,238,0.18),rgba(168,85,247,0.11)_55%,rgba(250,204,21,0.1))] p-4">
-                            <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-                              <span className="rounded-md bg-cyan-300/18 px-3 py-1.5 text-[13px] md:text-[14px] font-bold tracking-wider text-cyan-100">
+                          <div className="flex h-full flex-col rounded-lg border border-cyan-300/35 bg-[linear-gradient(145deg,rgba(34,211,238,0.18),rgba(168,85,247,0.11)_55%,rgba(250,204,21,0.1))] p-3">
+                            <div className="mb-2.5 flex flex-wrap items-center justify-between gap-2">
+                              <span className="rounded-md bg-cyan-300/18 px-2.5 py-1 text-[12px] md:text-[13px] font-bold tracking-wider text-cyan-100">
                                 {planCopy.paidLabel}
                               </span>
-                              <span className="rounded-full border border-amber-300/40 bg-amber-300/14 px-3 py-1 text-[12px] font-bold uppercase tracking-[0.12em] text-amber-100">
+                              <span className="rounded-full border border-amber-300/40 bg-amber-300/14 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.12em] text-amber-100">
                                 Upgrade
                               </span>
                             </div>
 
-                            <ul className="grid gap-x-5 gap-y-2.5 xl:grid-cols-2">
+                            <ul className="grid gap-x-4 gap-y-1.5 xl:grid-cols-2">
                               {proTasks.map((task, index) => (
-                                <li key={index} className="flex gap-2 text-[14px] md:text-[15px] leading-[1.35] text-cyan-50/94">
-                                  <CheckCircle2 className={index % 4 === 0 ? 'mt-0.5 h-4 w-4 shrink-0 text-cyan-200' : index % 4 === 1 ? 'mt-0.5 h-4 w-4 shrink-0 text-emerald-200' : index % 4 === 2 ? 'mt-0.5 h-4 w-4 shrink-0 text-amber-200' : 'mt-0.5 h-4 w-4 shrink-0 text-rose-200'} />
+                                <li key={index} className="flex gap-2 text-[13px] md:text-[14px] leading-[1.35] text-cyan-50/94">
+                                  <CheckCircle2 className={index % 4 === 0 ? 'mt-0.5 h-3.5 w-3.5 shrink-0 text-cyan-200' : index % 4 === 1 ? 'mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-200' : index % 4 === 2 ? 'mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-200' : 'mt-0.5 h-3.5 w-3.5 shrink-0 text-rose-200'} />
                                   <span>{task}</span>
                                 </li>
                               ))}
                             </ul>
 
-                            <div className="mt-auto grid gap-2 pt-4 sm:grid-cols-3">
+                            <div className="mt-auto grid gap-1.5 pt-2.5 sm:grid-cols-3">
                               {planCopy.paidHighlights.map((item, index) => (
                                 <span
                                   key={item}
                                   className={[
-                                    'rounded-lg border px-3 py-3 text-center text-[14px] md:text-[16px] font-black tracking-wide',
+                                    'rounded-lg border px-2 py-1.5 text-center text-[12px] md:text-[13px] font-black tracking-wide',
                                     index === 0
                                       ? 'border-cyan-300/25 bg-cyan-300/10 text-cyan-100/90'
                                       : index === 1
@@ -416,17 +416,17 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
                       <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex flex-col gap-2 px-3 pb-3 sm:flex-row sm:px-3"
+                        className="flex flex-col gap-2 px-2.5 pb-2.5 sm:flex-row sm:px-2.5"
                       >
                         <button
                           onClick={handleFree}
-                          className="flex-1 rounded-lg border border-emerald-300/40 bg-emerald-300/15 py-2 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.16em] text-emerald-100 transition-all hover:bg-emerald-300/25"
+                          className="flex-1 rounded-lg border border-emerald-300/40 bg-emerald-300/15 py-1.5 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.14em] text-emerald-100 transition-all hover:bg-emerald-300/25"
                         >
                           {planCopy.freeCta}
                         </button>
                         <button
                           onClick={handleUpgrade}
-                          className="flex-1 rounded-lg border border-cyan-300/70 bg-black/45 py-2 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.16em] text-cyan-100 transition-all hover:border-yellow-200/70 hover:text-yellow-100"
+                          className="flex-1 rounded-lg border border-cyan-300/70 bg-black/45 py-1.5 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.14em] text-cyan-100 transition-all hover:border-yellow-200/70 hover:text-yellow-100"
                           style={{ boxShadow: '0 0 18px rgba(34,211,238,0.4), inset 0 0 12px rgba(34,211,238,0.08)' }}
                         >
                           <span className="flex items-center justify-center gap-1">{planCopy.upgradeCta}</span>
@@ -453,7 +453,7 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
           </button>
         </div>
 
-        <div className="mt-6 flex gap-1.5">
+        <div className="mt-3 flex gap-1.5">
           {agents.map((_, index) => (
             <button
               key={index}
