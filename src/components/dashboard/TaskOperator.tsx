@@ -537,7 +537,7 @@ export function TaskOperator() {
         <div className="grid gap-4 xl:grid-cols-[1.08fr_0.92fr]">
           <div className="rounded-xl border border-amber-400/20 bg-[linear-gradient(145deg,rgba(251,191,36,0.08),rgba(15,23,42,0.78))] p-4">
             <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-amber-300/80">Tronco del proyecto</p>
-            <h3 className="mt-2 text-lg font-semibold text-amber-50">Mision principal fija</h3>
+            <h3 className="mt-2 text-lg font-semibold text-amber-50">{t('task.fixed_mission')}</h3>
             <p className="mt-2 text-sm leading-relaxed text-slate-200/85">
               Ayudar a usuarios a construir valor real en equity: startups, inversiones, productos y conocimiento,
               usando primeros principios, ejecucion disciplinada y alineacion de incentivos.
@@ -545,7 +545,7 @@ export function TaskOperator() {
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               <label className="rounded-xl border border-white/10 bg-black/20 px-3 py-2">
                 <span className="mb-1 block text-[10px] font-mono uppercase tracking-[0.16em] text-amber-200/70">
-                  Tiempo de finalizacion
+                  {t('task.completion')}
                 </span>
                 <Input
                   value={formData.targetEquityTime}
@@ -556,7 +556,7 @@ export function TaskOperator() {
               </label>
               <label className="rounded-xl border border-white/10 bg-black/20 px-3 py-2">
                 <span className="mb-1 block text-[10px] font-mono uppercase tracking-[0.16em] text-amber-200/70">
-                  Horas de trabajo semanal
+                  {t('task.weekly_hours')}
                 </span>
                 <Input
                   value={formData.weeklyHours}
@@ -696,7 +696,7 @@ export function TaskOperator() {
           <div className="p-4">
             {projectView === 'list' ? (
               <div className="space-y-3">
-                <p className="px-1 text-xs font-medium text-slate-400">PROYECTOS RECIENTES</p>
+                <p className="px-1 text-xs font-medium text-slate-400">{t('task.recent')}</p>
                 {projects.map(project => (
                   <div
                     key={project.id}
@@ -708,7 +708,7 @@ export function TaskOperator() {
                       </div>
                       <div className="min-w-0">
                         <h4 className="text-sm font-medium text-slate-200 transition-colors group-hover:text-cyan-300">{project.name}</h4>
-                        <p className="text-[11px] text-slate-500">Modificado: {project.date}</p>
+                        <p className="text-[11px] text-slate-500">{t('task.modified')} {project.date}</p>
                       </div>
                     </div>
                     <div className="flex shrink-0 items-center gap-1">
@@ -716,7 +716,7 @@ export function TaskOperator() {
                         type="button"
                         onClick={() => openProject(project)}
                         className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-cyan-300/20 bg-cyan-300/8 text-cyan-200 transition hover:border-cyan-200/50 hover:bg-cyan-300/14"
-                        title="Abrir proyecto"
+                        title={t('task.open')}
                       >
                         <FolderOpen size={15} />
                       </button>
@@ -724,7 +724,7 @@ export function TaskOperator() {
                         type="button"
                         onClick={() => deleteProject(project.id)}
                         className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-red-300/20 bg-red-400/8 text-red-200 transition hover:border-red-200/50 hover:bg-red-400/14"
-                        title="Eliminar proyecto"
+                        title={t('task.delete')}
                       >
                         <Trash2 size={15} />
                       </button>
@@ -735,11 +735,11 @@ export function TaskOperator() {
             ) : (
               <form onSubmit={handleProjectSubmit} className="space-y-5">
                 <div>
-                  <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-400">Nombre del Proyecto</label>
+                  <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-400">{t('task.project_name')}</label>
                   <Input
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Ej. Plataforma Automatizacion SEO"
+                    placeholder={t('task.project_name_ph')}
                     className="border-[#1e293b] bg-[#111827] text-sm focus-visible:ring-cyan-500"
                     required
                   />
@@ -748,24 +748,24 @@ export function TaskOperator() {
                 <div className="grid gap-4 lg:grid-cols-2">
                   <label className="space-y-2 rounded-lg border border-amber-500/20 bg-amber-500/5 p-3">
                     <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-amber-400">
-                      <Clock size={14} /> Tiempo equity esperable
+                      <Clock size={14} /> {t('task.equity_time')}
                     </span>
                     <Input
                       value={formData.targetEquityTime}
                       onChange={(e) => setFormData({ ...formData, targetEquityTime: e.target.value })}
-                      placeholder="Ej. 12 meses / hito de facturacion"
+                      placeholder={t('task.equity_time_ph')}
                       className="border-[#1e293b] bg-[#111827] text-sm focus-visible:ring-amber-500"
                     />
                   </label>
 
                   <label className="space-y-2 rounded-lg border border-cyan-500/20 bg-cyan-500/5 p-3">
                     <span className="text-xs font-semibold uppercase tracking-wider text-cyan-300">
-                      Tiempo de finalizacion
+                      {t('task.completion')}
                     </span>
                     <Input
                       value={formData.completionDate}
                       onChange={(e) => setFormData({ ...formData, completionDate: e.target.value })}
-                      placeholder="Ej. 2026-10-30 / 90 dias"
+                      placeholder={t('task.completion_ph')}
                       className="border-[#1e293b] bg-[#111827] text-sm focus-visible:ring-cyan-500"
                     />
                   </label>
@@ -774,19 +774,19 @@ export function TaskOperator() {
                 <div className="grid gap-4 lg:grid-cols-2">
                   <label className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3">
                     <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-emerald-300">
-                      Horas de trabajo semanal
+                      {t('task.weekly_hours')}
                     </span>
                     <Input
                       value={formData.weeklyHours}
                       onChange={(e) => setFormData({ ...formData, weeklyHours: e.target.value })}
-                      placeholder="Ej. 15 horas semanales"
+                      placeholder={t('task.weekly_hours_ph')}
                       className="border-[#1e293b] bg-[#111827] text-sm focus-visible:ring-emerald-500"
                     />
                   </label>
 
                   <label className="rounded-lg border border-fuchsia-500/20 bg-fuchsia-500/5 p-3">
                     <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-fuchsia-300">
-                      Rol del agente lider
+                      {t('task.agent_role')}
                     </span>
                     <select
                       value={formData.agentRole}
@@ -804,7 +804,7 @@ export function TaskOperator() {
 
                 <div>
                   <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-cyan-300">
-                    Mision principal
+                    {t('task.mission')}
                   </label>
                   <Textarea
                     value={formData.mission}
@@ -815,7 +815,7 @@ export function TaskOperator() {
 
                 <div>
                   <label className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-400">
-                    <Target size={14} /> Definir Metas Clinicas / Objetivos
+                    <Target size={14} /> {t('task.goals')}
                   </label>
                   <Textarea
                     value={formData.goals}
@@ -827,7 +827,7 @@ export function TaskOperator() {
 
                 <div>
                   <label className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-rose-400">
-                    <AlertCircle size={14} /> Dolores / Cuellos de Botella Actuales
+                    <AlertCircle size={14} /> {t('task.pains')}
                   </label>
                   <Textarea
                     value={formData.pains}
@@ -838,7 +838,7 @@ export function TaskOperator() {
                 </div>
 
                   <Button type="submit" className="mt-2 w-full bg-cyan-600 text-sm font-medium text-white hover:bg-cyan-500">
-                    Inicializar Proyecto Estrategico
+                    {t('task.init')}
                   </Button>
                 </form>
             )}

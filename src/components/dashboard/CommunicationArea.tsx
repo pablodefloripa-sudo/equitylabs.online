@@ -662,7 +662,11 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
   }, [forceFocus, language, planEngine, user]);
 
   useEffect(() => {
-    if (messages.length > 0) return;
+    // Si ya hay mensajes del usuario, no tocar el historial.
+    // Si solo existe el saludo inicial del agente (agentCommand sin respuesta del
+    // usuario), regenerarlo al cambiar idioma para que la bienvenida se reinicie.
+    if (messages.length > 1) return;
+    if (messages.length === 1 && messages[0].role === 'user') return;
 
     try {
       const rawActiveAgent = localStorage.getItem(ACTIVE_AGENT_STORAGE_KEY);

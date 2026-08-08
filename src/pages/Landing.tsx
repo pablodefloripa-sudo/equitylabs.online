@@ -82,7 +82,7 @@ const HeroSection = ({ lang, onDone }: { lang: LandingLang; onDone: () => void }
             className="flex h-10 items-center gap-2 rounded-full border border-fuchsia-400/30 bg-black/55 px-4 text-xs text-fuchsia-100 backdrop-blur-xl hover:border-fuchsia-300 transition">
             <Crown className="w-3.5 h-3.5" /> Ver suscripciones
           </button>
-          <LanguageFloater className="relative" lang={lang} onChange={() => {}} />
+          <LanguageFloater className="relative" lang={lang} onChange={(next) => { setStoredLandingLang(next); setLang(next); setLanguage(landingLangToAppLanguage(next)); }} />
         </div>
       </div>
 
