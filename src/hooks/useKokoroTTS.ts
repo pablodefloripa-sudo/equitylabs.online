@@ -56,6 +56,29 @@ export const useKokoroTTS = (): UseKokoroTTSReturn => {
   const [premiumConfigured] = useState(Boolean(PREMIUM_PROXY_URL || PREMIUM_VOICE_ID));
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const unlockedRef = useRef(false);
+  const pendingSpeechRef = useRef<string | null>(null);
+
+  // Autoplay policy unlock: la primera interaccion real del usuario (click,
+  // tecla, touch) desbloquea speechSynthesis y reproduce el saludo pendiente.
+  useEffect(() => {
+    const unlock = () => {
+      if (unlockedRef.current) return;
+      unlockedRef.current = true;
+      const pending = pendingSpeechRef.current;
+      pendingSpeechRef.current = null;
+      if (pending) {
+        setTimeout(() => speakLocal(pending), 250);
+      }
+    };
+    window.addEventListener('pointerdown', unlock, { once: true });
+    window.addEventListener('keydown', unlock, { once: true });
+    return () => {
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('keydown', unlock);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isReady]);
 
   useEffect(() => {
     const checkSupport = () => {
@@ -95,6 +118,14 @@ export const useKokoroTTS = (): UseKokoroTTSReturn => {
       return;
     }
 
+    if (!unlockedRef.current) {
+      // Autoplay policy: el navegador bloquea audio sin interaccion previa.
+      // Se registra el texto pendiente para reproducirlo en el primer click/key.
+      pendingSpeechRef.current = text;
+      return;
+    }
+    pendingSpeechRef.current = null;
+
     window.speechSynthesis.cancel();
 
     return new Promise((resolve, reject) => {
@@ -125,12 +156,15 @@ export const useKokoroTTS = (): UseKokoroTTSReturn => {
 
       utterance.onerror = (event) => {
         setIsSpeaking(false);
-        if (event.error !== 'canceled') {
-          console.error('TTS Error:', event.error);
-          reject(new Error(event.error));
-        } else {
+        // 'not-allowed' = el navegador bloquea TTS sin interaccion previa del
+        // usuario (autoplay policy). NO es un error real: se ignora en silencio
+        // y se reintenta en la proxima interaccion (ver unlockOnInteraction).
+        if (event.error === 'canceled' || event.error === 'not-allowed' || event.error === 'interrupted') {
           resolve();
+          return;
         }
+        console.error('TTS Error:', event.error);
+        reject(new Error(event.error));
       };
 
       window.speechSynthesis.speak(utterance);
@@ -182,11 +216,18 @@ export const useKokoroTTS = (): UseKokoroTTSReturn => {
   }, [speakLocal]);
 
   const speak = useCallback(async (text: string, voiceName?: string, options?: SpeakOptions): Promise<void> => {
-    const provider = options?.provider || 'local';
-    if (provider === 'premium') {
-      return speakPremium(text, voiceName, options?.voiceId);
+    try {
+      const provider = options?.provider || 'local';
+      if (provider === 'premium') {
+        return await speakPremium(text, voiceName, options?.voiceId);
+      }
+      return await speakLocal(text, voiceName);
+    } catch (speakError) {
+      // Nunca propagar errores TTS al resto de la app: el audio es un extra,
+      // no debe romper el flujo del chat.
+      console.warn('TTS speak blocked:', speakError);
+      setIsSpeaking(false);
     }
-    return speakLocal(text, voiceName);
   }, [speakLocal, speakPremium]);
 
   const stop = useCallback(() => {
