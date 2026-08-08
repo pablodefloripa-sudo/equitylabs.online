@@ -54,8 +54,8 @@ export interface AIProviderResult {
 
 export const LOVABLE_AI_GATEWAY_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 export const OPENROUTER_CHAT_URL = 'https://openrouter.ai/api/v1/chat/completions';
-export const EQUITYLABS_PRIMARY_MODEL = 'nvidia/nemotron-3-ultra-550b-a55b:free';
-export const OPENROUTER_FALLBACK_MODEL = 'nvidia/nemotron-3-ultra-550b-a55b:free';
+export const EQUITYLABS_PRIMARY_MODEL = 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free';
+export const OPENROUTER_FALLBACK_MODEL = 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free';
 
 const SINGLE_MODEL_AGENTS: Record<AgentKey, string> = {
   orquestador: EQUITYLABS_PRIMARY_MODEL,
