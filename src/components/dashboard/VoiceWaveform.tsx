@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 
 interface VoiceWaveformProps {
-  state: 'idle' | 'thinking' | 'speaking';
+  state: 'idle' | 'thinking' | 'speaking' | 'listening';
   className?: string;
 }
 
@@ -32,6 +32,18 @@ export const VoiceWaveform = ({ state, className = '' }: VoiceWaveformProps) => 
             repeat: Infinity,
             delay: baseDelay,
             ease: 'easeInOut',
+          },
+        };
+      case 'listening':
+        // Grabación activa: barras vivas e irregulares, bien energéticas
+        return {
+          scaleY: [0.3, 1, 0.45, 0.85, 0.35, 0.95, 0.4, 1, 0.3],
+          opacity: [0.5, 1, 0.6, 0.9, 0.5, 0.95, 0.55, 1, 0.5],
+          transition: {
+            duration: 0.45,
+            repeat: Infinity,
+            delay: baseDelay * 0.22,
+            ease: 'linear',
           },
         };
       case 'speaking':

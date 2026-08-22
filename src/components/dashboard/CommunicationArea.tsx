@@ -50,6 +50,7 @@ import {
 import { useAIChat } from '@/hooks/useAIChat';
 import { useKokoroTTS } from '@/hooks/useKokoroTTS';
 import { useVoiceCommands } from '@/hooks/useVoiceCommands';
+import { useSpeechToText } from '@/hooks/useSpeechToText';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage, type Language } from '@/hooks/useLanguage';
 import { useToast } from '@/hooks/use-toast';
@@ -723,6 +724,24 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
 
   useEffect(() => { autoResize(); }, [inputValue, autoResize]);
 
+  // Voz → texto en vivo: graba y transcribe al instante dentro del input
+  const { supported: micSupported, listening: isMicListening, interim: micInterim, toggle: toggleMic, stop: stopMic } = useSpeechToText({
+    onCommit: (text) => {
+      setInputValue(prev => (prev ? `${prev.trimEnd()} ${text}` : text));
+      forceFocus();
+    },
+    onError: (code) => {
+      if (code === 'not-allowed' || code === 'service-not-allowed') {
+        toast({ title: 'Micrófono bloqueado', description: 'Habilitá el micrófono en el navegador para usar voz a texto.' });
+      } else if (code === 'unsupported') {
+        toast({ title: 'Voz no soportada', description: 'Usá Chrome o Edge para la transcripción por voz.' });
+      }
+      // 'no-speech' / 'aborted' / 'network' = ruido normal del reconocedor, se ignora
+    },
+  });
+
+  useEffect(() => { autoResize(); }, [micInterim, autoResize]);
+
   const addChatFiles = useCallback(async (files: FileList | File[]) => {
     const incoming = Array.from(files);
     if (incoming.length === 0) return;
@@ -1083,7 +1102,11 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
   };
 
   const handleSend = async () => {
-    const currentInput = inputValue.trim();
+    // Si la voz está grabando, commitear lo hablado antes de enviar
+    const currentInput = isMicListening && micInterim
+      ? (inputValue ? `${inputValue} ${micInterim}` : micInterim).trim()
+      : inputValue.trim();
+    if (isMicListening) stopMic();
     await sendComposerMessage(currentInput, chatAttachments);
   };
 
@@ -1860,15 +1883,15 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
             WebkitBackdropFilter: 'none',
           }}
         >
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-cyan-200/8 via-fuchsia-200/4 to-transparent" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-blue-100/16 via-cyan-100/6 to-transparent" />
 
           {/* Status LEDs */}
           <div className="relative px-2 pt-1 pb-1">
             <div
-              className="inline-flex items-center rounded-[16px] border border-slate-200/26 px-3 py-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.28),0_8px_18px_rgba(0,0,0,0.18)]"
+              className="inline-flex items-center rounded-[16px] border border-blue-200/28 px-3 py-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.32),0_8px_18px_rgba(0,0,0,0.18)]"
               style={{
                 background:
-                  'linear-gradient(180deg, rgba(15,23,42,0.82) 0%, rgba(30,41,59,0.78) 48%, rgba(2,6,23,0.92) 100%)',
+                  'linear-gradient(180deg, rgba(66,99,168,0.55) 0%, rgba(42,66,122,0.45) 48%, rgba(10,18,44,0.82) 100%)',
                 backdropFilter: 'blur(8px)',
                 WebkitBackdropFilter: 'blur(8px)',
               }}
@@ -1879,12 +1902,17 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
 
           {/* Textarea row */}
           <div
-            className="eq-spectrum-box relative mx-0 my-0 rounded-[24px] border border-white/20 px-4 py-2 sm:px-5"
+            className="eq-spectrum-box relative mx-0 my-0 rounded-[24px] border border-blue-200/30 px-4 py-2 sm:px-5"
             onDrop={handleChatDrop}
             onDragOver={handleChatDragOver}
-            style={{ background: 'rgba(0, 0, 0, 0.89)', boxShadow: '0 14px 24px rgba(0,0,0,0.34), inset 0 1px 0 rgba(255,255,255,0.04)' }}
+            style={{
+              background: 'linear-gradient(180deg, rgba(20,36,78,0.72) 0%, rgba(12,22,54,0.66) 100%)',
+              boxShadow: '0 14px 24px rgba(0,0,0,0.34), inset 0 1px 0 rgba(255,255,255,0.10), 0 0 18px rgba(96,165,250,0.10)',
+              backdropFilter: 'blur(16px) saturate(140%)',
+              WebkitBackdropFilter: 'blur(16px) saturate(140%)',
+            }}
           >
-            <div className="pointer-events-none absolute inset-[3px] rounded-[21px] border border-slate-200/26 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]" />
+            <div className="pointer-events-none absolute inset-[3px] rounded-[21px] border border-blue-200/24 shadow-[inset_0_1px_0_rgba(255,255,255,0.20)]" />
             {chatAttachments.length > 0 && (
               <div className="relative z-10 mb-2 flex flex-wrap gap-2">
                 {chatAttachments.map((attachment) => (
@@ -1915,13 +1943,13 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
 
             <textarea
               ref={textareaRef}
-              value={inputValue}
+              value={isMicListening && micInterim ? (inputValue ? `${inputValue} ${micInterim}` : micInterim) : inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onPaste={handleChatPaste}
               onKeyDown={handleKeyDown}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
-              placeholder={t('chat.placeholder')}
+              placeholder={isMicListening ? '🎙️ Escuchando… hablá ahora' : t('chat.placeholder')}
               disabled={aiLoading}
               autoFocus
               rows={1}
@@ -1941,10 +1969,10 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
           {/* Toolbar */}
           <div className="relative flex items-center justify-between px-3 py-1.5">
             <div
-              className="inline-flex items-center gap-2 rounded-[16px] border border-slate-200/26 px-2.5 py-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.28),0_8px_18px_rgba(0,0,0,0.18)]"
+              className="inline-flex items-center gap-2 rounded-[16px] border border-blue-200/28 px-2.5 py-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.32),0_8px_18px_rgba(0,0,0,0.18)]"
               style={{
                 background:
-                  'linear-gradient(180deg, rgba(15,23,42,0.82) 0%, rgba(30,41,59,0.78) 48%, rgba(2,6,23,0.92) 100%)',
+                  'linear-gradient(180deg, rgba(66,99,168,0.55) 0%, rgba(42,66,122,0.45) 48%, rgba(10,18,44,0.82) 100%)',
                 backdropFilter: 'blur(8px)',
                 WebkitBackdropFilter: 'blur(8px)',
               }}
@@ -1971,6 +1999,49 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
                 className="h-7 w-7 rounded-xl border border-cyan-400/30 bg-cyan-400/5 text-cyan-300/80 transition-all duration-300 hover:bg-cyan-400/15 hover:text-cyan-200"
               >
                 <Paperclip className="h-4 w-4" />
+              </Button>
+
+              {/* Micrófono: graba y transcribe a texto al instante */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleMic}
+                disabled={!micSupported || aiLoading}
+                title={isMicListening ? 'Detener grabación' : 'Grabar y transcribir a texto'}
+                className={`relative h-7 w-7 rounded-xl transition-all duration-300 border ${
+                  isMicListening
+                    ? 'text-red-400 bg-red-500/15 border-red-400/70 shadow-[0_0_14px_rgba(239,68,68,0.45)]'
+                    : micSupported
+                      ? 'text-cyan-300/80 bg-cyan-400/5 border-cyan-400/30 hover:bg-cyan-400/15 hover:text-cyan-200'
+                      : 'text-muted-foreground/30 border-muted/20'
+                }`}
+              >
+                {isMicListening && (
+                  <>
+                    <motion.span
+                      className="absolute inset-0 rounded-xl border-2 border-red-400/70"
+                      animate={{ scale: [1, 1.6], opacity: [0.9, 0] }}
+                      transition={{ duration: 1.1, repeat: Infinity, ease: 'easeOut' }}
+                    />
+                    <motion.span
+                      className="absolute inset-0 rounded-xl border-2 border-red-400/50"
+                      animate={{ scale: [1, 2.1], opacity: [0.6, 0] }}
+                      transition={{ duration: 1.1, repeat: Infinity, ease: 'easeOut', delay: 0.35 }}
+                    />
+                    <motion.span
+                      className="absolute inset-0 rounded-xl bg-red-500/30"
+                      animate={{ opacity: [0.15, 0.45, 0.15] }}
+                      transition={{ duration: 1, repeat: Infinity }}
+                    />
+                  </>
+                )}
+                <motion.span
+                  className="relative"
+                  animate={isMicListening ? { scale: [1, 1.15, 1] } : { scale: 1 }}
+                  transition={isMicListening ? { duration: 0.5, repeat: Infinity } : {}}
+                >
+                  <Mic className="h-4 w-4" />
+                </motion.span>
               </Button>
 
               <div className="relative inline-flex">
