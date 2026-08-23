@@ -35,6 +35,7 @@ const App = () => {
           <BrowserRouter>
             <Suspense fallback={<div className="min-h-screen bg-black" />}>
               <Routes>
+                <Route path="/" element={<Landing />} />
                 <Route path="/landing" element={<Landing />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/register" element={<Auth />} />
@@ -53,11 +54,6 @@ const App = () => {
                   </AuthGuard>
                 } />
                 <Route path="/dashboard" element={
-                  <AuthGuard>
-                    <Index />
-                  </AuthGuard>
-                } />
-                <Route path="/" element={
                   <AuthGuard>
                     <Index />
                   </AuthGuard>
