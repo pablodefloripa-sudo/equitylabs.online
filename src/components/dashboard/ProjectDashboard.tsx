@@ -13,6 +13,7 @@ import { HistoryModal } from './HistoryModal';
 import { ExitModal } from './ExitModal';
 import { ProjectManagerModal } from './ProjectManagerModal';
 import { DashboardNeonAtmosphere } from './DashboardNeonAtmosphere';
+import AgentActivity from './AgentActivity';
 
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
@@ -170,6 +171,7 @@ export const ProjectDashboard = () => {
         isOpen={isProjectManagerOpen} 
         onClose={() => setIsProjectManagerOpen(false)} 
       />
+      <AgentActivity />
     </div>
   );
 };

@@ -442,7 +442,7 @@ serve(async (req) => {
   }
 
   try {
-    const { message, conversationHistory, agentId, language, attachments, preferredModel } = await req.json();
+    const { message, conversationHistory, agentId, language, persona, attachments, preferredModel } = await req.json();
     const safeAttachments = sanitizeAttachments(attachments);
     const langMap: Record<string, string> = {
       es: 'español', en: 'English', pt: 'português', de: 'Deutsch',
@@ -592,8 +592,31 @@ ${isFirstMessage ? `En tu primera respuesta, comienza con "Hola ${firstName},".`
         );
       }
 
+      // ─── Registro de tarea → informe/seguimiento del usuario (audit_logs) ───
+      try {
+        const auditClient = createClient(supabaseUrl, supabaseKey);
+        const agentOneModel = typeof aiResult.data?.model === 'string' ? aiResult.data.model : AGENT_ONE_MODEL;
+        await auditClient.from('audit_logs').insert({
+          user_id: userId,
+          action_type: 'agent_task',
+          entity_type: 'ai-chat',
+          details: {
+            action: 'agent_one',
+            agent: AGENT_ONE_ID,
+            model: agentOneModel,
+            provider: typeof aiResult.data?.provider === 'string' ? aiResult.data.provider : 'openrouter',
+            plan: activePlan,
+            task_preview: typeof message === 'string' ? message.slice(0, 140) : '',
+            usage: aiResult.data?.usage || null,
+            status: 'ok',
+          },
+        });
+      } catch (logErr) {
+        console.warn('[EQuityLabs] audit log insert failed:', logErr);
+      }
+
       return new Response(
-        JSON.stringify({
+        JSON.stringify({ 
           response: assistantMessage,
           meta: {
             model: typeof aiResult.data?.model === 'string' ? aiResult.data.model : AGENT_ONE_MODEL,
@@ -868,7 +891,10 @@ Eres el asistente principal de EQuityLabs, una plataforma de control de misiones
 - Si te preguntan quién eres, di que eres el asistente de EQuityLabs.
 ${agentId ? `\n## Modo Agente Activo: ${agentId}${routedAgent ? ` (${routedAgent})` : ''}` : ''}
 `;
-    const baseContext = isMascotPersona ? mascotContext : equityLabsContext;
+    const personaPrompt = typeof persona === 'string' && persona.trim().length > 0 ? persona.trim() : null;
+    const baseContext = isMascotPersona
+      ? (personaPrompt ? `${mascotContext}\n\n## Tu Persona Personalizada (desde Companion Forge)\n${personaPrompt}` : mascotContext)
+      : equityLabsContext;
 
     const messages: ChatMessage[] = [
       { role: 'system', content: baseContext },
@@ -895,6 +921,28 @@ ${agentId ? `\n## Modo Agente Activo: ${agentId}${routedAgent ? ` (${routedAgent
         JSON.stringify({ error: 'AI returned empty response.' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    }
+
+    // ─── Registro de tarea → informe/seguimiento del usuario (audit_logs) ───
+    try {
+      const auditClient = createClient(supabaseUrl, supabaseKey);
+      await auditClient.from('audit_logs').insert({
+        user_id: userId,
+        action_type: 'agent_task',
+        entity_type: 'ai-chat',
+        details: {
+          action: routingReason || 'chat',
+          agent: (typeof agentId === 'string' ? agentId : null) || routedAgent || null,
+          model: effectiveModel,
+          provider,
+          plan: activePlan,
+          task_preview: typeof message === 'string' ? message.slice(0, 140) : '',
+          usage: aiResult.data?.usage || null,
+          status: 'ok',
+        },
+      });
+    } catch (logErr) {
+      console.warn('[EQuityLabs] audit log insert failed:', logErr);
     }
 
     return new Response(

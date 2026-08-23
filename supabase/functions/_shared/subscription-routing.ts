@@ -57,36 +57,151 @@ export const OPENROUTER_CHAT_URL = 'https://openrouter.ai/api/v1/chat/completion
 export const EQUITYLABS_PRIMARY_MODEL = 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free';
 export const OPENROUTER_FALLBACK_MODEL = 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free';
 
-const SINGLE_MODEL_AGENTS: Record<AgentKey, string> = {
-  orquestador: EQUITYLABS_PRIMARY_MODEL,
-  analista: EQUITYLABS_PRIMARY_MODEL,
-  escritor: EQUITYLABS_PRIMARY_MODEL,
-  investigador: EQUITYLABS_PRIMARY_MODEL,
-  desarrollador: EQUITYLABS_PRIMARY_MODEL,
-  disenador: EQUITYLABS_PRIMARY_MODEL,
-  revisor: EQUITYLABS_PRIMARY_MODEL,
-  asistente: EQUITYLABS_PRIMARY_MODEL,
-  architect: EQUITYLABS_PRIMARY_MODEL,
-  logic: EQUITYLABS_PRIMARY_MODEL,
-  recepcionista: EQUITYLABS_PRIMARY_MODEL,
+/* ─── Ecosistema de modelos (verificado en OpenRouter Ago 2026) ───
+ * - NEMOTRON_FREE : nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free  → $0 (free tier)
+ * - DEEPSEEK      : deepseek/deepseek-v4-flash                         → $0.05/$0.10 por M (codigo, rapido, barato)
+ * - KIMI          : moonshotai/kimi-k2.5                                → $0.45/$2.25 por M (cerebro: estrategia, escritura, ES)
+ * - CLAUDE_HAIKU  : anthropic/claude-haiku-4.5                          → $1/$5 por M (premium: revision, arquitectura)
+ */
+export const MODEL_IDS = {
+  NEMOTRON_FREE: EQUITYLABS_PRIMARY_MODEL,
+  DEEPSEEK: 'deepseek/deepseek-v4-flash',
+  KIMI: 'moonshotai/kimi-k2.5',
+  CLAUDE_HAIKU: 'anthropic/claude-haiku-4.5',
+} as const;
+
+export type ModelId = (typeof MODEL_IDS)[keyof typeof MODEL_IDS];
+
+export const MODEL_LABELS: Record<ModelId, string> = {
+  [MODEL_IDS.NEMOTRON_FREE]: 'NVIDIA Nemotron (gratis)',
+  [MODEL_IDS.DEEPSEEK]: 'DeepSeek V4 Flash',
+  [MODEL_IDS.KIMI]: 'Kimi K2.5',
+  [MODEL_IDS.CLAUDE_HAIKU]: 'Claude Haiku 4.5',
 };
 
-function singleModelRouting(): PlanModelRouting {
-  return {
-    greeting: EQUITYLABS_PRIMARY_MODEL,
-    default: EQUITYLABS_PRIMARY_MODEL,
-    agents: { ...SINGLE_MODEL_AGENTS },
-  };
+const ALL_MODELS = [MODEL_IDS.NEMOTRON_FREE, MODEL_IDS.DEEPSEEK, MODEL_IDS.KIMI, MODEL_IDS.CLAUDE_HAIKU];
+
+/* Plan FREE: un solo modelo gratuito */
+const FREE_MODEL_AGENTS: Record<AgentKey, string> = {
+  orquestador: MODEL_IDS.NEMOTRON_FREE,
+  analista: MODEL_IDS.NEMOTRON_FREE,
+  escritor: MODEL_IDS.NEMOTRON_FREE,
+  investigador: MODEL_IDS.NEMOTRON_FREE,
+  desarrollador: MODEL_IDS.NEMOTRON_FREE,
+  disenador: MODEL_IDS.NEMOTRON_FREE,
+  revisor: MODEL_IDS.NEMOTRON_FREE,
+  asistente: MODEL_IDS.NEMOTRON_FREE,
+  architect: MODEL_IDS.NEMOTRON_FREE,
+  logic: MODEL_IDS.NEMOTRON_FREE,
+  recepcionista: MODEL_IDS.NEMOTRON_FREE,
+};
+
+/* TACTICAL $25/mes — EL DÚO: DeepSeek + Kimi K2.5 */
+const TACTICAL_AGENTS: Record<AgentKey, string> = {
+  orquestador: MODEL_IDS.DEEPSEEK,     // coordina rapido y barato
+  analista: MODEL_IDS.KIMI,            // analisis profundo
+  escritor: MODEL_IDS.KIMI,            // redaccion de calidad
+  investigador: MODEL_IDS.DEEPSEEK,    // busquedas, barato
+  desarrollador: MODEL_IDS.DEEPSEEK,   // codigo
+  disenador: MODEL_IDS.KIMI,           // diseno conceptual
+  revisor: MODEL_IDS.KIMI,             // control de calidad
+  asistente: MODEL_IDS.DEEPSEEK,
+  architect: MODEL_IDS.DEEPSEEK,
+  logic: MODEL_IDS.KIMI,
+  recepcionista: MODEL_IDS.DEEPSEEK,
+};
+
+/* PREMIUM $50/mes — dúo + revisión premium (Claude) */
+const PREMIUM_AGENTS: Record<AgentKey, string> = {
+  orquestador: MODEL_IDS.KIMI,          // el jefe ahora piensa con Kimi
+  analista: MODEL_IDS.KIMI,
+  escritor: MODEL_IDS.KIMI,
+  investigador: MODEL_IDS.DEEPSEEK,
+  desarrollador: MODEL_IDS.DEEPSEEK,
+  disenador: MODEL_IDS.KIMI,
+  revisor: MODEL_IDS.CLAUDE_HAIKU,      // primera mejora: revision premium
+  asistente: MODEL_IDS.DEEPSEEK,
+  architect: MODEL_IDS.DEEPSEEK,
+  logic: MODEL_IDS.KIMI,
+  recepcionista: MODEL_IDS.DEEPSEEK,
+};
+
+/* MASTERMIND $100/mes — "pro": arquitectura + revision premium */
+const MASTERMIND_AGENTS: Record<AgentKey, string> = {
+  orquestador: MODEL_IDS.KIMI,
+  analista: MODEL_IDS.KIMI,
+  escritor: MODEL_IDS.KIMI,
+  investigador: MODEL_IDS.DEEPSEEK,
+  desarrollador: MODEL_IDS.DEEPSEEK,
+  disenador: MODEL_IDS.KIMI,
+  revisor: MODEL_IDS.CLAUDE_HAIKU,
+  asistente: MODEL_IDS.KIMI,
+  architect: MODEL_IDS.CLAUDE_HAIKU,    // arquitectura premium
+  logic: MODEL_IDS.DEEPSEEK,
+  recepcionista: MODEL_IDS.DEEPSEEK,
+};
+
+/* ENTERPRISE $600/mes — cobertura premium amplia */
+const ENTERPRISE_AGENTS: Record<AgentKey, string> = {
+  orquestador: MODEL_IDS.KIMI,
+  analista: MODEL_IDS.KIMI,
+  escritor: MODEL_IDS.CLAUDE_HAIKU,     // escritura premium
+  investigador: MODEL_IDS.DEEPSEEK,
+  desarrollador: MODEL_IDS.DEEPSEEK,
+  disenador: MODEL_IDS.KIMI,
+  revisor: MODEL_IDS.CLAUDE_HAIKU,
+  asistente: MODEL_IDS.KIMI,
+  architect: MODEL_IDS.CLAUDE_HAIKU,
+  logic: MODEL_IDS.DEEPSEEK,
+  recepcionista: MODEL_IDS.DEEPSEEK,
+};
+
+/* ALLIANCE $1K/año — LA CABEZA: ecosistema completo, todos los modelos activos */
+const ALLIANCE_AGENTS: Record<AgentKey, string> = {
+  orquestador: MODEL_IDS.KIMI,           // la cabeza decide con el mejor cerebro
+  analista: MODEL_IDS.CLAUDE_HAIKU,      // analisis premium
+  escritor: MODEL_IDS.KIMI,              // mejor escritura
+  investigador: MODEL_IDS.DEEPSEEK,
+  desarrollador: MODEL_IDS.DEEPSEEK,
+  disenador: MODEL_IDS.KIMI,
+  revisor: MODEL_IDS.CLAUDE_HAIKU,
+  asistente: MODEL_IDS.KIMI,
+  architect: MODEL_IDS.CLAUDE_HAIKU,
+  logic: MODEL_IDS.DEEPSEEK,
+  recepcionista: MODEL_IDS.DEEPSEEK,
+};
+
+function buildRouting(defaultModel: string, agents: Record<AgentKey, string>): PlanModelRouting {
+  return { greeting: defaultModel, default: defaultModel, agents: { ...agents } };
 }
 
 export const PLAN_MODEL_ROUTING: Record<SubscriptionPlanKey, PlanModelRouting> = {
-  FREE_30_DAYS: singleModelRouting(),
-  TACTICAL_25: singleModelRouting(),
-  PREMIUM_50: singleModelRouting(),
-  MASTERMIND_100: singleModelRouting(),
-  ENTERPRISE_500: singleModelRouting(),
-  ALLIANCE_1000: singleModelRouting(),
+  FREE_30_DAYS: buildRouting(MODEL_IDS.NEMOTRON_FREE, FREE_MODEL_AGENTS),
+  TACTICAL_25: buildRouting(MODEL_IDS.KIMI, TACTICAL_AGENTS),
+  PREMIUM_50: buildRouting(MODEL_IDS.KIMI, PREMIUM_AGENTS),
+  MASTERMIND_100: buildRouting(MODEL_IDS.KIMI, MASTERMIND_AGENTS),
+  ENTERPRISE_500: buildRouting(MODEL_IDS.KIMI, ENTERPRISE_AGENTS),
+  ALLIANCE_1000: buildRouting(MODEL_IDS.KIMI, ALLIANCE_AGENTS),
 };
+
+/** Modelos que incluye cada plan (para el informe / catálogo visible al usuario) */
+export function getPlanModelCatalog(plan: SubscriptionPlanKey): Array<{ id: string; label: string }> {
+  const routing = PLAN_MODEL_ROUTING[plan];
+  const ids = Array.from(new Set([
+    routing.greeting,
+    routing.default,
+    ...Object.values(routing.agents),
+  ]));
+  return ids.map((id) => ({
+    id,
+    label: MODEL_LABELS[id as ModelId] || id,
+  }));
+}
+
+/** Todos los modelos del ecosistema (Alliance = la cabeza, los usa todos) */
+export function getEcosystemModels(): Array<{ id: string; label: string }> {
+  return ALL_MODELS.map((id) => ({ id, label: MODEL_LABELS[id as ModelId] || id }));
+}
 
 const LEGACY_PLAN_MAP: Record<string, SubscriptionPlanKey> = {
   free: 'FREE_30_DAYS',
