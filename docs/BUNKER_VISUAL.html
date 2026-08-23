@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BUNKER VISUAL — EQuityLabs Command Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan: #00d2ff;
+    --pink: #ff007f;
+    --purple: #8a2be2;
+    --bg: #0c0a1d;
+    --card: #120e2e;
+    --card2: #171240;
+    --text: #ffffff;
+    --muted: rgba(255,255,255,0.55);
+    --green: #00e676;
+    --amber: #ffd740;
+    --red: #ff5252;
+    --border: rgba(0,210,255,0.25);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Quicksand', sans-serif;
+    padding: 24px;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(138,43,226,0.18), transparent),
+      radial-gradient(ellipse 60% 40% at 90% 110%, rgba(0,210,255,0.10), transparent);
+  }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* HEADER BUNKER */
+  .bunker-header {
+    border: 2px solid var(--cyan);
+    border-radius: 14px;
+    background: var(--card);
+    box-shadow: 8px 8px 0 0 var(--cyan);
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .bunker-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .bunker-header h1 .cyan { color: var(--cyan); }
+  .bunker-header h1 .pink { color: var(--pink); }
+  .status-row { display:flex; gap:8px; flex-wrap:wrap; }
+  .status-pill {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1.5px solid;
+  }
+  .pill-green { color: var(--green); border-color: var(--green); background: rgba(0,230,118,0.08); }
+  .pill-amber { color: var(--amber); border-color: var(--amber); background: rgba(255,215,64,0.08); }
+  .pill-red   { color: var(--red);   border-color: var(--red);   background: rgba(255,82,82,0.08); }
+  .pill-cyan  { color: var(--cyan);  border-color: var(--cyan);  background: rgba(0,210,255,0.08); }
+
+  /* TERMINAL TOP */
+  .terminal {
+    font-family: 'JetBrains Mono', monospace;
+    background: #05040f;
+    border: 1px solid rgba(0,210,255,0.4);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    box-shadow: 0 0 25px rgba(0,210,255,0.12);
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--cyan);
+  }
+  .terminal .dots { display:flex; gap:6px; margin-bottom:10px; }
+  .terminal .dots span { width:11px; height:11px; border-radius:50%; display:inline-block; }
+  .terminal .comment { color: rgba(255,255,255,0.35); }
+
+  /* GRID */
+  .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 18px; margin-bottom: 24px; }
+  .card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 4px 4px 0 0 rgba(0,210,255,0.25);
+  }
+  .card h2 {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(0,210,255,0.15);
+  }
+  .card h2 .pink { color: var(--pink); }
+  .card h2 .yellow { color: var(--amber); }
+  .card h2 .green { color: var(--green); }
+
+  table { width:100%; border-collapse: collapse; font-size: 12.5px; }
+  th {
+    text-align:left;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    padding: 6px 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+  td { padding: 7px 8px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .mono-sm { font-family:'JetBrains Mono', monospace; font-size: 11.5px; }
+  .ok { color: var(--green); font-weight:700; }
+  .warn { color: var(--amber); font-weight:700; }
+  .bad { color: var(--red); font-weight:700; }
+  .cyan-t { color: var(--cyan); }
+  .pink-t { color: var(--pink); }
+  .dim { color: var(--muted); }
+
+  /* ROADMAP */
+  .roadmap-day {
+    border-left: 3px solid var(--cyan);
+    padding-left: 16px;
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .roadmap-day::before {
+    content: '';
+    position: absolute;
+    left: -7px; top: 4px;
+    width: 11px; height: 11px;
+    background: var(--cyan);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--cyan);
+  }
+  .roadmap-day.d2 { border-color: var(--purple); }
+  .roadmap-day.d2::before { background: var(--purple); box-shadow: 0 0 12px var(--purple); }
+  .roadmap-day.d3 { border-color: var(--pink); }
+  .roadmap-day.d3::before { background: var(--pink); box-shadow: 0 0 12px var(--pink); }
+  .roadmap-day h3 { font-size: 15px; margin-bottom: 8px; }
+  .roadmap-day ul { list-style:none; }
+  .roadmap-day li {
+    font-size: 13px;
+    padding: 5px 0 5px 20px;
+    position: relative;
+    color: rgba(255,255,255,0.85);
+  }
+  .roadmap-day li::before { content: '▹'; position:absolute; left:0; color: var(--cyan); }
+  .roadmap-day.d2 li::before { color: var(--purple); }
+  .roadmap-day.d3 li::before { color: var(--pink); }
+  .money {
+    display:inline-block;
+    background: linear-gradient(90deg, var(--cyan), var(--purple), var(--pink));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 700;
+  }
+
+  /* INSTALL */
+  pre {
+    background: #05040f;
+    border: 1px solid rgba(0,210,255,0.3);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    line-height: 1.65;
+    overflow-x: auto;
+    color: #7ee8ff;
+    margin-bottom: 10px;
+  }
+  pre .c { color: rgba(255,255,255,0.35); }
+  pre .p { color: var(--pink); }
+
+  /* TIMELINE */
+  .tl { position: relative; padding-left: 20px; }
+  .tl::before { content:''; position:absolute; left:5px; top:4px; bottom:4px; width:2px; background: rgba(0,210,255,0.25); }
+  .tl-item { position:relative; padding: 8px 0 8px 10px; font-size: 12.5px; }
+  .tl-item::before { content:''; position:absolute; left:-19px; top:14px; width:9px; height:9px; border-radius:50%; background: var(--cyan); }
+  .tl-item .date { font-family:'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); display:block; }
+  .tl-item .tag {
+    display:inline-block; font-size:9.5px; font-weight:700; letter-spacing:0.1em;
+    padding:2px 8px; border-radius:999px; margin-left:6px; vertical-align:middle;
+    border:1px solid;
+  }
+  .tag-deploy { color: var(--green); border-color: var(--green); }
+  .tag-feat { color: var(--cyan); border-color: var(--cyan); }
+  .tag-fix { color: var(--amber); border-color: var(--amber); }
+
+  /* MONEY SECTION */
+  .money-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap:10px; }
+  .money-card {
+    border:1.5px solid rgba(255,255,255,0.12);
+    border-radius:10px;
+    padding:12px;
+    text-align:center;
+    background: var(--card2);
+  }
+  .money-card .price { font-size:20px; font-weight:700; font-family:'JetBrains Mono', monospace; }
+  .money-card .name { font-size:11px; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin-top:4px; }
+  .money-card.hot { border-color: var(--pink); box-shadow: 0 0 18px rgba(255,0,127,0.2); }
+  .money-card.hot .price { color: var(--pink); }
+
+  .footer {
+    text-align:center;
+    margin-top: 28px;
+    padding: 18px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .footer .mono { color: var(--cyan); }
+  .alert-banner {
+    background: linear-gradient(90deg, rgba(255,0,127,0.12), rgba(138,43,226,0.12));
+    border: 1.5px solid var(--pink);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .alert-banner .pink-t { font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="bunker-header">
+  <h1><span class="cyan">◤ BUNKER</span> <span class="pink">VISUAL</span> <span class="mono dim" style="font-size:14px">// EQUITYLABS CMD</span></h1>
+  <div class="status-row">
+    <span class="status-pill pill-green">● Build OK</span>
+    <span class="status-pill pill-amber">● Producción activa</span>
+    <span class="status-pill pill-red">● FACTURAR YA</span>
+    <span class="status-pill pill-cyan">● 2026-08-07</span>
+  </div>
+</div>
+
+<div class="alert-banner">
+  🚨 <span class="pink-t">ZONA DE PELIGRO EXTREMO</span> — Objetivo N°1: <span class="money">GENERAR INGRESOS EN LOS PRÓXIMOS 3 DÍAS</span>. La plataforma está operativa; falta convertir visitas en clientes. Plan de batalla abajo. 🎯
+</div>
+
+<div class="terminal">
+  <div class="dots"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span></div>
+  <span class="comment"># Estado del sistema</span><br>
+  $ equitylabs status --brief<br>
+  ▸ App: <b>equitylabs.online</b> <span style="color:#00e676">[ONLINE]</span><br>
+  ▸ Frontend: React 18 + Vite 5 + TS 5.8 + Tailwind 3.4 <span style="color:#00e676">[24.895 LOC]</span><br>
+  ▸ Backend: 9 Edge Functions Supabase <span style="color:#00e676">[3.378 LOC]</span><br>
+  ▸ Core Python: router/agents/models <span style="color:#00e676">[141 LOC]</span><br>
+  ▸ DB: 6 tablas · Migraciones: 10<br>
+  ▸ Agentes: 41 (landing) + 20 (equity_labs_v1)<br>
+  ▸ Modelo IA: nvidia/nemotron-3-ultra-550b-a55b:free <span style="color:#ffd740">[free-tier]</span><br>
+  <span class="comment"># ⚠️ Desync: core/models.py usa qwen/qwen3-vl-8b-thinking (Python ≠ TS)</span>
+</div>
+
+<div class="grid">
+  <!-- STACK -->
+  <div class="card">
+    <h2>🧱 Stack Tecnológico</h2>
+    <table>
+      <tr><th>Capa</th><th>Tecnología</th></tr>
+      <tr><td>Frontend</td><td>React 18 · Vite 5 · TS 5.8 · Tailwind 3.4 · shadcn/ui</td></tr>
+      <tr><td>Backend</td><td>Supabase Edge Functions (Deno)</td></tr>
+      <tr><td>DB</td><td>Supabase PostgreSQL</td></tr>
+      <tr><td>IA</td><td>OpenRouter (free-tier) · Lovable gateway</td></tr>
+      <tr><td>Pagos</td><td>Stripe Checkout</td></tr>
+      <tr><td>Auth</td><td>Supabase Auth + Google OAuth</td></tr>
+      <tr><td>Deploy</td><td>Vercel → equitylabs.online</td></tr>
+      <tr><td>Analytics</td><td>PostHog <span class="warn">[pendiente]</span></td></tr>
+    </table>
+  </div>
+
+  <!-- RUTAS -->
+  <div class="card">
+    <h2>🖥️ Rutas Frontend</h2>
+    <table>
+      <tr><th>Ruta</th><th>Página</th><th>Guard</th></tr>
+      <tr><td class="mono-sm">/landing</td><td>Landing (slides → dashboard + chat IA demo)</td><td class="dim">pública</td></tr>
+      <tr><td class="mono-sm">/auth · /register</td><td>Login/registro</td><td class="dim">pública</td></tr>
+      <tr><td class="mono-sm">/suscripciones</td><td>Planes</td><td class="dim">pública</td></tr>
+      <tr><td class="mono-sm">/diagnostico</td><td>Diagnóstico gratuito</td><td class="dim">pública</td></tr>
+      <tr><td class="mono-sm">/dashboard</td><td>Panel principal</td><td class="ok">AuthGuard</td></tr>
+      <tr><td class="mono-sm">/admin</td><td>Admin</td><td class="ok">AuthGuard</td></tr>
+      <tr><td class="mono-sm">/mascota-paseo</td><td>Mascota paseo</td><td class="ok">AuthGuard</td></tr>
+      <tr><td class="mono-sm">/</td><td>Landing pública (slides → dashboard demo)</td><td class="dim">pública</td></tr>
+      <tr><td class="mono-sm">/oauth/consent</td><td>OAuth consent</td><td class="dim">pública</td></tr>
+    </table>
+  </div>
+
+  <!-- EDGE FUNCTIONS -->
+  <div class="card">
+    <h2>⚙️ Edge Functions <span class="dim">(12)</span></h2>
+    <table>
+      <tr><th>Función</th><th>LOC</th><th>Auth</th></tr>
+      <tr><td class="mono-sm">ai-chat</td><td>931</td><td class="ok">JWT</td></tr>
+      <tr><td class="mono-sm">diagnostico</td><td>433</td><td class="dim">pública</td></tr>
+      <tr><td class="mono-sm">diagnostico-auth</td><td>75</td><td class="ok">JWT</td></tr>
+      <tr><td class="mono-sm">generate-image</td><td>297</td><td class="ok">JWT</td></tr>
+      <tr><td class="mono-sm">landing-chat</td><td>150</td><td class="dim">pública (chat demo landing)</td></tr>
+      <tr><td class="mono-sm">stripe-checkout</td><td>160</td><td class="ok">JWT (crea sesión de pago)</td></tr>
+      <tr><td class="mono-sm">stripe-webhook</td><td>150</td><td class="dim">firma Stripe (activa plan)</td></tr>
+      <tr><td class="mono-sm">gmail-actions</td><td>313</td><td class="ok">JWT</td></tr>
+      <tr><td class="mono-sm">google-calendar</td><td>285</td><td class="ok">JWT</td></tr>
+      <tr><td class="mono-sm">google-drive</td><td>236</td><td class="ok">JWT</td></tr>
+      <tr><td class="mono-sm">google-sheets</td><td>257</td><td class="ok">JWT</td></tr>
+      <tr><td class="mono-sm">tools-ai</td><td>168</td><td class="ok">JWT</td></tr>
+      <tr><td class="mono-sm">_shared</td><td>383</td><td class="dim">módulo</td></tr>
+    </table>
+    <p class="dim" style="font-size:11px; margin-top:8px">⚠️ _shared/subscription-routing.ts: cualquier cambio → redeploy de ai-chat, tools-ai y generate-image</p>
+  </div>
+
+  <!-- DB -->
+  <div class="card">
+    <h2>🗄️ Base de Datos</h2>
+    <table>
+      <tr><th>Tabla</th><th>Propósito</th></tr>
+      <tr><td class="mono-sm">profiles</td><td>Usuarios</td></tr>
+      <tr><td class="mono-sm">user_integrations</td><td>Google/Gmail/Drive/Sheets</td></tr>
+      <tr><td class="mono-sm">user_planes</td><td>Suscripciones activas</td></tr>
+      <tr><td class="mono-sm">tool_executions</td><td>Uso de tools</td></tr>
+      <tr><td class="mono-sm">free_ai_usage</td><td>Cuota gratuita IA</td></tr>
+      <tr><td class="mono-sm">audit_logs</td><td>Auditoría</td></tr>
+    </table>
+  </div>
+
+  <!-- MONETIZACION -->
+  <div class="card">
+    <h2>💰 Monetización <span class="pink">— 6 Planes</span></h2>
+    <div class="money-grid">
+      <div class="money-card"><div class="price">$0</div><div class="name">FREE · 30d</div></div>
+      <div class="money-card hot"><div class="price">$25</div><div class="name">TACTICAL · /mes</div></div>
+      <div class="money-card hot"><div class="price">$50</div><div class="name">PREMIUM · /mes</div></div>
+      <div class="money-card"><div class="price">$100</div><div class="name">MASTERMIND · /mes</div></div>
+      <div class="money-card"><div class="price">$600</div><div class="name">ENTERPRISE · /mes</div></div>
+      <div class="money-card"><div class="price">$1K</div><div class="name">ALLIANCE · /año</div></div>
+    </div>
+    <p style="font-size:12px; margin-top:12px; color:rgba(255,255,255,0.8)">🎯 <span class="money">Estrategia: el diagnóstico gratuito (público) es el imán de leads</span> → el carousel de 41 agentes es la vidriera → /suscripciones cierra la venta.</p>
+  </div>
+</div>
+
+<!-- ROADMAP 3 DIAS -->
+<div class="card" style="margin-bottom:24px">
+  <h2>🛣️ Hoja de Ruta — LANZAMIENTO 3 DÍAS <span class="pink">// OBJETIVO: FACTURAR</span></h2>
+
+  <div class="roadmap-day">
+    <h3>📅 Día 1 — <span class="cyan-t">CERRAR EL EMBUDO DE VENTA</span></h3>
+    <ul>
+      <li><b>Activar Stripe Checkout real</b> — verificar webhook + precio de los 6 planes (hoy el webhook está pendiente = nadie puede pagar)</li>
+      <li><b>Diagnóstico gratuito → lead magnet</b>: al terminar /diagnostico, pedir email y ofrecer descuento 48h en Tactical</li>
+      <li><b>CTA "Ver suscripciones" en la landing</b> — ya existe; probar flujo completo landing → auth → suscripciones → checkout</li>
+      <li><b>Test de conversión real</b>: registrar usuario de prueba, pasar por checkout con tarjeta de test (4242 4242 4242 4242)</li>
+      <li class="money">✅ META DÍA 1: embudo de venta 100% funcional de punta a punta</li>
+    </ul>
+  </div>
+
+  <div class="roadmap-day d2">
+    <h3>📅 Día 2 — <span class="pink-t">TRÁFICO Y PRUEBA SOCIAL</span></h3>
+    <ul>
+      <li><b>Contenido en 3 canales</b>: 1 video corto del carousel de agentes + 1 post del diagnóstico + 1 demo del dashboard (podés usar los 8 kits como casos de uso)</li>
+      <li><b>Activar PostHog</b> — analytics para medir visitas → registros → pagos (sin datos no hay optimización)</li>
+      <li><b>SEO básico</b>: título/meta de la landing + sitemap (Vercel lo sirve gratis)</li>
+      <li><b>Oferta de lanzamiento</b>: 30% off primer mes en Tactical/Premium con código LANZAMIENTO2026</li>
+      <li class="money">✅ META DÍA 2: 100+ visitas reales, 10+ registros, primeros leads del diagnóstico</li>
+    </ul>
+  </div>
+
+  <div class="roadmap-day d3">
+    <h3>📅 Día 3 — <span class="pink-t">CONVERTIR Y COBRAR</span></h3>
+    <ul>
+      <li><b>Seguimiento de leads</b>: los emails del diagnóstico reciben oferta personalizada (email automático o manual vía gmail-actions)</li>
+      <li><b>Venta directa con los kits</b>: ofrecer "montaje del agente" como servicio (los 8 kits ya están listos — venta inmediata a negocios locales)</li>
+      <li><b>Primer pago real</b>: meta mínima <span class="money">1 cliente pago (Tactical $25 o kit montado $150-300)</span></li>
+      <li><b>Métricas del día</b>: reporte de visitas, registros, leads, pagos → decide qué canal duplicar</li>
+      <li class="money">✅ META DÍA 3: PRIMER INGRESO CONFIRMADO + embudo medido</li>
+    </ul>
+  </div>
+</div>
+
+<div class="grid">
+  <!-- INSTALACION -->
+  <div class="card">
+    <h2>🔧 Instalación Completa</h2>
+    <pre><span class="c"># 1. Clonar y entrar</span>
+cd "/c/Users/pablo/Desktop/EQUITYLABS CODEX/EquityLabs20261-main/EquityLabs20261"
+
+<span class="c"># 2. Dependencias</span>
+npm install
+
+<span class="c"># 3. Variables de entorno (.env.local)</span>
+VITE_SUPABASE_URL=...
+VITE_SUPABASE_PUBLISHABLE_KEY=...
+VITE_AUTH_REDIRECT_ORIGIN=...
+VITE_GOOGLE_CLIENT_ID=...
+VITE_STRIPE_CHECKOUT_PUBLIC_KEY=...
+
+<span class="c"># 4. Dev server (puerto FIJO 8080)</span>
+npm run dev   <span class="c"># → http://localhost:8080/</span>
+
+<span class="c"># 5. Edge Functions (deploy por función)</span>
+npx supabase functions deploy ai-chat --project-ref otgxdmouuaqdpgrpzlul
+npx supabase functions deploy tools-ai --project-ref otgxdmouuaqdpgrpzlul
+npx supabase functions deploy generate-image --project-ref otgxdmouuaqdpgrpzlul
+
+<span class="c"># 6. Producción (UNICA via confiable)</span>
+npx vercel --prod --yes   <span class="c"># git push NO auto-deploya</span></pre>
+    <p class="dim" style="font-size:11px">⚠️ .vercelignore requerido (ya existe). Matar node.exe antes de dev: <span class="mono-sm">powershell "Get-Process node | Stop-Process -Force"</span></p>
+  </div>
+
+  <!-- TRAZABILIDAD -->
+  <div class="card">
+    <h2>📍 Trazabilidad de Lanzamiento</h2>
+    <div class="tl">
+      <div class="tl-item">
+        <span class="date">2026-07-07 · b151ee9</span>
+        Módulo proyectos y equity <span class="tag tag-feat">FEAT</span>
+      </div>
+      <div class="tl-item">
+        <span class="date">2026-07-11 · 81772bb</span>
+        Refine dashboard layout y auth <span class="tag tag-feat">FEAT</span>
+      </div>
+      <div class="tl-item">
+        <span class="date">2026-07-21 · d2271b2 / c9daf34</span>
+        Fix auth flow, routing y register <span class="tag tag-fix">FIX</span>
+      </div>
+      <div class="tl-item">
+        <span class="date">2026-07-26 · ad3bea9</span>
+        Refine mascot flows <span class="tag tag-fix">FIX</span>
+      </div>
+      <div class="tl-item">
+        <span class="date">2026-08-01 · 77617b8</span>
+        Landing Warhol + suscripciones redesign <span class="tag tag-feat">FEAT</span>
+      </div>
+      <div class="tl-item">
+        <span class="date">2026-08-05 · 39e53b5</span>
+        Carousel reactivado + auditoría + admin <span class="tag tag-feat">FEAT</span>
+      </div>
+      <div class="tl-item">
+        <span class="date">2026-08-05 · 15eab9d</span>
+        Fix carousel 100% zoom <span class="tag tag-fix">FIX</span>
+      </div>
+      <div class="tl-item">
+        <span class="date">2026-08-07 · AHORA</span>
+        🚀 <span class="money">LANZAMIENTO COMERCIAL — Día 1 de 3</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEUDA TECNICA -->
+  <div class="card">
+    <h2>⚠️ Deuda Técnica <span class="yellow">// Priorizada</span></h2>
+    <table>
+      <tr><th>Severidad</th><th>Issue</th><th>Acción</th></tr>
+      <tr><td class="bad">ALTA</td><td>Stripe webhook pendiente</td><td>Configurar antes de vender</td></tr>
+      <tr><td class="warn">MEDIA</td><td>Modelo Python ≠ TS</td><td>Sync core/models.py</td></tr>
+      <tr><td class="warn">MEDIA</td><td>Chunk grande (817KB)</td><td>Code-splitting lazy</td></tr>
+      <tr><td class="warn">MEDIA</td><td>generate-image 429 (plan FREE)</td><td>Requiere plan pago Supabase</td></tr>
+      <tr><td class="dim">BAJA</td><td>Dead code landing</td><td>Limpiar LandingIntro/Splash</td></tr>
+      <tr><td class="dim">BAJA</td><td>PostHog sin activar</td><td>Día 2 del roadmap</td></tr>
+    </table>
+  </div>
+
+  <!-- ENV -->
+  <div class="card">
+    <h2>🔑 Variables de Entorno</h2>
+    <table>
+      <tr><th>Variable</th><th>Uso</th></tr>
+      <tr><td class="mono-sm">VITE_SUPABASE_URL</td><td>Supabase project</td></tr>
+      <tr><td class="mono-sm">VITE_SUPABASE_PUBLISHABLE_KEY</td><td>Cliente (fallback ANON)</td></tr>
+      <tr><td class="mono-sm">VITE_AUTH_REDIRECT_ORIGIN</td><td>OAuth redirect</td></tr>
+      <tr><td class="mono-sm">VITE_GOOGLE_CLIENT_ID</td><td>Google login</td></tr>
+      <tr><td class="mono-sm">VITE_STRIPE_CHECKOUT_PUBLIC_KEY</td><td>Checkout</td></tr>
+      <tr><td class="mono-sm">VITE_STRIPE_WEBHOOK_SECRET</td><td>Webhook (⚠️ pendiente)</td></tr>
+      <tr><td class="mono-sm">VITE_ADMIN_EMAILS</td><td>Admin dashboard</td></tr>
+      <tr><td class="mono-sm">OPENROUTER_API_KEY</td><td>Secrets Supabase (solo server)</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="footer">
+  <span class="mono">BUNKER VISUAL v1.0</span> · EQuityLabs Command Dashboard · Generado 2026-08-07<br>
+  MetaLearning: <b>ejecutar → medir → iterar</b> · <span class="pink-t">Zona de peligro: facturar o morir 🚀</span>
+</div>
+
+</body>
+</html>
