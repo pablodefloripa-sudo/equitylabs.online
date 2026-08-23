@@ -187,8 +187,16 @@ const Suscripciones = () => {
         navigate('/');
         return;
       }
-      if (!plan.checkoutUrl) { toast.error(`Stripe link missing for ${plan.name}.`); return; }
-      window.location.assign(plan.checkoutUrl);
+      // Checkout real: edge function crea la sesión Stripe y devuelve la URL
+      const { data, error: fnError } = await supabase.functions.invoke('stripe-checkout', {
+        body: { planKey: plan.key },
+      });
+      if (fnError || !data?.url) {
+        console.error('stripe-checkout failed', fnError, data);
+        toast.error(data?.error || 'No se pudo iniciar el pago. Intenta de nuevo.');
+        return;
+      }
+      window.location.assign(data.url);
     } finally { setLoading(null); }
   };
 
