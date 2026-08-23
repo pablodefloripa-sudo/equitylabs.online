@@ -73,7 +73,59 @@ serve(async (req) => {
       });
     }
 
-    const reply = data?.choices?.[0]?.message?.content?.trim() || "Sin respuesta.";
+    const extract = (d: any): string => {
+      const c = d?.choices?.[0]?.message?.content;
+      if (typeof c === "string") return c.trim();
+      if (Array.isArray(c)) return c.map((p: any) => p?.text ?? "").join("").trim();
+      return "";
+    };
+
+    // Llamada con timeout — los modelos free a veces se cuelgan
+    const callModel = async (model: string, temperature: number): Promise<string> => {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 35000);
+      try {
+        const r = await fetch(OPENROUTER_CHAT_URL, {
+          method: "POST",
+          signal: ctrl.signal,
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://www.equitylabs.online",
+            "X-Title": "EQuityLabs Landing Demo",
+          },
+          body: JSON.stringify({
+            model,
+            messages: [
+              { role: "system", content: SYSTEM_PROMPT },
+              { role: "user", content: message.slice(0, 600) },
+            ],
+            max_tokens: 320,
+            temperature,
+          }),
+        });
+        if (!r.ok) {
+          console.warn("landing-chat openrouter", r.status, (await r.text()).slice(0, 200));
+          return "";
+        }
+        return extract(await r.json());
+      } catch (err) {
+        console.warn("landing-chat fetch fail", model, err instanceof Error ? err.message : err);
+        return "";
+      } finally {
+        clearTimeout(timer);
+      }
+    };
+
+    // Modelo 1 (principal) → Modelo 2 (respaldo gratuito) → fallback amigable
+    let reply = await callModel(EQUITYLABS_PRIMARY_MODEL, 0.7);
+    if (!reply) {
+      reply = await callModel("google/gemma-4-26b-a4b-it:free", 0.6);
+    }
+    if (!reply) {
+      reply = "Estoy conectado ✅ — el modelo gratuito está saturado ahora mismo. Probá en unos segundos o creá tu cuenta gratis para usar los modelos premium.";
+    }
+
     return new Response(JSON.stringify({ reply }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
