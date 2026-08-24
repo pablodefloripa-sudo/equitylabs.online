@@ -55,7 +55,7 @@ const landingPlanCopyByLang: Partial<Record<LandingLang, LandingPlanCopy>> = {
       { title: 'Strategic north', detail: 'We define the real direction before scaling.' },
       { title: 'Final roadmap', detail: 'You leave with a next-step plan, not just prompts.' },
     ],
-    paidHighlights: ['$25 Tactical', '$50 Premium', '$100 Mastermind'],
+    paidHighlights: ['$25 Tactical', '$100 Mastermind', '$500 Enterprise'],
   },
   es: {
     trialLabel: 'FREE (30 Dias Trial)',
@@ -68,7 +68,7 @@ const landingPlanCopyByLang: Partial<Record<LandingLang, LandingPlanCopy>> = {
       { title: 'Norte estrategico', detail: 'Definimos direccion real antes de escalar.' },
       { title: 'Hoja de ruta final', detail: 'Te llevas el siguiente paso, no solo prompts.' },
     ],
-    paidHighlights: ['$25 Tactical', '$50 Premium', '$100 Mastermind'],
+    paidHighlights: ['$25 Tactical', '$100 Mastermind', '$500 Enterprise'],
   },
   fr: {
     trialLabel: 'FREE (Essai 30 jours)',
@@ -81,7 +81,7 @@ const landingPlanCopyByLang: Partial<Record<LandingLang, LandingPlanCopy>> = {
       { title: 'Nord strategique', detail: 'Nous definissons la vraie direction avant de scaler.' },
       { title: 'Feuille de route finale', detail: 'Vous repartez avec le prochain pas, pas seulement des prompts.' },
     ],
-    paidHighlights: ['$25 Tactical', '$50 Premium', '$100 Mastermind'],
+    paidHighlights: ['$25 Tactical', '$100 Mastermind', '$500 Enterprise'],
   },
   pt: {
     trialLabel: 'FREE (Trial de 30 dias)',
@@ -94,7 +94,7 @@ const landingPlanCopyByLang: Partial<Record<LandingLang, LandingPlanCopy>> = {
       { title: 'Norte estrategico', detail: 'Definimos a direcao real antes de escalar.' },
       { title: 'Roteiro final', detail: 'Voce sai com o proximo passo, nao apenas prompts.' },
     ],
-    paidHighlights: ['$25 Tactical', '$50 Premium', '$100 Mastermind'],
+    paidHighlights: ['$25 Tactical', '$100 Mastermind', '$500 Enterprise'],
   },
   it: {
     trialLabel: 'FREE (Trial 30 giorni)',
@@ -107,7 +107,7 @@ const landingPlanCopyByLang: Partial<Record<LandingLang, LandingPlanCopy>> = {
       { title: 'Nord strategico', detail: 'Definiamo la direzione reale prima di scalare.' },
       { title: 'Roadmap finale', detail: 'Esci con il prossimo passo, non solo prompt.' },
     ],
-    paidHighlights: ['$25 Tactical', '$50 Premium', '$100 Mastermind'],
+    paidHighlights: ['$25 Tactical', '$100 Mastermind', '$500 Enterprise'],
   },
   de: {
     trialLabel: 'FREE (30 Tage Trial)',
@@ -120,7 +120,7 @@ const landingPlanCopyByLang: Partial<Record<LandingLang, LandingPlanCopy>> = {
       { title: 'Strategischer Norden', detail: 'Wir definieren die echte Richtung vor dem Skalieren.' },
       { title: 'Finale Roadmap', detail: 'Du gehst mit dem nachsten Schritt, nicht nur mit Prompts.' },
     ],
-    paidHighlights: ['$25 Tactical', '$50 Premium', '$100 Mastermind'],
+    paidHighlights: ['$25 Tactical', '$100 Mastermind', '$500 Enterprise'],
   },
   pl: {
     trialLabel: 'FREE (Trial 30 dni)',
@@ -133,7 +133,7 @@ const landingPlanCopyByLang: Partial<Record<LandingLang, LandingPlanCopy>> = {
       { title: 'Strategiczna polnoc', detail: 'Definiujemy prawdziwy kierunek przed skalowaniem.' },
       { title: 'Finalna mapa drogowa', detail: 'Wychodzisz z kolejnym krokiem, nie tylko z promptami.' },
     ],
-    paidHighlights: ['$25 Tactical', '$50 Premium', '$100 Mastermind'],
+    paidHighlights: ['$25 Tactical', '$100 Mastermind', '$500 Enterprise'],
   },
 };
 

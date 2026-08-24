@@ -306,7 +306,7 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
                                 ].join(' ')}
                               >
                                 <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/55">
-                                  {index === 0 ? 'Start' : index === 1 ? 'Scale' : 'Lead'}
+                                  {index === 0 ? 'Tactical' : index === 1 ? 'Mastermind' : 'Enterprise'}
                                 </p>
                                 <p className="mt-1 text-[15px] font-black leading-none text-white md:text-[18px]">
                                   {item}
@@ -320,6 +320,19 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
                       <p className={`mb-2.5 ${isCenter ? 'max-w-5xl text-[14px] md:text-[15px] leading-[1.4] text-cyan-50/92' : 'line-clamp-2 text-[14px] md:text-[15px] leading-relaxed text-slate-300/68'}`}>
                         {mission}
                       </p>
+
+                      {isCenter ? (
+                        <div className="mb-3 flex flex-wrap gap-1.5">
+                          {(agent.skills as string[] | undefined)?.slice(0, 5).map((skill) => (
+                            <span
+                              key={skill}
+                              className="rounded-full border border-cyan-300/25 bg-cyan-300/8 px-2.5 py-1 text-[10px] md:text-[11px] font-semibold tracking-wide text-cyan-100/85"
+                            >
+                              ⚡ {skill}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
 
                       {isCenter ? (
                         <div className="grid gap-2.5 xl:grid-cols-[minmax(0,0.96fr)_minmax(0,1.04fr)]">
