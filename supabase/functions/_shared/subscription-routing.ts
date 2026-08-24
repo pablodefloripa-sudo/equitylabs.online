@@ -54,7 +54,9 @@ export interface AIProviderResult {
 export const LOVABLE_AI_GATEWAY_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 export const OPENROUTER_CHAT_URL = 'https://openrouter.ai/api/v1/chat/completions';
 export const EQUITYLABS_PRIMARY_MODEL = 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free';
-export const OPENROUTER_FALLBACK_MODEL = 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free';
+// Respaldo: OpenRouter marca los modelos gratuitos con el sufijo ":free".
+// El fallback apunta a OTRO free (nano-30b) para que el plan FREE nunca pague.
+export const OPENROUTER_FALLBACK_MODEL = 'nvidia/nemotron-3-nano-30b-a3b:free';
 
 /* ─── Ecosistema de modelos (verificado en OpenRouter Ago 2026) ───
  * - NEMOTRON_FREE : nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free  → $0 (free tier)
@@ -72,10 +74,10 @@ export const MODEL_IDS = {
 export type ModelId = (typeof MODEL_IDS)[keyof typeof MODEL_IDS];
 
 export const MODEL_LABELS: Record<ModelId, string> = {
-  [MODEL_IDS.NEMOTRON_FREE]: 'NVIDIA Nemotron (gratis)',
-  [MODEL_IDS.DEEPSEEK]: 'DeepSeek V4 Flash',
-  [MODEL_IDS.KIMI]: 'Kimi K2.5',
-  [MODEL_IDS.CLAUDE_HAIKU]: 'Claude Haiku 4.5',
+  [MODEL_IDS.NEMOTRON_FREE]: 'NVIDIA Nemotron',
+  [MODEL_IDS.DEEPSEEK]: 'DeepSeek',
+  [MODEL_IDS.KIMI]: 'Kimi',
+  [MODEL_IDS.CLAUDE_HAIKU]: 'Claude',
 };
 
 const ALL_MODELS = [MODEL_IDS.NEMOTRON_FREE, MODEL_IDS.DEEPSEEK, MODEL_IDS.KIMI, MODEL_IDS.CLAUDE_HAIKU];

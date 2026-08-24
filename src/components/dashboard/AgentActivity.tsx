@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ClipboardList, X, Bot, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/runtime-client';
+import { modelDisplayName } from '@/lib/modelDisplay';
 
 /* Informe de actividad de agentes — seguimiento por usuario.
    Lee public.audit_logs (RLS: solo las tareas del usuario) con
@@ -20,13 +21,6 @@ interface TaskLog {
     status?: string;
   };
 }
-
-const MODEL_LABELS: Record<string, string> = {
-  'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free': 'NVIDIA Nemotron (gratis)',
-  'deepseek/deepseek-v4-flash': 'DeepSeek V4 Flash',
-  'moonshotai/kimi-k2.5': 'Kimi K2.5',
-  'anthropic/claude-haiku-4.5': 'Claude Haiku 4.5',
-};
 
 const PLAN_LABELS: Record<string, string> = {
   FREE_30_DAYS: 'Free Trial',
@@ -157,7 +151,7 @@ const AgentActivity = () => {
                       }`}
                     >
                       <Bot className="w-3 h-3" />
-                      {MODEL_LABELS[model] || model.split('/').pop()}
+                      {modelDisplayName(model) || 'Modelo'}
                       <span className="text-white/40">×{count}</span>
                     </button>
                   ))}
@@ -193,7 +187,7 @@ const AgentActivity = () => {
                               {l.details?.agent || l.details?.action || 'chat'}
                             </span>
                           </td>
-                          <td className="py-2.5 pr-3 text-white/80">{MODEL_LABELS[l.details?.model || ''] || l.details?.model || '—'}</td>
+                          <td className="py-2.5 pr-3 text-white/80">{modelDisplayName(l.details?.model) || '—'}</td>
                           <td className="py-2.5 pr-3 text-white/50">{PLAN_LABELS[l.details?.plan || ''] || l.details?.plan || '—'}</td>
                           <td className="py-2.5 text-white/60 max-w-[260px] truncate">{l.details?.task_preview || '—'}</td>
                         </tr>

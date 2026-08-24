@@ -23,6 +23,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { modelDisplayName } from '@/lib/modelDisplay';
 import { CollapsibleSidebar } from './CollapsibleSidebar';
 import { useLanguage } from '@/hooks/useLanguage';
 
@@ -454,7 +455,7 @@ export function TaskOperator() {
               {dashboardContext.activeAgent?.name || 'Sin seleccionar'}
             </strong>
             <p className="mt-2 text-xs leading-relaxed text-slate-400">
-              Ruta activa: {assignedAgents} usando {dashboardContext.activeAgent?.engine || 'modelo disponible'}.
+              Ruta activa: {assignedAgents} usando {modelDisplayName(dashboardContext.activeAgent?.engine) || 'modelo disponible'}.
             </p>
           </div>
 

@@ -1,6 +1,7 @@
 ﻿import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import QRCode from 'qrcode';
+import { modelDisplayName } from '@/lib/modelDisplay';
 import {
   Zap,
   Loader2,
@@ -1355,7 +1356,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
                             <div className="mb-1 flex items-center gap-2">
                               <Cpu className="h-3 w-3 text-cyan-300/65" />
                               <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-cyan-200/60">
-                                {msg.model || planEngine}
+                                {modelDisplayName(msg.model) || planEngine}
                               </span>
                               {(msg.agentId || msg.route) && (
                                 <span className="rounded border border-emerald-300/15 bg-emerald-300/8 px-1.5 py-0.5 text-[8px] font-mono uppercase tracking-[0.12em] text-emerald-200/60">
