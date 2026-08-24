@@ -57,6 +57,10 @@ SKILLS_BY_BADGE = {
 
 # Overrides por keyword de la misión (más específicos que la categoría)
 KEYWORD_SKILLS = [
+    (re.compile(r"public speaking|hablar en publico|oratoria|discurso|presentac|speech|confianza escenica", re.I),
+     ["técnicas de oratoria y comunicación", "estructura de discursos y presentaciones", "manejo de voz, ritmo y lenguaje corporal", "storytelling en presentaciones", "control de nervios y confianza escénica"]),
+    (re.compile(r"film|cinema|cine|movie|pelicul|director de cine|video production|short film|rodaje", re.I),
+     ["dirección cinematográfica y narrativa visual", "guion y estructura de historias", "dirección de actores y puesta en escena", "planificación de rodaje (storyboard, shot list)", "edición y postproducción de video"]),
     (re.compile(r"crypto|defi|bitcoin|blockchain|token|nft|web3|trading", re.I),
      ["análisis de criptomonedas y mercados", "fundamentos DeFi y yield farming", "seguridad de wallets y buenas prácticas", "evaluación de proyectos token", "gestión de riesgo y portafolio crypto"]),
     (re.compile(r"real estate|propiedad|inmobiliari|rental|landlord", re.I),
