@@ -57,8 +57,20 @@ SKILLS_BY_BADGE = {
 
 # Overrides por keyword de la misión (más específicos que la categoría)
 KEYWORD_SKILLS = [
-    (re.compile(r"financ|wealth|money|invest|real estate|propiedad|riqueza|dinero|inversi", re.I),
+    (re.compile(r"crypto|defi|bitcoin|blockchain|token|nft|web3|trading", re.I),
+     ["análisis de criptomonedas y mercados", "fundamentos DeFi y yield farming", "seguridad de wallets y buenas prácticas", "evaluación de proyectos token", "gestión de riesgo y portafolio crypto"]),
+    (re.compile(r"real estate|propiedad|inmobiliari|rental|landlord", re.I),
+     ["análisis de propiedades e inversión inmobiliaria", "evaluación de flujo de caja (ROI, cap rate)", "negociación de compra/venta", "financiamiento e hipotecas", "expansión de portafolio inmobiliario"]),
+    (re.compile(r"fitness|health|gym|entrenam|workout|salud|nutrici", re.I),
+     ["planes de entrenamiento y acondicionamiento", "nutrición y hábitos alimentarios", "seguimiento de progreso y métricas", "recuperación y prevención de lesiones", "motivación y consistencia"]),
+    (re.compile(r"social|instagram|tiktok|youtube|influencer|redes|content creator", re.I),
+     ["estrategia de contenido para redes sociales", "crecimiento orgánico y engagement", "branding personal en plataformas", "calendario de contenido", "análisis de métricas sociales"]),
+    (re.compile(r"financ|wealth|money|invest|riqueza|dinero|inversi", re.I),
      ["análisis financiero personal", "presupuestos y ahorro", "estrategia de inversión", "planificación fiscal básica", "educación financiera"]),
+    (re.compile(r"travel|viaje|aventura|explor", re.I),
+     ["planificación de viajes y rutas", "optimización de presupuesto de viaje", "experiencias y cultura local", "itinerarios flexibles", "fotografía y registro de viajes"]),
+    (re.compile(r"music|arte|creativ|design|diseñ|dibuj|pint", re.I),
+     ["desarrollo de habilidades creativas", "proyectos de arte y diseño", "técnicas de expresión creativa", "portafolio creativo", "colaboración artística"]),
     (re.compile(r"code|software|develop|program|build app|web|developer|crear", re.I),
      ["desarrollo de software y código", "automatización con scripts", "integración de APIs", "revisión de código", "arquitectura técnica"]),
     (re.compile(r"writ|content|blog|copy|book|libro|escrib", re.I),
