@@ -6,7 +6,7 @@ import { LanguageFloater, type LandingLang } from '@/components/landing/Language
 import { getLandingLang, setStoredLandingLang } from '@/components/landing/landingContent';
 import { useLanguage, type Language } from '@/hooks/useLanguage';
 import { AgentEliteCarousel } from '@/components/landing/AgentEliteCarousel';
-import LandingChat from '@/components/landing/LandingChat';
+import HermesConsole from '@/components/landing/HermesConsole';
 
 /* ─── Slides de la landing (Canva export, 1920×1080) ─── */
 const LANDING_SLIDES = [
@@ -131,16 +131,16 @@ const DashboardPhase = ({ lang, onLangChange, onAgents }: {
   const navigate = useNavigate();
   return (
     <div className="relative w-full min-h-screen overflow-hidden bg-black">
-      {/* Slide 5 fija = dashboard operacional */}
-      <img src={LANDING_SLIDES[4]} alt="EQuityLabs Dashboard" className="fixed inset-0 w-full h-full object-cover" />
+      {/* Slide 5 fija = dashboard operacional (fondo con franja negra para la consola) */}
+      <img src="/slides/landing/hermes-console-bg.png" alt="EQuityLabs Dashboard" className="fixed inset-0 w-full h-full object-cover object-top" />
       {/* Veladura sutil para legibilidad del chat */}
-      <div className="fixed inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60 pointer-events-none" />
+      <div className="fixed inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/35 pointer-events-none" />
 
       <TopBar lang={lang} onLangChange={onLangChange} />
 
-      <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-4 py-20">
+      <div className="relative z-10 flex min-h-screen flex-col items-center justify-end px-4 pb-5">
         {/* Encabezado */}
-        <div className="mb-6 text-center">
+        <div className="mb-4 text-center">
           <p className="font-mono text-[11px] tracking-[0.3em] uppercase text-[#00d2ff]/90 mb-2 flex items-center justify-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-[#00d2ff] animate-pulse" />
             Command Center · en vivo
@@ -150,17 +150,17 @@ const DashboardPhase = ({ lang, onLangChange, onAgents }: {
           </h1>
         </div>
 
-        {/* Communication center transparente */}
-        <LandingChat lang={lang === 'en' ? 'en' : 'es'} />
+        {/* HERMES OS — consola de comandos sobre la franja negra */}
+        <HermesConsole lang={lang === 'en' ? 'en' : 'es'} />
 
         {/* CTAs */}
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
           <button onClick={() => navigate('/auth')}
-            className="flex h-12 items-center gap-2 rounded-xl bg-gradient-to-r from-[#00d2ff] via-[#8a2be2] to-[#ff007f] px-6 text-sm font-bold text-white border-2 border-white shadow-[4px_4px_0px_0px_rgba(255,255,255,0.6)] hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.6)] hover:brightness-110 transition">
+            className="flex h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-[#00d2ff] via-[#8a2be2] to-[#ff007f] px-6 text-sm font-bold text-white border-2 border-white shadow-[4px_4px_0px_0px_rgba(255,255,255,0.6)] hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.6)] hover:brightness-110 transition">
             Empezar gratis <ArrowRight className="w-4 h-4" />
           </button>
           <button onClick={onAgents}
-            className="flex h-12 items-center rounded-xl border-2 border-[#00d2ff]/60 bg-black/50 px-6 text-sm font-bold text-[#00d2ff] backdrop-blur-md hover:bg-[#00d2ff]/10 transition">
+            className="flex h-11 items-center rounded-xl border-2 border-[#00d2ff]/60 bg-black/50 px-6 text-sm font-bold text-[#00d2ff] backdrop-blur-md hover:bg-[#00d2ff]/10 transition">
             Ver los 40 agentes
           </button>
         </div>
