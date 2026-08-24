@@ -9,7 +9,7 @@ import { supabase } from '@/integrations/supabase/runtime-client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 
-type PlanKey = 'FREE' | 'TACTICAL' | 'PREMIUM' | 'MASTERMIND' | 'ENTERPRISE' | 'ALLIANCE';
+type PlanKey = 'FREE' | 'TACTICAL' | 'MASTERMIND' | 'ENTERPRISE' | 'ALLIANCE';
 
 type PlanDef = {
   key: PlanKey;
@@ -62,25 +62,6 @@ const plans: PlanDef[] = [
     badge: 'POPULAR',
   },
   {
-    key: 'PREMIUM', name: 'Premium',
-    price: '$50', cadence: '/month',
-    tagline: 'Scalability + Professional Quality',
-    icon: Shield,
-    features: [
-      'Everything in Tactical',
-      'Advanced scalability & performance (NVIDIA infra)',
-      'Comprehensive automated testing + edge-cases',
-      'Complex multi-API integrations',
-      'Architecture review & best-practice enforcement',
-      'Up to 8 concurrent projects',
-      'Senior agent supervision',
-      'Weekly technical progress reports',
-      'Early access to new agent capabilities',
-    ],
-    ctaLabel: 'Go Premium',
-    badge: 'MOST POWERFUL',
-  },
-  {
     key: 'MASTERMIND', name: 'Mastermind',
     price: '$100', cadence: '/month',
     tagline: 'Corporate-Grade + Maximum Control',
@@ -103,7 +84,7 @@ const plans: PlanDef[] = [
   },
   {
     key: 'ENTERPRISE', name: 'Enterprise',
-    price: '$600', cadence: '/month',
+    price: '$500', cadence: '/month',
     tagline: 'Full Organizational Implementation',
     icon: Building2,
     features: [
@@ -204,7 +185,6 @@ const Suscripciones = () => {
     const map: Record<PlanKey, { border: string; glow: string; badge: string; dot: string; btn: string }> = {
       FREE: { border: 'border-[#00d2ff]', glow: 'shadow-[8px_8px_0px_0px_#00d2ff]', badge: 'from-[#00d2ff] to-[#7b2ff7]', dot: 'bg-[#00d2ff]', btn: 'bg-white text-black border-[#00d2ff] shadow-[4px_4px_0px_0px_#00d2ff] hover:shadow-[6px_6px_0px_0px_#00d2ff]' },
       TACTICAL: { border: 'border-[#7b2ff7]', glow: 'shadow-[8px_8px_0px_0px_#7b2ff7]', badge: 'from-[#7b2ff7] to-[#ff007f]', dot: 'bg-[#7b2ff7]', btn: 'bg-white text-black border-[#7b2ff7] shadow-[4px_4px_0px_0px_#7b2ff7] hover:shadow-[6px_6px_0px_0px_#7b2ff7]' },
-      PREMIUM: { border: 'border-[#ff007f]', glow: 'shadow-[10px_10px_0px_0px_#ff007f]', badge: 'from-[#00d2ff] to-[#ff007f]', dot: 'bg-[#ff007f]', btn: 'bg-gradient-to-r from-[#00d2ff] via-[#8a2be2] to-[#ff007f] text-white border-white shadow-[4px_4px_0px_0px_#ffffff] hover:shadow-[6px_6px_0px_0px_#ffffff]' },
       MASTERMIND: { border: 'border-[#ff007f]', glow: 'shadow-[8px_8px_0px_0px_#ff007f]', badge: 'from-[#ff007f] to-[#00d2ff]', dot: 'bg-[#ff007f]', btn: 'bg-white text-black border-[#ff007f] shadow-[4px_4px_0px_0px_#ff007f] hover:shadow-[6px_6px_0px_0px_#ff007f]' },
       ENTERPRISE: { border: 'border-[#00d2ff]', glow: 'shadow-[8px_8px_0px_0px_#00d2ff]', badge: 'from-[#00d2ff] to-[#7b2ff7]', dot: 'bg-[#00d2ff]', btn: 'bg-white text-black border-[#00d2ff] shadow-[4px_4px_0px_0px_#00d2ff] hover:shadow-[6px_6px_0px_0px_#00d2ff]' },
       ALLIANCE: { border: 'border-[#7b2ff7]', glow: 'shadow-[8px_8px_0px_0px_#7b2ff7]', badge: 'from-[#7b2ff7] to-[#00d2ff]', dot: 'bg-[#7b2ff7]', btn: 'bg-white text-black border-[#7b2ff7] shadow-[4px_4px_0px_0px_#7b2ff7] hover:shadow-[6px_6px_0px_0px_#7b2ff7]' },

@@ -16,9 +16,8 @@ WEBHOOK_URL="${STRIPE_WEBHOOK_URL:-https://otgxdmouuaqdpgrpzlul.supabase.co/func
 # plan | nombre | descripcion | monto_usd | intervalo (month|year|one_time)
 PLANS=(
   "TACTICAL|Tactical|Speed + Real Results|25|month"
-  "PREMIUM|Premium|Scalability + Professional Quality|50|month"
   "MASTERMIND|Mastermind|Corporate-Grade + Maximum Control|100|month"
-  "ENTERPRISE|Enterprise|Full Organizational Implementation|600|month"
+  "ENTERPRISE|Enterprise|Full Organizational Implementation|500|month"
   "ALLIANCE|Alliance|Strategic Partnership + Brand Expansion|1000|year"
 )
 

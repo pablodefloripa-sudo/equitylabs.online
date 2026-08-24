@@ -23,11 +23,6 @@ const PLANS: Record<string, PlanConfig> = {
     mode: "subscription",
     interval: "month",
   },
-  PREMIUM: {
-    priceId: Deno.env.get("STRIPE_PRICE_PREMIUM") || "",
-    mode: "subscription",
-    interval: "month",
-  },
   MASTERMIND: {
     priceId: Deno.env.get("STRIPE_PRICE_MASTERMIND") || "",
     mode: "subscription",

@@ -3,7 +3,6 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 export type SubscriptionPlanKey =
   | 'FREE_30_DAYS'
   | 'TACTICAL_25'
-  | 'PREMIUM_50'
   | 'MASTERMIND_100'
   | 'ENTERPRISE_500'
   | 'ALLIANCE_1000';
@@ -111,21 +110,6 @@ const TACTICAL_AGENTS: Record<AgentKey, string> = {
   recepcionista: MODEL_IDS.DEEPSEEK,
 };
 
-/* PREMIUM $50/mes — dúo + revisión premium (Claude) */
-const PREMIUM_AGENTS: Record<AgentKey, string> = {
-  orquestador: MODEL_IDS.KIMI,          // el jefe ahora piensa con Kimi
-  analista: MODEL_IDS.KIMI,
-  escritor: MODEL_IDS.KIMI,
-  investigador: MODEL_IDS.DEEPSEEK,
-  desarrollador: MODEL_IDS.DEEPSEEK,
-  disenador: MODEL_IDS.KIMI,
-  revisor: MODEL_IDS.CLAUDE_HAIKU,      // primera mejora: revision premium
-  asistente: MODEL_IDS.DEEPSEEK,
-  architect: MODEL_IDS.DEEPSEEK,
-  logic: MODEL_IDS.KIMI,
-  recepcionista: MODEL_IDS.DEEPSEEK,
-};
-
 /* MASTERMIND $100/mes — "pro": arquitectura + revision premium */
 const MASTERMIND_AGENTS: Record<AgentKey, string> = {
   orquestador: MODEL_IDS.KIMI,
@@ -141,7 +125,7 @@ const MASTERMIND_AGENTS: Record<AgentKey, string> = {
   recepcionista: MODEL_IDS.DEEPSEEK,
 };
 
-/* ENTERPRISE $600/mes — cobertura premium amplia */
+/* ENTERPRISE $500/mes — cobertura premium amplia */
 const ENTERPRISE_AGENTS: Record<AgentKey, string> = {
   orquestador: MODEL_IDS.KIMI,
   analista: MODEL_IDS.KIMI,
@@ -156,20 +140,8 @@ const ENTERPRISE_AGENTS: Record<AgentKey, string> = {
   recepcionista: MODEL_IDS.DEEPSEEK,
 };
 
-/* ALLIANCE $1K/año — LA CABEZA: ecosistema completo, todos los modelos activos */
-const ALLIANCE_AGENTS: Record<AgentKey, string> = {
-  orquestador: MODEL_IDS.KIMI,           // la cabeza decide con el mejor cerebro
-  analista: MODEL_IDS.CLAUDE_HAIKU,      // analisis premium
-  escritor: MODEL_IDS.KIMI,              // mejor escritura
-  investigador: MODEL_IDS.DEEPSEEK,
-  desarrollador: MODEL_IDS.DEEPSEEK,
-  disenador: MODEL_IDS.KIMI,
-  revisor: MODEL_IDS.CLAUDE_HAIKU,
-  asistente: MODEL_IDS.KIMI,
-  architect: MODEL_IDS.CLAUDE_HAIKU,
-  logic: MODEL_IDS.DEEPSEEK,
-  recepcionista: MODEL_IDS.DEEPSEEK,
-};
+/* ALLIANCE $1K/año — mismo motor que MASTERMIND (el valor extra es el partnership) */
+const ALLIANCE_AGENTS: Record<AgentKey, string> = MASTERMIND_AGENTS;
 
 function buildRouting(defaultModel: string, agents: Record<AgentKey, string>): PlanModelRouting {
   return { greeting: defaultModel, default: defaultModel, agents: { ...agents } };
@@ -178,7 +150,6 @@ function buildRouting(defaultModel: string, agents: Record<AgentKey, string>): P
 export const PLAN_MODEL_ROUTING: Record<SubscriptionPlanKey, PlanModelRouting> = {
   FREE_30_DAYS: buildRouting(MODEL_IDS.NEMOTRON_FREE, FREE_MODEL_AGENTS),
   TACTICAL_25: buildRouting(MODEL_IDS.KIMI, TACTICAL_AGENTS),
-  PREMIUM_50: buildRouting(MODEL_IDS.KIMI, PREMIUM_AGENTS),
   MASTERMIND_100: buildRouting(MODEL_IDS.KIMI, MASTERMIND_AGENTS),
   ENTERPRISE_500: buildRouting(MODEL_IDS.KIMI, ENTERPRISE_AGENTS),
   ALLIANCE_1000: buildRouting(MODEL_IDS.KIMI, ALLIANCE_AGENTS),
@@ -206,7 +177,7 @@ export function getEcosystemModels(): Array<{ id: string; label: string }> {
 const LEGACY_PLAN_MAP: Record<string, SubscriptionPlanKey> = {
   free: 'FREE_30_DAYS',
   tactical: 'TACTICAL_25',
-  premium: 'PREMIUM_50',
+  premium: 'MASTERMIND_100', // plan eliminado Ago 2026 → escalón siguiente
   mastermind: 'MASTERMIND_100',
   enterprise: 'ENTERPRISE_500',
   alliance: 'ALLIANCE_1000',

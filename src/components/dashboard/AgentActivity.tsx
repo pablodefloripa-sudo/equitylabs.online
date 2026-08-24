@@ -31,9 +31,8 @@ const MODEL_LABELS: Record<string, string> = {
 const PLAN_LABELS: Record<string, string> = {
   FREE_30_DAYS: 'Free Trial',
   TACTICAL_25: 'Tactical $25',
-  PREMIUM_50: 'Premium $50',
   MASTERMIND_100: 'Mastermind $100',
-  ENTERPRISE_500: 'Enterprise $600',
+  ENTERPRISE_500: 'Enterprise $500',
   ALLIANCE_1000: 'Alliance $1K',
 };
 
