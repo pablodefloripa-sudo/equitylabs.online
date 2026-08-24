@@ -1908,17 +1908,17 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
 
           {/* Textarea row */}
           <div
-            className="eq-spectrum-box relative mx-0 my-0 rounded-[24px] border border-blue-200/30 px-4 py-2 sm:px-5"
+            className="eq-spectrum-box relative mx-0 my-0 rounded-[24px] border border-white/10 px-4 py-2 sm:px-5"
             onDrop={handleChatDrop}
             onDragOver={handleChatDragOver}
             style={{
-              background: 'linear-gradient(180deg, rgba(20,36,78,0.72) 0%, rgba(12,22,54,0.66) 100%)',
-              boxShadow: '0 14px 24px rgba(0,0,0,0.34), inset 0 1px 0 rgba(255,255,255,0.10), 0 0 18px rgba(96,165,250,0.10)',
-              backdropFilter: 'blur(16px) saturate(140%)',
-              WebkitBackdropFilter: 'blur(16px) saturate(140%)',
+              background: 'linear-gradient(180deg, rgba(12,16,34,0.48) 0%, rgba(8,10,24,0.40) 100%)',
+              boxShadow: '0 10px 22px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 16px rgba(96,165,250,0.06)',
+              backdropFilter: 'blur(18px) saturate(140%)',
+              WebkitBackdropFilter: 'blur(18px) saturate(140%)',
             }}
           >
-            <div className="pointer-events-none absolute inset-[3px] rounded-[21px] border border-blue-200/24 shadow-[inset_0_1px_0_rgba(255,255,255,0.20)]" />
+            <div className="pointer-events-none absolute inset-[3px] rounded-[21px] border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]" />
             {chatAttachments.length > 0 && (
               <div className="relative z-10 mb-2 flex flex-wrap gap-2">
                 {chatAttachments.map((attachment) => (

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { modelDisplayName } from '@/lib/modelDisplay';
 
 interface AgentResponsePanelProps {
   content: string;
@@ -211,33 +212,33 @@ export const AgentResponsePanel = ({
       style={{ '--response-scale': responseScale } as CSSProperties}
     >
       <motion.div
-        className={`absolute -inset-1 rounded-[24px] blur-[8px] ${mascot ? 'bg-white/20' : 'bg-slate-200/35'}`}
-        animate={{ opacity: [0.28, 0.52, 0.28], scale: [0.998, 1.004, 0.998] }}
+        className={`absolute -inset-1 rounded-[24px] blur-[10px] ${mascot ? 'bg-pink-400/15' : 'bg-[radial-gradient(ellipse_at_top,rgba(0,210,255,0.16),rgba(124,58,237,0.12)_55%,transparent)]'}`}
+        animate={{ opacity: [0.24, 0.46, 0.24], scale: [0.998, 1.004, 0.998] }}
         transition={{ duration: 4.8, repeat: Infinity, ease: 'easeInOut' }}
       />
 
       <div
         className={`relative overflow-hidden rounded-[22px] border px-4 py-4 backdrop-blur-2xl ${
           mascot
-            ? 'border-pink-300/30 bg-[linear-gradient(180deg,rgba(226,232,240,0.22)_0%,rgba(148,163,184,0.10)_100%)] shadow-[0_0_32px_rgba(236,72,153,0.18),0_0_0_1px_rgba(255,255,255,0.08),inset_0_1px_0_rgba(255,255,255,0.22)]'
-            : 'border-white/90 bg-[linear-gradient(145deg,rgba(248,250,252,0.94)_0%,rgba(203,213,225,0.82)_24%,rgba(100,116,139,0.72)_52%,rgba(226,232,240,0.92)_78%,rgba(255,255,255,0.96)_100%)] shadow-[0_24px_52px_rgba(15,23,42,0.48),0_0_0_1px_rgba(255,255,255,0.9),inset_0_2px_0_rgba(255,255,255,0.98),inset_0_-3px_0_rgba(51,65,85,0.35)]'
+            ? 'border-pink-300/25 bg-[linear-gradient(170deg,rgba(30,10,40,0.75)_0%,rgba(20,8,32,0.55)_100%)] shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_0_rgba(255,255,255,0.10)]'
+            : 'border-white/10 bg-[linear-gradient(165deg,rgba(9,11,26,0.78)_0%,rgba(13,16,38,0.62)_45%,rgba(8,10,24,0.72)_100%)] shadow-[0_24px_60px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.04),inset_0_1px_0_rgba(255,255,255,0.10),inset_0_-2px_0_rgba(0,0,0,0.45),inset_0_0_40px_rgba(0,210,255,0.05)]'
         }`}
         style={{
           transform: 'translateZ(0)',
           transformStyle: 'preserve-3d',
-          ...(mascot ? {} : { backdropFilter: 'blur(10px) saturate(115%)' }),
+          ...(mascot ? {} : { backdropFilter: 'blur(14px) saturate(130%)' }),
         }}
       >
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.12]"
+          className="pointer-events-none absolute inset-0 opacity-[0.10]"
           style={{
             backgroundImage:
-              'linear-gradient(115deg, rgba(255,255,255,0.52) 0%, rgba(255,255,255,0.10) 18%, rgba(255,255,255,0.32) 34%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.26) 66%, rgba(255,255,255,0.08) 82%, rgba(255,255,255,0.42) 100%), radial-gradient(circle at 20% 0%, rgba(34,211,238,0.12), transparent 26%), radial-gradient(circle at 80% 20%, rgba(168,85,247,0.07), transparent 22%)',
+              'linear-gradient(115deg, rgba(255,255,255,0.10) 0%, transparent 20%, rgba(255,255,255,0.05) 36%, transparent 52%, rgba(255,255,255,0.08) 68%, transparent 84%), radial-gradient(circle at 18% 0%, rgba(0,210,255,0.14), transparent 30%), radial-gradient(circle at 82% 12%, rgba(124,58,237,0.10), transparent 26%)',
           }}
         />
 
         {isThinking && (
-          <div className="relative z-10 mb-3 rounded-xl border border-cyan-200/30 bg-slate-900/55 px-3 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]">
+          <div className="relative z-10 mb-3 rounded-xl border border-cyan-300/20 bg-[#0a0c1c]/60 px-3 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md">
             <div className="mb-1.5 flex items-center justify-between gap-3 font-mono text-[9px] uppercase tracking-[0.18em] text-cyan-100/80">
               <span className="flex items-center gap-2">
                 <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-cyan-300 shadow-[0_0_8px_rgba(103,232,249,0.9)]" />
@@ -255,36 +256,32 @@ export const AgentResponsePanel = ({
           </div>
         )}
 
-        <div className="relative z-10 mb-3 flex items-center gap-2 font-mono text-yellow-200">
-          {([
-            ['bg-red-500/80', 'rgba(239,68,68,0.75)'],
-            ['bg-yellow-500/80', 'rgba(234,179,8,0.75)'],
-            ['bg-green-500/80', 'rgba(34,197,94,0.75)'],
-          ] as const).map(([colorClass, glow], index) => (
+        <div className="relative z-10 mb-3 flex items-center gap-2 font-mono text-white/70">
+          {(['bg-white/25', 'bg-white/15', 'bg-white/20'] as const).map((colorClass, index) => (
             <motion.div
               key={colorClass}
-              className={`h-2.5 w-2.5 rounded-full ${colorClass}`}
-              style={{ boxShadow: `0 0 6px ${glow}` }}
-              animate={isThinking ? { opacity: [0.25, 1, 0.25], scale: [0.88, 1.15, 0.88] } : { opacity: 0.85, scale: 1 }}
+              className={`h-2 w-2 rounded-full ${colorClass}`}
+              style={{ boxShadow: 'inset 0 0 3px rgba(0,0,0,0.55)' }}
+              animate={isThinking ? { opacity: [0.3, 1, 0.3], scale: [0.9, 1.2, 0.9] } : { opacity: 0.75, scale: 1 }}
               transition={isThinking ? { duration: 0.85, repeat: Infinity, delay: index * 0.16 } : { duration: 0.2 }}
             />
           ))}
 
-          <div className="ml-2 flex min-w-0 flex-1 items-center gap-1.5 text-[10px] md:text-[12px] text-slate-950">
+          <div className="ml-2 flex min-w-0 flex-1 items-center gap-1.5 text-[10px] md:text-[11px] text-white/60">
             <span
-              className="inline-flex shrink-0 items-center rounded-full border border-emerald-200/80 bg-emerald-400 px-2 py-1 text-base leading-none shadow-[0_2px_8px_rgba(16,185,129,0.35)]"
+              className="inline-flex shrink-0 items-center rounded-md border border-white/10 bg-white/[0.05] px-1.5 py-0.5 text-[11px] leading-none"
               title={countryCode ? `Country ${countryCode}` : 'Country'}
               aria-label={countryCode ? `Country ${countryCode}` : 'Country'}
             >
               {countryFlag}
             </span>
-            <span className="rounded-full border border-yellow-200/80 bg-yellow-400 px-2.5 py-1 font-semibold tracking-[0.14em] uppercase shadow-[0_2px_8px_rgba(234,179,8,0.35)]">{clock.day}</span>
-            <span className="rounded-full border border-red-200/80 bg-red-400 px-2.5 py-1 shadow-[0_2px_8px_rgba(239,68,68,0.35)]">{clock.date}</span>
-            <span className="rounded-full border border-emerald-200/80 bg-emerald-400 px-2.5 py-1 font-semibold tabular-nums shadow-[0_2px_8px_rgba(16,185,129,0.35)]">{clock.time}</span>
+            <span className="rounded-md border border-white/10 bg-white/[0.05] px-2 py-0.5 uppercase tracking-[0.12em] text-white/55">{clock.day}</span>
+            <span className="hidden rounded-md border border-white/10 bg-white/[0.05] px-2 py-0.5 text-white/55 sm:inline">{clock.date}</span>
+            <span className="rounded-md border border-white/10 bg-white/[0.05] px-2 py-0.5 tabular-nums text-cyan-200/70">{clock.time}</span>
           </div>
 
-          <span className="rounded-full border border-yellow-200/80 bg-yellow-400 px-2.5 py-1 text-[10px] md:text-[12px] font-semibold text-slate-950 shadow-[0_2px_8px_rgba(234,179,8,0.35)]">
-            {model}
+          <span className="hidden rounded-md border border-cyan-300/20 bg-cyan-300/[0.08] px-2 py-0.5 text-[10px] md:text-[11px] font-semibold text-cyan-100/80 sm:inline">
+            {modelDisplayName(model)}
           </span>
           <button
             type="button"
@@ -292,13 +289,13 @@ export const AgentResponsePanel = ({
             title={coderMode ? 'Desactivar modo coder' : 'Activar modo coder'}
             aria-label={coderMode ? 'Desactivar modo coder' : 'Activar modo coder'}
             aria-pressed={coderMode}
-            className={`inline-flex h-7 items-center gap-1 rounded-lg border px-2 text-[9px] font-mono font-bold tracking-[0.12em] transition-all ${
+            className={`inline-flex h-6 items-center gap-1 rounded-md border px-2 text-[9px] font-mono font-bold tracking-[0.12em] transition-all ${
               coderMode
-                ? 'border-emerald-100 bg-emerald-500 text-slate-950 shadow-[0_0_14px_rgba(52,211,153,0.5)]'
-                : 'border-red-200/90 bg-red-400 text-slate-950 shadow-[0_2px_8px_rgba(239,68,68,0.35)] hover:bg-red-300'
+                ? 'border-emerald-300/40 bg-emerald-400/15 text-emerald-200 shadow-[0_0_12px_rgba(52,211,153,0.25)]'
+                : 'border-white/10 bg-white/[0.05] text-white/55 hover:border-white/25 hover:text-white/80'
             }`}
           >
-            <Code2 className="h-3.5 w-3.5" />
+            <Code2 className="h-3 w-3" />
             CODER
           </button>
           {onSpeak && (
@@ -307,7 +304,7 @@ export const AgentResponsePanel = ({
               onClick={onSpeak}
               title="Reproducir respuesta"
               aria-label="Reproducir respuesta"
-              className="ml-auto inline-flex h-7 w-7 items-center justify-center rounded-lg border border-cyan-300/30 bg-cyan-300/10 text-cyan-200 transition hover:border-emerald-300/55 hover:bg-emerald-300/15 hover:text-emerald-200"
+              className="ml-auto inline-flex h-6 w-6 items-center justify-center rounded-md border border-white/10 bg-white/[0.05] text-white/55 transition hover:border-cyan-300/40 hover:bg-cyan-300/10 hover:text-cyan-200"
             >
               <Volume2 className="h-3.5 w-3.5" />
             </button>
@@ -316,12 +313,12 @@ export const AgentResponsePanel = ({
 
         <div
           ref={contentRef}
-          className={`relative z-10 mt-1 min-h-[120px] overflow-visible rounded-2xl border px-4 py-3 ${coderMode ? 'font-mono' : 'font-sans font-light tracking-tight'} text-[clamp(13px,calc(14px*var(--response-scale)),20px)] leading-relaxed shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] ${
+          className={`relative z-10 mt-1 min-h-[120px] overflow-visible rounded-2xl border px-4 py-3 backdrop-blur-md ${coderMode ? 'font-mono' : 'font-sans font-light tracking-tight'} text-[clamp(13px,calc(14px*var(--response-scale)),20px)] leading-relaxed shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] ${
             mascot
-              ? 'border-pink-300/20 bg-black/92 text-pink-50/92'
+              ? 'border-pink-300/15 bg-pink-950/25 text-pink-50/92'
             : coderMode
-                ? 'border-emerald-300/35 bg-black text-emerald-300'
-              : 'border-slate-300/45 bg-slate-950/90 text-slate-50 shadow-[inset_0_0_24px_rgba(148,163,184,0.08)]'
+                ? 'border-emerald-300/25 bg-emerald-950/30 text-emerald-300'
+              : 'border-white/[0.07] bg-black/45 text-slate-50 shadow-[inset_0_0_30px_rgba(0,0,0,0.35)]'
           }`}
         >
           <ReactMarkdown
