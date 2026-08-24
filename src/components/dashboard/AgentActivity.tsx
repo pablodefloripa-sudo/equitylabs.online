@@ -40,6 +40,39 @@ const AgentActivity = () => {
   const [logs, setLogs] = useState<TaskLog[]>([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState<string>('all');
+  const [report, setReport] = useState<{ loading: boolean; text: string | null }>({ loading: false, text: null });
+
+  const generateWeeklyReport = useCallback(async () => {
+    setReport({ loading: true, text: null });
+    try {
+      let agentId: string | undefined;
+      let skills: string[] = [];
+      let premiumModel: string | undefined;
+      try {
+        const raw = localStorage.getItem('eq_active_agent_context');
+        if (raw) {
+          const agent = JSON.parse(raw);
+          agentId = agent.id;
+          skills = agent.skills || [];
+          const premium = (agent.supportModels || []).find((m: { tier: string }) => m.tier === 'premium');
+          premiumModel = premium?.id;
+        }
+      } catch { /* sin agente activo */ }
+
+      const { data, error: fnError } = await supabase.functions.invoke('ai-chat', {
+        body: {
+          message: 'Generá mi REPORTE SEMANAL: resumí las tareas realizadas, logros, métricas si las hay, pendientes y próximos pasos recomendados. Formato claro con secciones.',
+          agentId,
+          skills,
+          preferredModel: premiumModel,
+        },
+      });
+      if (fnError || data?.error) throw new Error(data?.error || fnError?.message || 'Error');
+      setReport({ loading: false, text: data.response });
+    } catch (err) {
+      setReport({ loading: false, text: `⚠️ ${err instanceof Error ? err.message : 'Error generando reporte'}` });
+    }
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -124,6 +157,14 @@ const AgentActivity = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
+                  <button
+                    onClick={generateWeeklyReport}
+                    disabled={report.loading}
+                    className="flex h-8 items-center gap-1.5 rounded-lg border border-amber-300/30 bg-amber-300/10 px-3 text-[11px] font-bold text-amber-200 transition hover:border-amber-300/60 disabled:opacity-50"
+                    title="Usa el modelo premium del agente (restringido al plan)"
+                  >
+                    {report.loading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : '📊'} Reporte semanal
+                  </button>
                   <button onClick={load} className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 text-white/60 hover:text-[#00d2ff] transition" title="Actualizar">
                     <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
                   </button>
@@ -196,6 +237,14 @@ const AgentActivity = () => {
                   </table>
                 )}
               </div>
+
+              {/* Reporte semanal */}
+              {report.text && (
+                <div className="mx-5 mb-3 rounded-xl border border-amber-300/20 bg-amber-300/[0.06] p-4 max-h-[30vh] overflow-y-auto">
+                  <p className="mb-2 text-[10px] font-mono uppercase tracking-widest text-amber-200/70">📊 Reporte semanal · modelo premium</p>
+                  <div className="text-[13px] leading-relaxed text-white/85 whitespace-pre-wrap">{report.text}</div>
+                </div>
+              )}
 
               <div className="border-t border-white/10 px-5 py-2.5 text-[10px] font-mono text-white/30">
                 {filtered.length} tareas · RLS: solo ves tu actividad · actualizado en vivo por ai-chat

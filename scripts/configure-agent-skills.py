@@ -16,6 +16,34 @@ JSON_PATH = ROOT / "src" / "data" / "lifestyleAgents.json"
 NEMOTRON_FREE = "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
 DEEPSEEK = "deepseek/deepseek-v4-flash"
 KIMI = "moonshotai/kimi-k2.5"
+KIMI_THINKING = "moonshotai/kimi-k2-thinking"
+QWEN = "qwen/qwen3.7-flash"
+CLAUDE = "anthropic/claude-haiku-4.5"
+
+def sm(mid, tier, purpose):
+    return {"id": mid, "tier": tier, "purpose": purpose}
+
+# Modelos de soporte por dominio: 5 budget + 1 premium (restringido a reporte semanal).
+# El premium SIEMPRE es Claude (uso restringido); los budget varían según la especialidad.
+def support_for(domain):
+    base_budget = [
+        sm(KIMI, "budget", "análisis y estrategia"),
+        sm(KIMI_THINKING, "budget", "razonamiento profundo"),
+        sm(DEEPSEEK, "budget", "procesamiento rápido"),
+        sm(QWEN, "budget", "resumen y soporte"),
+        sm(NEMOTRON_FREE, "budget", "fallback gratuito"),
+    ]
+    ordering = {
+        "code": [sm(DEEPSEEK, "budget", "código y automatización"), sm(QWEN, "budget", "tareas rápidas"), sm(KIMI, "budget", "arquitectura"), sm(KIMI_THINKING, "budget", "debug profundo"), sm(NEMOTRON_FREE, "budget", "fallback gratuito")],
+        "analysis": [sm(KIMI, "budget", "análisis de mercado"), sm(KIMI_THINKING, "budget", "razonamiento profundo"), sm(DEEPSEEK, "budget", "procesamiento de datos"), sm(QWEN, "budget", "resumen"), sm(NEMOTRON_FREE, "budget", "fallback gratuito")],
+        "writing": [sm(KIMI, "budget", "redacción"), sm(KIMI_THINKING, "budget", "profundidad"), sm(QWEN, "budget", "borradores"), sm(DEEPSEEK, "budget", "edición"), sm(NEMOTRON_FREE, "budget", "fallback gratuito")],
+        "creative": [sm(KIMI, "budget", "concepto creativo"), sm(QWEN, "budget", "rapidez"), sm(KIMI_THINKING, "budget", "ideación"), sm(DEEPSEEK, "budget", "ejecución"), sm(NEMOTRON_FREE, "budget", "fallback gratuito")],
+        "social": [sm(KIMI, "budget", "estrategia de contenido"), sm(QWEN, "budget", "respuestas rápidas"), sm(DEEPSEEK, "budget", "métricas"), sm(KIMI_THINKING, "budget", "planificación"), sm(NEMOTRON_FREE, "budget", "fallback gratuito")],
+        "wellness": [sm(KIMI, "budget", "acompañamiento"), sm(QWEN, "budget", "rapidez"), sm(NEMOTRON_FREE, "budget", "fallback gratuito"), sm(DEEPSEEK, "budget", "lógica"), sm(KIMI_THINKING, "budget", "profundidad")],
+        "lifestyle": [sm(QWEN, "budget", "rapidez"), sm(KIMI, "budget", "calidad"), sm(NEMOTRON_FREE, "budget", "fallback gratuito"), sm(DEEPSEEK, "budget", "lógica"), sm(KIMI_THINKING, "budget", "profundidad")],
+    }
+    budgets = ordering.get(domain, base_budget)
+    return budgets + [sm(CLAUDE, "premium", "reporte semanal")]
 
 SKILLS_BY_BADGE = {
     "CAREER": [
@@ -87,6 +115,25 @@ KEYWORD_MODELS = [
     (re.compile(r"code|software|develop|program|app|web|script", re.I), DEEPSEEK),
 ]
 
+# Dominio → regex (alineado con KEYWORD_SKILLS: primer match define el dominio)
+DOMAIN_PATTERNS = [
+    ("public_speaking", re.compile(r"public speaking|hablar en publico|oratoria|discurso|presentac|speech", re.I)),
+    ("film", re.compile(r"film|cinema|cine|movie|pelicul|director de cine|video production|rodaje", re.I)),
+    ("analysis", re.compile(r"crypto|defi|bitcoin|blockchain|token|nft|web3|trading|real estate|propiedad|inmobiliari|financ|wealth|money|invest|riqueza|dinero|inversi", re.I)),
+    ("wellness", re.compile(r"fitness|health|gym|entrenam|workout|salud|nutrici|yoga|meditac|bienestar", re.I)),
+    ("social", re.compile(r"social|instagram|tiktok|youtube|influencer|redes|content creator", re.I)),
+    ("code", re.compile(r"code|software|develop|program|build app|web|developer|crear", re.I)),
+    ("writing", re.compile(r"writ|content|blog|copy|book|libro|escrib", re.I)),
+    ("creative", re.compile(r"music|arte|creativ|design|diseñ|dibuj|pint|culinary|cocina|chef", re.I)),
+    ("lifestyle", re.compile(r"travel|viaje|aventura|explor", re.I)),
+]
+
+def detect_domain(mission):
+    for name, rx in DOMAIN_PATTERNS:
+        if rx.search(mission):
+            return name
+    return "lifestyle"
+
 def build_agent(agent):
     name = agent.get("name", {}).get("en", "")
     mission = " ".join(str(agent.get("mission", {}).get(k, "")) for k in ("en", "es"))
@@ -113,6 +160,10 @@ def build_agent(agent):
     agent["proModels"] = [pro_model]
     agent["proStack"] = pro_model
     agent["skills"] = skills
+
+    # Modelos de soporte: 5 budget + 1 premium (reporte semanal) según dominio
+    domain = detect_domain(mission)
+    agent["supportModels"] = support_for(domain)
     return agent
 
 def main():

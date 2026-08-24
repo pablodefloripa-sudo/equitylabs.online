@@ -143,6 +143,38 @@
         "copy de conversión",
         "análisis de métricas",
         "CRM y seguimiento de leads"
+      ],
+      "supportModels": [
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "calidad"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "lógica"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "profundidad"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -288,6 +320,38 @@
         "preparación de entrevistas y negociación salarial",
         "estrategia de networking y marca personal",
         "planes de desarrollo de habilidades"
+      ],
+      "supportModels": [
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "calidad"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "lógica"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "profundidad"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -433,6 +497,38 @@
         "copy de conversión",
         "análisis de métricas",
         "CRM y seguimiento de leads"
+      ],
+      "supportModels": [
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "calidad"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "lógica"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "profundidad"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -570,6 +666,38 @@
         "técnicas de expresión creativa",
         "portafolio creativo",
         "colaboración artística"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "redacción"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "profundidad"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "borradores"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "edición"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -707,6 +835,38 @@
         "finanzas empresariales y métricas (KPI, ROI)",
         "automatización de procesos y operaciones",
         "propuestas comerciales y presentaciones a clientes"
+      ],
+      "supportModels": [
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "calidad"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "lógica"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "profundidad"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -836,6 +996,38 @@
         "preparación de entrevistas y negociación salarial",
         "estrategia de networking y marca personal",
         "planes de desarrollo de habilidades"
+      ],
+      "supportModels": [
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "calidad"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "lógica"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "profundidad"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -965,6 +1157,38 @@
         "finanzas empresariales y métricas (KPI, ROI)",
         "automatización de procesos y operaciones",
         "propuestas comerciales y presentaciones a clientes"
+      ],
+      "supportModels": [
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "calidad"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "lógica"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "profundidad"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -1094,6 +1318,38 @@
         "finanzas empresariales y métricas (KPI, ROI)",
         "automatización de procesos y operaciones",
         "propuestas comerciales y presentaciones a clientes"
+      ],
+      "supportModels": [
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "calidad"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "lógica"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "profundidad"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -1239,6 +1495,38 @@
         "estrategia de inversión",
         "planificación fiscal básica",
         "educación financiera"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "análisis de mercado"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "razonamiento profundo"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "procesamiento de datos"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "resumen"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -1384,6 +1672,38 @@
         "branding personal en plataformas",
         "calendario de contenido",
         "análisis de métricas sociales"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "estrategia de contenido"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "respuestas rápidas"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "métricas"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "planificación"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -1513,6 +1833,38 @@
         "técnicas de expresión creativa",
         "portafolio creativo",
         "colaboración artística"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "concepto creativo"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "ideación"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "ejecución"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -1658,6 +2010,38 @@
         "experiencias y cultura local",
         "itinerarios flexibles",
         "fotografía y registro de viajes"
+      ],
+      "supportModels": [
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "calidad"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "lógica"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "profundidad"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -1803,6 +2187,38 @@
         "pitch, fundraising y finanzas de arranque",
         "growth marketing y adquisición de usuarios",
         "metodologías ágiles y ejecución de proyectos"
+      ],
+      "supportModels": [
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "calidad"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "lógica"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "profundidad"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -1948,6 +2364,38 @@
         "estructura de libros y artículos",
         "storytelling",
         "revisión de estilo"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "redacción"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "profundidad"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "borradores"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "edición"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -2093,6 +2541,38 @@
         "branding personal en plataformas",
         "calendario de contenido",
         "análisis de métricas sociales"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "estrategia de contenido"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "respuestas rápidas"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "métricas"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "planificación"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -2238,6 +2718,38 @@
         "estrategia de inversión",
         "planificación fiscal básica",
         "educación financiera"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "análisis de mercado"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "razonamiento profundo"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "procesamiento de datos"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "resumen"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -2383,6 +2895,38 @@
         "seguimiento de progreso y métricas",
         "recuperación y prevención de lesiones",
         "motivación y consistencia"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "acompañamiento"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "lógica"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "profundidad"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -2528,6 +3072,38 @@
         "negociación de compra/venta",
         "financiamiento e hipotecas",
         "expansión de portafolio inmobiliario"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "análisis de mercado"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "razonamiento profundo"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "procesamiento de datos"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "resumen"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -2673,6 +3249,38 @@
         "preparación de entrevistas y negociación salarial",
         "estrategia de networking y marca personal",
         "planes de desarrollo de habilidades"
+      ],
+      "supportModels": [
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "calidad"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "lógica"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "profundidad"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -2818,6 +3426,38 @@
         "seguridad de wallets y buenas prácticas",
         "evaluación de proyectos token",
         "gestión de riesgo y portafolio crypto"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "análisis de mercado"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "razonamiento profundo"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "procesamiento de datos"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "resumen"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -2963,6 +3603,38 @@
         "preparación de entrevistas y negociación salarial",
         "estrategia de networking y marca personal",
         "planes de desarrollo de habilidades"
+      ],
+      "supportModels": [
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "calidad"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "lógica"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "profundidad"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -3100,6 +3772,38 @@
         "estilo de vida y ocio inteligente",
         "relaciones interpersonales y comunicación",
         "viajes, hobbies y experiencias"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "concepto creativo"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "ideación"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "ejecución"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -3245,6 +3949,38 @@
         "integración de APIs",
         "revisión de código",
         "arquitectura técnica"
+      ],
+      "supportModels": [
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "código y automatización"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "tareas rápidas"
+        },
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "arquitectura"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "debug profundo"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -3390,6 +4126,38 @@
         "branding personal en plataformas",
         "calendario de contenido",
         "análisis de métricas sociales"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "estrategia de contenido"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "respuestas rápidas"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "métricas"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "planificación"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -3535,6 +4303,38 @@
         "seguimiento de progreso y métricas",
         "recuperación y prevención de lesiones",
         "motivación y consistencia"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "acompañamiento"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "lógica"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "profundidad"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -3680,6 +4480,38 @@
         "branding personal en plataformas",
         "calendario de contenido",
         "análisis de métricas sociales"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "estrategia de contenido"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "respuestas rápidas"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "métricas"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "planificación"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -3825,6 +4657,38 @@
         "seguimiento de progreso y métricas",
         "recuperación y prevención de lesiones",
         "motivación y consistencia"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "acompañamiento"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "lógica"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "profundidad"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -3970,6 +4834,38 @@
         "pitch, fundraising y finanzas de arranque",
         "growth marketing y adquisición de usuarios",
         "metodologías ágiles y ejecución de proyectos"
+      ],
+      "supportModels": [
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "calidad"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "lógica"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "profundidad"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -4115,6 +5011,38 @@
         "técnicas de expresión creativa",
         "portafolio creativo",
         "colaboración artística"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "concepto creativo"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "ideación"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "ejecución"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -4260,6 +5188,38 @@
         "seguimiento de progreso y métricas",
         "recuperación y prevención de lesiones",
         "motivación y consistencia"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "acompañamiento"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "lógica"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "profundidad"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -4405,6 +5365,38 @@
         "branding personal en plataformas",
         "calendario de contenido",
         "análisis de métricas sociales"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "estrategia de contenido"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "respuestas rápidas"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "métricas"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "planificación"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -4550,6 +5542,38 @@
         "experiencias y cultura local",
         "itinerarios flexibles",
         "fotografía y registro de viajes"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "concepto creativo"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "ideación"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "ejecución"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -4695,6 +5719,38 @@
         "manejo de voz, ritmo y lenguaje corporal",
         "storytelling en presentaciones",
         "control de nervios y confianza escénica"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "análisis y estrategia"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "razonamiento profundo"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "procesamiento rápido"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "resumen y soporte"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -4840,6 +5896,38 @@
         "seguimiento de progreso y métricas",
         "recuperación y prevención de lesiones",
         "motivación y consistencia"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "acompañamiento"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "lógica"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "profundidad"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -4985,6 +6073,38 @@
         "dirección de actores y puesta en escena",
         "planificación de rodaje (storyboard, shot list)",
         "edición y postproducción de video"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "análisis y estrategia"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "razonamiento profundo"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "procesamiento rápido"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "resumen y soporte"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -5130,6 +6250,38 @@
         "productividad personal y gestión del tiempo",
         "mindfulness y enfoque",
         "acompañamiento motivacional"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "acompañamiento"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "lógica"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "profundidad"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -5275,6 +6427,38 @@
         "finanzas empresariales y métricas (KPI, ROI)",
         "automatización de procesos y operaciones",
         "propuestas comerciales y presentaciones a clientes"
+      ],
+      "supportModels": [
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "calidad"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "lógica"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "profundidad"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -5420,6 +6604,38 @@
         "branding personal en plataformas",
         "calendario de contenido",
         "análisis de métricas sociales"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "estrategia de contenido"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "respuestas rápidas"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "métricas"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "planificación"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -5565,6 +6781,38 @@
         "técnicas de expresión creativa",
         "portafolio creativo",
         "colaboración artística"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "concepto creativo"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "rapidez"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "ideación"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "ejecución"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -5710,6 +6958,38 @@
         "branding personal en plataformas",
         "calendario de contenido",
         "análisis de métricas sociales"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "estrategia de contenido"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "respuestas rápidas"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "métricas"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "planificación"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     },
     {
@@ -5855,6 +7135,38 @@
         "seguridad de wallets y buenas prácticas",
         "evaluación de proyectos token",
         "gestión de riesgo y portafolio crypto"
+      ],
+      "supportModels": [
+        {
+          "id": "moonshotai/kimi-k2.5",
+          "tier": "budget",
+          "purpose": "análisis de mercado"
+        },
+        {
+          "id": "moonshotai/kimi-k2-thinking",
+          "tier": "budget",
+          "purpose": "razonamiento profundo"
+        },
+        {
+          "id": "deepseek/deepseek-v4-flash",
+          "tier": "budget",
+          "purpose": "procesamiento de datos"
+        },
+        {
+          "id": "qwen/qwen3.7-flash",
+          "tier": "budget",
+          "purpose": "resumen"
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "tier": "budget",
+          "purpose": "fallback gratuito"
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "tier": "premium",
+          "purpose": "reporte semanal"
+        }
       ]
     }
   ],

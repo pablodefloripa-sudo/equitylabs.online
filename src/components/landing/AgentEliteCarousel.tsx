@@ -30,6 +30,7 @@ import type { LandingLang } from './LanguageFloater';
 import data from '@/data/lifestyleAgents.json';
 import { resolveLandingLang } from './landingContent';
 import { getLandingPlanCopy } from './siteCopy';
+import { modelDisplayName } from '@/lib/modelDisplay';
 
 const agentIcons = [
   Lightbulb,
@@ -150,6 +151,7 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
       engine: (agent.engines as Record<string, string> | undefined)?.free || SINGLE_AGENT_ENGINE,
       tasks: freeTasks,
       skills: (agent.skills as string[] | undefined) || [],
+      supportModels: (agent.supportModels as unknown[] | undefined) || [],
       selectedAt: new Date().toISOString(),
     };
     localStorage.setItem(ACTIVE_AGENT_STORAGE_KEY, JSON.stringify(persistedAgent));
@@ -168,6 +170,7 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
       engine: (agent.engines as Record<string, string> | undefined)?.pro || SINGLE_AGENT_ENGINE,
       tasks,
       skills: (agent.skills as string[] | undefined) || [],
+      supportModels: (agent.supportModels as unknown[] | undefined) || [],
       selectedAt: new Date().toISOString(),
     };
     localStorage.setItem(ACTIVE_AGENT_STORAGE_KEY, JSON.stringify(persistedAgent));
@@ -331,6 +334,26 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
                               ⚡ {skill}
                             </span>
                           ))}
+                        </div>
+                      ) : null}
+
+                      {isCenter ? (
+                        <div className="mb-3 flex flex-wrap items-center gap-1.5">
+                          <span className="text-[9px] font-mono uppercase tracking-[0.14em] text-white/40">Motores:</span>
+                          {(agent.supportModels as Array<{ id: string; tier: string; purpose?: string }> | undefined)
+                            ?.filter((m) => m.tier === 'budget')
+                            .map((m) => (
+                              <span key={m.id} className="rounded-md border border-white/10 bg-white/[0.05] px-2 py-0.5 text-[10px] font-semibold text-white/70">
+                                {modelDisplayName(m.id)}
+                              </span>
+                            ))}
+                          {(agent.supportModels as Array<{ id: string; tier: string; purpose?: string }> | undefined)
+                            ?.filter((m) => m.tier === 'premium')
+                            .map((m) => (
+                              <span key={m.id} className="flex items-center gap-1 rounded-md border border-amber-300/30 bg-amber-300/10 px-2 py-0.5 text-[10px] font-bold text-amber-200" title={m.purpose}>
+                                🔒 {modelDisplayName(m.id)} · {m.purpose}
+                              </span>
+                            ))}
                         </div>
                       ) : null}
 
