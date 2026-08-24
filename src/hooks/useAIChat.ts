@@ -26,6 +26,7 @@ interface UseAIChatReturn {
     agentId?: string,
     attachments?: ChatAttachment[],
     preferredModel?: string,
+    persona?: string,
   ) => Promise<AIChatResult>;
   isLoading: boolean;
   error: string | null;
@@ -95,6 +96,8 @@ export const useAIChat = (): UseAIChatReturn => {
     agentId?: string,
     attachments: ChatAttachment[] = [],
     preferredModel?: string,
+    persona?: string,
+    skills?: string[],
   ): Promise<AIChatResult> => {
     setIsLoading(true);
     setError(null);
@@ -105,8 +108,10 @@ export const useAIChat = (): UseAIChatReturn => {
           message,
           agentId,
           language: apiLanguage,
+          persona: persona || undefined,
           attachments,
           preferredModel,
+          skills,
           conversationHistory: conversationHistory.map(msg => ({
             role: msg.role,
             content: msg.content

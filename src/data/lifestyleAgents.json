@@ -26,10 +26,10 @@
       "category": "Innovation",
       "badge": "ENTREPRENEURSHIP",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -132,11 +132,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "estrategia de marketing",
+        "embudos de venta (funnels)",
+        "copy de conversión",
+        "análisis de métricas",
+        "CRM y seguimiento de leads"
+      ]
     },
     {
       "id": "ls_02",
@@ -164,10 +171,10 @@
       "category": "Education",
       "badge": "CAREER",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -270,11 +277,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "análisis de carrera y proyección profesional",
+        "optimización de CV, LinkedIn y perfil profesional",
+        "preparación de entrevistas y negociación salarial",
+        "estrategia de networking y marca personal",
+        "planes de desarrollo de habilidades"
+      ]
     },
     {
       "id": "ls_03",
@@ -302,10 +316,10 @@
       "category": "Business",
       "badge": "BUSINESS",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -408,11 +422,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "estrategia de marketing",
+        "embudos de venta (funnels)",
+        "copy de conversión",
+        "análisis de métricas",
+        "CRM y seguimiento de leads"
+      ]
     },
     {
       "id": "ls_04",
@@ -440,10 +461,10 @@
       "category": "Creative",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -538,11 +559,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "redacción y edición de contenido",
+        "copywriting y persuasión",
+        "estructura de libros y artículos",
+        "storytelling",
+        "revisión de estilo"
+      ]
     },
     {
       "id": "ls_05",
@@ -570,10 +598,10 @@
       "category": "Business",
       "badge": "BUSINESS",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -668,11 +696,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "estrategia de negocio y análisis de mercado",
+        "planes de negocio y modelos de ingresos",
+        "finanzas empresariales y métricas (KPI, ROI)",
+        "automatización de procesos y operaciones",
+        "propuestas comerciales y presentaciones a clientes"
+      ]
     },
     {
       "id": "ls_06",
@@ -700,10 +735,10 @@
       "category": "Career",
       "badge": "CAREER",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -790,11 +825,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "análisis de carrera y proyección profesional",
+        "optimización de CV, LinkedIn y perfil profesional",
+        "preparación de entrevistas y negociación salarial",
+        "estrategia de networking y marca personal",
+        "planes de desarrollo de habilidades"
+      ]
     },
     {
       "id": "ls_07",
@@ -822,10 +864,10 @@
       "category": "Income",
       "badge": "BUSINESS",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -912,11 +954,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "estrategia de negocio y análisis de mercado",
+        "planes de negocio y modelos de ingresos",
+        "finanzas empresariales y métricas (KPI, ROI)",
+        "automatización de procesos y operaciones",
+        "propuestas comerciales y presentaciones a clientes"
+      ]
     },
     {
       "id": "ls_08",
@@ -944,10 +993,10 @@
       "category": "Business",
       "badge": "BUSINESS",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -1034,11 +1083,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "estrategia de negocio y análisis de mercado",
+        "planes de negocio y modelos de ingresos",
+        "finanzas empresariales y métricas (KPI, ROI)",
+        "automatización de procesos y operaciones",
+        "propuestas comerciales y presentaciones a clientes"
+      ]
     },
     {
       "id": "ls_09",
@@ -1066,10 +1122,10 @@
       "category": "Finance",
       "badge": "BUSINESS",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -1172,11 +1228,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "análisis financiero personal",
+        "presupuestos y ahorro",
+        "estrategia de inversión",
+        "planificación fiscal básica",
+        "educación financiera"
+      ]
     },
     {
       "id": "ls_10",
@@ -1204,10 +1267,10 @@
       "category": "Lifestyle",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -1310,11 +1373,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "organización personal y planificación",
+        "planificación de eventos y vida social",
+        "estilo de vida y ocio inteligente",
+        "relaciones interpersonales y comunicación",
+        "viajes, hobbies y experiencias"
+      ]
     },
     {
       "id": "ls_11",
@@ -1342,10 +1412,10 @@
       "category": "Lifestyle",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -1432,11 +1502,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "organización personal y planificación",
+        "planificación de eventos y vida social",
+        "estilo de vida y ocio inteligente",
+        "relaciones interpersonales y comunicación",
+        "viajes, hobbies y experiencias"
+      ]
     },
     {
       "id": "ls_12",
@@ -1464,10 +1541,10 @@
       "category": "Lifestyle",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -1570,11 +1647,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "organización personal y planificación",
+        "planificación de eventos y vida social",
+        "estilo de vida y ocio inteligente",
+        "relaciones interpersonales y comunicación",
+        "viajes, hobbies y experiencias"
+      ]
     },
     {
       "id": "ls_13",
@@ -1602,10 +1686,10 @@
       "category": "Tech",
       "badge": "ENTREPRENEURSHIP",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "deepseek/deepseek-v4-flash"
       ],
       "freeTasks": {
         "en": [
@@ -1708,11 +1792,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "deepseek/deepseek-v4-flash"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "deepseek/deepseek-v4-flash",
+      "isPro": true,
+      "skills": [
+        "validación de ideas y lean startup",
+        "modelo de negocio y pricing",
+        "pitch, fundraising y finanzas de arranque",
+        "growth marketing y adquisición de usuarios",
+        "metodologías ágiles y ejecución de proyectos"
+      ]
     },
     {
       "id": "ls_14",
@@ -1740,10 +1831,10 @@
       "category": "Marketing",
       "badge": "BUSINESS",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -1846,11 +1937,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "redacción y edición de contenido",
+        "copywriting y persuasión",
+        "estructura de libros y artículos",
+        "storytelling",
+        "revisión de estilo"
+      ]
     },
     {
       "id": "ls_15",
@@ -1878,10 +1976,10 @@
       "category": "Marketing",
       "badge": "BUSINESS",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -1984,11 +2082,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "estrategia de negocio y análisis de mercado",
+        "planes de negocio y modelos de ingresos",
+        "finanzas empresariales y métricas (KPI, ROI)",
+        "automatización de procesos y operaciones",
+        "propuestas comerciales y presentaciones a clientes"
+      ]
     },
     {
       "id": "ls_16",
@@ -2016,10 +2121,10 @@
       "category": "Marketing",
       "badge": "BUSINESS",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -2122,11 +2227,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "análisis financiero personal",
+        "presupuestos y ahorro",
+        "estrategia de inversión",
+        "planificación fiscal básica",
+        "educación financiera"
+      ]
     },
     {
       "id": "ls_17",
@@ -2154,10 +2266,10 @@
       "category": "Health",
       "badge": "WELLNESS",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -2260,11 +2372,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "bienestar emocional y manejo del estrés",
+        "hábitos saludables y rutinas sostenibles",
+        "productividad personal y gestión del tiempo",
+        "mindfulness y enfoque",
+        "acompañamiento motivacional"
+      ]
     },
     {
       "id": "ls_18",
@@ -2292,10 +2411,10 @@
       "category": "Finance",
       "badge": "BUSINESS",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -2398,11 +2517,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "análisis financiero personal",
+        "presupuestos y ahorro",
+        "estrategia de inversión",
+        "planificación fiscal básica",
+        "educación financiera"
+      ]
     },
     {
       "id": "ls_19",
@@ -2430,10 +2556,10 @@
       "category": "Personal",
       "badge": "CAREER",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -2536,11 +2662,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "análisis de carrera y proyección profesional",
+        "optimización de CV, LinkedIn y perfil profesional",
+        "preparación de entrevistas y negociación salarial",
+        "estrategia de networking y marca personal",
+        "planes de desarrollo de habilidades"
+      ]
     },
     {
       "id": "ls_20",
@@ -2568,10 +2701,10 @@
       "category": "Finance",
       "badge": "BUSINESS",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -2674,11 +2807,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "análisis financiero personal",
+        "presupuestos y ahorro",
+        "estrategia de inversión",
+        "planificación fiscal básica",
+        "educación financiera"
+      ]
     },
     {
       "id": "ls_21",
@@ -2706,10 +2846,10 @@
       "category": "Education",
       "badge": "CAREER",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -2812,11 +2952,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "análisis de carrera y proyección profesional",
+        "optimización de CV, LinkedIn y perfil profesional",
+        "preparación de entrevistas y negociación salarial",
+        "estrategia de networking y marca personal",
+        "planes de desarrollo de habilidades"
+      ]
     },
     {
       "id": "ls_22",
@@ -2844,10 +2991,10 @@
       "category": "Lifestyle",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -2942,11 +3089,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "organización personal y planificación",
+        "planificación de eventos y vida social",
+        "estilo de vida y ocio inteligente",
+        "relaciones interpersonales y comunicación",
+        "viajes, hobbies y experiencias"
+      ]
     },
     {
       "id": "ls_23",
@@ -2974,10 +3128,10 @@
       "category": "Tech",
       "badge": "ENTREPRENEURSHIP",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "deepseek/deepseek-v4-flash"
       ],
       "freeTasks": {
         "en": [
@@ -3080,11 +3234,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "deepseek/deepseek-v4-flash"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "deepseek/deepseek-v4-flash",
+      "isPro": true,
+      "skills": [
+        "desarrollo de software y código",
+        "automatización con scripts",
+        "integración de APIs",
+        "revisión de código",
+        "arquitectura técnica"
+      ]
     },
     {
       "id": "ls_24",
@@ -3112,10 +3273,10 @@
       "category": "Creative",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -3218,11 +3379,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "organización personal y planificación",
+        "planificación de eventos y vida social",
+        "estilo de vida y ocio inteligente",
+        "relaciones interpersonales y comunicación",
+        "viajes, hobbies y experiencias"
+      ]
     },
     {
       "id": "ls_25",
@@ -3250,10 +3418,10 @@
       "category": "Health",
       "badge": "WELLNESS",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -3356,11 +3524,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "bienestar emocional y manejo del estrés",
+        "hábitos saludables y rutinas sostenibles",
+        "productividad personal y gestión del tiempo",
+        "mindfulness y enfoque",
+        "acompañamiento motivacional"
+      ]
     },
     {
       "id": "ls_26",
@@ -3388,10 +3563,10 @@
       "category": "Marketing",
       "badge": "BUSINESS",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -3494,11 +3669,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "estrategia de marketing",
+        "embudos de venta (funnels)",
+        "copy de conversión",
+        "análisis de métricas",
+        "CRM y seguimiento de leads"
+      ]
     },
     {
       "id": "ls_27",
@@ -3526,10 +3708,10 @@
       "category": "Lifestyle",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -3632,11 +3814,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "organización personal y planificación",
+        "planificación de eventos y vida social",
+        "estilo de vida y ocio inteligente",
+        "relaciones interpersonales y comunicación",
+        "viajes, hobbies y experiencias"
+      ]
     },
     {
       "id": "ls_28",
@@ -3664,10 +3853,10 @@
       "category": "Tech",
       "badge": "ENTREPRENEURSHIP",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -3770,11 +3959,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "validación de ideas y lean startup",
+        "modelo de negocio y pricing",
+        "pitch, fundraising y finanzas de arranque",
+        "growth marketing y adquisición de usuarios",
+        "metodologías ágiles y ejecución de proyectos"
+      ]
     },
     {
       "id": "ls_29",
@@ -3802,10 +3998,10 @@
       "category": "Creative",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -3908,11 +4104,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "organización personal y planificación",
+        "planificación de eventos y vida social",
+        "estilo de vida y ocio inteligente",
+        "relaciones interpersonales y comunicación",
+        "viajes, hobbies y experiencias"
+      ]
     },
     {
       "id": "ls_30",
@@ -3940,10 +4143,10 @@
       "category": "Health",
       "badge": "WELLNESS",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -4046,11 +4249,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "bienestar emocional y manejo del estrés",
+        "hábitos saludables y rutinas sostenibles",
+        "productividad personal y gestión del tiempo",
+        "mindfulness y enfoque",
+        "acompañamiento motivacional"
+      ]
     },
     {
       "id": "ls_31",
@@ -4078,10 +4288,10 @@
       "category": "Creative",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -4184,11 +4394,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "redacción y edición de contenido",
+        "copywriting y persuasión",
+        "estructura de libros y artículos",
+        "storytelling",
+        "revisión de estilo"
+      ]
     },
     {
       "id": "ls_32",
@@ -4216,10 +4433,10 @@
       "category": "Creative",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -4322,11 +4539,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "organización personal y planificación",
+        "planificación de eventos y vida social",
+        "estilo de vida y ocio inteligente",
+        "relaciones interpersonales y comunicación",
+        "viajes, hobbies y experiencias"
+      ]
     },
     {
       "id": "ls_33",
@@ -4354,10 +4578,10 @@
       "category": "Personal",
       "badge": "CAREER",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -4460,11 +4684,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "análisis de carrera y proyección profesional",
+        "optimización de CV, LinkedIn y perfil profesional",
+        "preparación de entrevistas y negociación salarial",
+        "estrategia de networking y marca personal",
+        "planes de desarrollo de habilidades"
+      ]
     },
     {
       "id": "ls_34",
@@ -4492,10 +4723,10 @@
       "category": "Lifestyle",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -4598,11 +4829,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "organización personal y planificación",
+        "planificación de eventos y vida social",
+        "estilo de vida y ocio inteligente",
+        "relaciones interpersonales y comunicación",
+        "viajes, hobbies y experiencias"
+      ]
     },
     {
       "id": "ls_35",
@@ -4630,10 +4868,10 @@
       "category": "Creative",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -4736,11 +4974,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "organización personal y planificación",
+        "planificación de eventos y vida social",
+        "estilo de vida y ocio inteligente",
+        "relaciones interpersonales y comunicación",
+        "viajes, hobbies y experiencias"
+      ]
     },
     {
       "id": "ls_36",
@@ -4768,10 +5013,10 @@
       "category": "Health",
       "badge": "WELLNESS",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -4874,11 +5119,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "bienestar emocional y manejo del estrés",
+        "hábitos saludables y rutinas sostenibles",
+        "productividad personal y gestión del tiempo",
+        "mindfulness y enfoque",
+        "acompañamiento motivacional"
+      ]
     },
     {
       "id": "ls_37",
@@ -4906,10 +5158,10 @@
       "category": "Business",
       "badge": "BUSINESS",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -5012,11 +5264,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "estrategia de negocio y análisis de mercado",
+        "planes de negocio y modelos de ingresos",
+        "finanzas empresariales y métricas (KPI, ROI)",
+        "automatización de procesos y operaciones",
+        "propuestas comerciales y presentaciones a clientes"
+      ]
     },
     {
       "id": "ls_38",
@@ -5044,10 +5303,10 @@
       "category": "Creative",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -5150,11 +5409,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "organización personal y planificación",
+        "planificación de eventos y vida social",
+        "estilo de vida y ocio inteligente",
+        "relaciones interpersonales y comunicación",
+        "viajes, hobbies y experiencias"
+      ]
     },
     {
       "id": "ls_39",
@@ -5182,10 +5448,10 @@
       "category": "Lifestyle",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -5288,11 +5554,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "organización personal y planificación",
+        "planificación de eventos y vida social",
+        "estilo de vida y ocio inteligente",
+        "relaciones interpersonales y comunicación",
+        "viajes, hobbies y experiencias"
+      ]
     },
     {
       "id": "ls_40",
@@ -5320,10 +5593,10 @@
       "category": "Lifestyle",
       "badge": "LIFESTYLE",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -5426,11 +5699,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "organización personal y planificación",
+        "planificación de eventos y vida social",
+        "estilo de vida y ocio inteligente",
+        "relaciones interpersonales y comunicación",
+        "viajes, hobbies y experiencias"
+      ]
     },
     {
       "id": "ls_41",
@@ -5458,10 +5738,10 @@
       "category": "Equity",
       "badge": "BUSINESS",
       "freeModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       ],
       "proModels": [
-        "qwen/qwen3-vl-8b-thinking"
+        "moonshotai/kimi-k2.5"
       ],
       "freeTasks": {
         "en": [
@@ -5564,11 +5844,18 @@
         ]
       },
       "engines": {
-        "free": "qwen/qwen3-vl-8b-thinking",
-        "pro": "qwen/qwen3-vl-8b-thinking"
+        "free": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "pro": "moonshotai/kimi-k2.5"
       },
-      "proStack": "qwen/qwen3-vl-8b-thinking",
-      "isPro": true
+      "proStack": "moonshotai/kimi-k2.5",
+      "isPro": true,
+      "skills": [
+        "análisis financiero personal",
+        "presupuestos y ahorro",
+        "estrategia de inversión",
+        "planificación fiscal básica",
+        "educación financiera"
+      ]
     }
   ],
   "heroPhrase": {

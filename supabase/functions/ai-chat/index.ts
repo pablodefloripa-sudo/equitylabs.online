@@ -442,7 +442,7 @@ serve(async (req) => {
   }
 
   try {
-    const { message, conversationHistory, agentId, language, persona, attachments, preferredModel } = await req.json();
+    const { message, conversationHistory, agentId, language, persona, attachments, preferredModel, skills } = await req.json();
     const safeAttachments = sanitizeAttachments(attachments);
     const langMap: Record<string, string> = {
       es: 'español', en: 'English', pt: 'português', de: 'Deutsch',
@@ -889,7 +889,7 @@ Eres el asistente principal de EQuityLabs, una plataforma de control de misiones
 - FORMATO: Responde de forma natural, clara y profesional. No uses ni muestres las etiquetas "Razonamiento:", "Ejecución:" o "Next Step:"; entrega directamente la información y el próximo paso cuando corresponda.
 - Sé claro y directo, incluyendo el contexto necesario, las acciones recomendadas y un próximo paso concreto cuando corresponda.
 - Si te preguntan quién eres, di que eres el asistente de EQuityLabs.
-${agentId ? `\n## Modo Agente Activo: ${agentId}${routedAgent ? ` (${routedAgent})` : ''}` : ''}
+${agentId ? `\n## Modo Agente Activo: ${agentId}${routedAgent ? ` (${routedAgent})` : ''}` : ''}${Array.isArray(skills) && skills.length > 0 ? `\n\n## Tus Skills (capacidades especializadas que dominas)\n- ${(skills as string[]).filter(Boolean).slice(0, 8).join('\n- ')}\nÚsalas activamente para resolver la tarea del usuario con profundidad de experto.` : ''}
 `;
     const personaPrompt = typeof persona === 'string' && persona.trim().length > 0 ? persona.trim() : null;
     const baseContext = isMascotPersona

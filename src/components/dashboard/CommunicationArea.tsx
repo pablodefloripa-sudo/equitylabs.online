@@ -512,6 +512,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
   const [activeAgentName, setActiveAgentName] = useState<string | null>(null);
   const [activeAgentId, setActiveAgentId] = useState<string | null>(null);
   const [activeAgentEngine, setActiveAgentEngine] = useState<string>('');
+  const [activeAgentSkills, setActiveAgentSkills] = useState<string[]>([]);
   const [agentProjectForm, setAgentProjectForm] = useState<AgentProjectForm>(emptyAgentProjectForm);
   const [operationMode, setOperationMode] = useState<(typeof OPERATION_MODES)[number]>('SEO EstratÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©gico');
   const [styleMode, setStyleMode] = useState<(typeof STYLE_MODES)[number]>('ExplicaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n Humana');
@@ -678,6 +679,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
         name?: string;
         engine?: string;
         tasks?: string[];
+        skills?: string[];
       };
 
       if (!activeAgent.name) return;
@@ -707,6 +709,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
       setActiveAgentName(activeAgent.name);
       setActiveAgentId(activeAgent.id || null);
       setActiveAgentEngine(planEngine);
+      setActiveAgentSkills(activeAgent.skills || []);
     } catch {
       // ignore malformed active agent cache
     }
@@ -1060,6 +1063,8 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
         activeAgentId || undefined,
         currentAttachments,
         activeAgentEngine || planEngine,
+        undefined,
+        activeAgentSkills,
       );
       
       const assistantMessage: Message = {
@@ -1165,7 +1170,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
 
     try {
       const history = messages.map(m => ({ role: m.role, content: m.content }));
-      const result = await sendMessage(currentInput, history, currentAgentId || undefined, [], currentAgentEngine);
+      const result = await sendMessage(currentInput, history, currentAgentId || undefined, [], currentAgentEngine, undefined, activeAgentSkills);
       setMessages(prev => [...prev, {
         id: crypto.randomUUID(),
         role: 'assistant',
@@ -2219,7 +2224,7 @@ export const CommunicationArea = ({ onEnterFocusMode }: CommunicationAreaProps) 
           forceFocus();
           try {
             const history = messages.map(m => ({ role: m.role, content: m.content }));
-            const result = await sendMessage(task, history, activeAgentId || undefined, [], activeAgentEngine || planEngine);
+            const result = await sendMessage(task, history, activeAgentId || undefined, [], activeAgentEngine || planEngine, undefined, activeAgentSkills);
             setMessages(prev => [...prev, {
               id: crypto.randomUUID(),
               role: 'assistant',

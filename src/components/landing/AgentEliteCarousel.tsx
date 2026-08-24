@@ -147,8 +147,9 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
     const persistedAgent = {
       id: String(agent.id),
       name,
-      engine: SINGLE_AGENT_ENGINE,
+      engine: (agent.engines as Record<string, string> | undefined)?.free || SINGLE_AGENT_ENGINE,
       tasks: freeTasks,
+      skills: (agent.skills as string[] | undefined) || [],
       selectedAt: new Date().toISOString(),
     };
     localStorage.setItem(ACTIVE_AGENT_STORAGE_KEY, JSON.stringify(persistedAgent));
@@ -164,8 +165,9 @@ export const AgentEliteCarousel = ({ lang, visualScale }: Props) => {
     const persistedAgent = {
       id: String(agent.id),
       name,
-      engine: SINGLE_AGENT_ENGINE,
+      engine: (agent.engines as Record<string, string> | undefined)?.pro || SINGLE_AGENT_ENGINE,
       tasks,
+      skills: (agent.skills as string[] | undefined) || [],
       selectedAt: new Date().toISOString(),
     };
     localStorage.setItem(ACTIVE_AGENT_STORAGE_KEY, JSON.stringify(persistedAgent));
