@@ -35,10 +35,10 @@ export const getLandingLang = (storageKey = 'eq_landing_lang'): LandingLang => {
 
 export const resolveLandingSlideUrl = (lang: LandingLang, index: number) => {
   const slideNumber = index + 1;
-  return `/slides/en/en-${slideNumber}.jpg`;
+  return `/slides/landing/${slideNumber}.png`;
 };
 
 export const resolveLandingSlideFallbackUrl = (index: number) => {
   const slideNumber = index + 1;
-  return `/slides/en/en-${slideNumber}.jpg`;
+  return `/slides/landing/${slideNumber}.png`;
 };
