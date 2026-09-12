@@ -8,7 +8,16 @@ import { useLanguage, type Language } from '@/hooks/useLanguage';
 import { AgentEliteCarousel } from '@/components/landing/AgentEliteCarousel';
 import HermesConsole from '@/components/landing/HermesConsole';
 
-const LANDING_SLIDES = Array.from({ length: 9 }, (_, index) => `/slides/landing/${index + 1}.png`);
+const LANDING_SLIDES = [
+  { src: '/slides/landing/1.png', alt: 'EquityLabs system architecture' },
+  { src: '/slides/landing/2.png', alt: 'EquityLabs multi-agent capabilities' },
+  { src: '/slides/landing/3.png', alt: 'EquityLabs registration workspace' },
+  {
+    src: '/slides/landing/4.png',
+    alt: 'EquityLabs workspace modules',
+    modules: true,
+  },
+];
 const INTRO_SLIDE_COUNT = LANDING_SLIDES.length;
 const SLIDE_SECONDS = 8;
 
@@ -76,7 +85,7 @@ const SlidesPhase = ({
     return () => clearInterval(timer);
   }, [go]);
 
-  const img = LANDING_SLIDES[idx];
+  const slide = LANDING_SLIDES[idx];
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-black">
@@ -89,7 +98,21 @@ const SlidesPhase = ({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          <img src={img} alt={`Landing slide ${idx + 1}`} className="h-full w-full object-cover" />
+          <img src={slide.src} alt={slide.alt} className="h-full w-full object-cover" />
+          {slide.modules && (
+            <div aria-hidden="true" className="absolute inset-0">
+              <img
+                src="/slides/landing/modules/pequeno.png"
+                alt=""
+                className="absolute left-[8.8%] top-[11.2%] w-[31.6%] mix-blend-multiply"
+              />
+              <img
+                src="/slides/landing/modules/grande.png"
+                alt=""
+                className="absolute left-[43.8%] top-[10.2%] w-[52.1%] mix-blend-multiply"
+              />
+            </div>
+          )}
         </motion.div>
       </AnimatePresence>
 
